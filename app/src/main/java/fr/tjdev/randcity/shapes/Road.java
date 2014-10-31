@@ -18,6 +18,12 @@
 
 package fr.tjdev.randcity.shapes;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.Region;
+
 import fr.tjdev.randcity.generation.GenUtil;
 
 public class Road extends Floor {
@@ -33,16 +39,61 @@ public class Road extends Floor {
     //   /\
     //   ||--> +X
     static public final float[] positionData = {
-            -GenUtil.HALF_ROAD_WIDTH, GenUtil.ROAD_HEIGHT, -GenUtil.HALF_GRID_SIZE,
-            -GenUtil.HALF_ROAD_WIDTH, GenUtil.ROAD_HEIGHT, GenUtil.HALF_GRID_SIZE,
-            GenUtil.HALF_ROAD_WIDTH, GenUtil.ROAD_HEIGHT, -GenUtil.HALF_GRID_SIZE,
-            GenUtil.HALF_ROAD_WIDTH, GenUtil.ROAD_HEIGHT, -GenUtil.HALF_GRID_SIZE,
-            -GenUtil.HALF_ROAD_WIDTH, GenUtil.ROAD_HEIGHT, GenUtil.HALF_GRID_SIZE,
-            GenUtil.HALF_ROAD_WIDTH, GenUtil.ROAD_HEIGHT, GenUtil.HALF_GRID_SIZE
+            -GenUtil.HALF_ROAD_WIDTH, 0.0f, -GenUtil.HALF_GRID_SIZE,
+            -GenUtil.HALF_ROAD_WIDTH, 0.0f, GenUtil.HALF_GRID_SIZE,
+            GenUtil.HALF_ROAD_WIDTH, 0.0f, -GenUtil.HALF_GRID_SIZE,
+            GenUtil.HALF_ROAD_WIDTH, 0.0f, -GenUtil.HALF_GRID_SIZE,
+            -GenUtil.HALF_ROAD_WIDTH, 0.0f, GenUtil.HALF_GRID_SIZE,
+            GenUtil.HALF_ROAD_WIDTH, 0.0f, GenUtil.HALF_GRID_SIZE
     };
 
     // R, G, B, A
     static public final float[] colorData = {
-            0.2f, 0.2f, 0.2f, 1.0f
+            //0.2f, 0.2f, 0.2f, 1.0f
+            1.0f, 1.0f, 1.0f, 1.0f
     };
+
+    // S, T (or X, Y)
+    // Texture coordinate data.
+    public static final float[] textureCoordinatesData = {
+            0.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 0.0f,
+            1.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 1.0f
+    };
+
+    // Generate a texture for the road
+    static public Bitmap generateTexture() {
+        final int width = (int)GenUtil.ROAD_WIDTH * 10;
+        final int height = (int)GenUtil.GRID_SIZE;
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.rgb(50, 50, 50));
+
+        // Left line
+        canvas.clipRect(new Rect(0, 0, width/16, height), Region.Op.REPLACE);
+        canvas.drawRGB(160, 160, 160);
+        // Right line
+        canvas.clipRect(new Rect(width - (width/16), 0, width, height), Region.Op.REPLACE);
+        canvas.drawRGB(160, 160, 160);
+
+        // Remove lines on intersections
+        for (int i = (int)(GenUtil.SPACE_BETWEEN_ROADS - GenUtil.ROAD_WIDTH);
+             i <= GenUtil.GRID_SIZE;
+             i += GenUtil.SPACE_BETWEEN_ROADS) {
+            // The middle road is larger, check it
+            if(i + GenUtil.ROAD_WIDTH == GenUtil.HALF_GRID_SIZE) {
+                canvas.clipRect(new Rect(0, i, width, i + (int)GenUtil.MAIN_ROAD_WIDTH), Region.Op.REPLACE);
+                i += GenUtil.MAIN_ROAD_WIDTH - GenUtil.ROAD_WIDTH;
+            } else {
+                canvas.clipRect(new Rect(0, i, width, i + (int)GenUtil.ROAD_WIDTH), Region.Op.REPLACE);
+            }
+            canvas.drawRGB(50, 50, 50);
+        }
+
+        return bitmap;
+    }
 }

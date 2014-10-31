@@ -135,11 +135,17 @@ public class Building {
     // 2 --> "
     // 3 --> "
     // 4 --> "
-    // 5 --> linear windows
+    // 5 --> "
     // 6 --> "
     // 7 --> "
-    // 8 --> "
+    // 8 --> linear windows
     // 9 --> "
+    // 10 -> "
+    // 11 -> "
+    // 12 -> "
+    // 13 -> "
+    // 14 -> "
+    // 15 -> "
     //
     // Chance to have a specified texture are :
     // fuzzy  --> 70 %
@@ -198,10 +204,10 @@ public class Building {
         // Generate the texture type
         if(rand.chance(70)) {
             // Fuzzy
-            build.textureType = rand.nextInt(5);
+            build.textureType = rand.nextInt(GenUtil.TEX_TYPES_NB / 2);
         } else {
             // Linear
-            build.textureType = rand.nextInt(5) + 5;
+            build.textureType = rand.nextInt(GenUtil.TEX_TYPES_NB / 2) + GenUtil.TEX_TYPES_NB / 2;
         }
 
         return build;

@@ -30,7 +30,6 @@ public class GenUtil {
 
     static public final float SPACE_BETWEEN_ROADS = 64.0f;
 
-    static public final float ROAD_HEIGHT = 0.0f /*0.08f*/;
     static public final float ROAD_WIDTH = 16.0f;
     static public final float HALF_ROAD_WIDTH = ROAD_WIDTH / 2.0f;
     static public final float MAIN_ROAD_SCALE = 2.0f;
@@ -50,8 +49,8 @@ public class GenUtil {
     static public final float BUILD_SQUARE_WIDTH = SPACE_BETWEEN_ROADS - (HALF_ROAD_WIDTH * 2.0f);
     static public final float HALF_BUILD_SQUARE_WIDTH = BUILD_SQUARE_WIDTH / 2.0f;
 
-    // There is a margin of 0.5f on each side of the building (we can see the grass at the bottom)
-    static public final float BUILD_MARGIN = 0.5f;
+    // There is a margin on each side of the building (we can see the grass at the bottom)
+    static public final float BUILD_MARGIN = 0.0f;
     static public final float BUILD_WIDTH = BUILD_SQUARE_WIDTH - (BUILD_MARGIN * 2.0f);
 
     // Width and height for windows
@@ -74,7 +73,7 @@ public class GenUtil {
     static public final int TEX_NB_WINDOW_Y = AVERAGE_BUILD_HEIGHT / 6;
 
     // The numbers of textures generated
-    static public final int TEX_TYPES_NB = 10;
+    static public final int TEX_TYPES_NB = 16;
 
     // Colors used for windows
     static public final int WIN_BRIGHT_1_RGB = 255;

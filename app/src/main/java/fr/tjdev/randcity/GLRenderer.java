@@ -61,7 +61,11 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     private static final int mVBONormalOffset = IShape.VERTEX_DATA_ELEMENTS * IShape.BYTES_PER_FLOAT;
 
     private int mCubeVBOBuffer;
+    private int mBrickTextureDataHandle;
+
     private int mRoadVBOBuffer;
+    private Bitmap mRoadTextureBitmap;
+    private int mRoadTextureDataHandle;
 
     private ArrayList<Building> mBuildings;
     // Contains all buffers used for buildings
@@ -116,9 +120,6 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     // This is a handle to our light point program.
     private int mPointProgramHandle;
 
-    // These are handles to our texture data.
-    private int mBrickTextureDataHandle;
-
     // Store the FPS and the last time to compute the fps
     private int mFPS = 0;
     private long mLastTime = 0;
@@ -157,12 +158,18 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         mBuildTextureBitmaps[2] = Building.generateFuzzyTexture();
         mBuildTextureBitmaps[3] = Building.generateFuzzyTexture();
         mBuildTextureBitmaps[4] = Building.generateFuzzyTexture();
+        mBuildTextureBitmaps[5] = Building.generateFuzzyTexture();
+        mBuildTextureBitmaps[6] = Building.generateFuzzyTexture();
+        mBuildTextureBitmaps[7] = Building.generateFuzzyTexture();
 
-        mBuildTextureBitmaps[5] = Building.generateLinearTexture();
-        mBuildTextureBitmaps[6] = Building.generateLinearTexture();
-        mBuildTextureBitmaps[7] = Building.generateLinearTexture();
         mBuildTextureBitmaps[8] = Building.generateLinearTexture();
         mBuildTextureBitmaps[9] = Building.generateLinearTexture();
+        mBuildTextureBitmaps[10] = Building.generateLinearTexture();
+        mBuildTextureBitmaps[11] = Building.generateLinearTexture();
+        mBuildTextureBitmaps[12] = Building.generateLinearTexture();
+        mBuildTextureBitmaps[13] = Building.generateLinearTexture();
+        mBuildTextureBitmaps[14] = Building.generateLinearTexture();
+        mBuildTextureBitmaps[15] = Building.generateLinearTexture();
 
         // Update the buildings information on the screen
         String info = "Buildings: " + Integer.toString(mBuildings.size());
@@ -175,11 +182,17 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         info += "/" + Integer.toString(texTypes[2]);
         info += "/" + Integer.toString(texTypes[3]);
         info += "/" + Integer.toString(texTypes[4]);
-        info += "\nLinear tex: " + Integer.toString(texTypes[5]);
+        info += "/" + Integer.toString(texTypes[5]);
         info += "/" + Integer.toString(texTypes[6]);
         info += "/" + Integer.toString(texTypes[7]);
-        info += "/" + Integer.toString(texTypes[8]);
+        info += "\nLinear tex: " + Integer.toString(texTypes[8]);
         info += "/" + Integer.toString(texTypes[9]);
+        info += "/" + Integer.toString(texTypes[10]);
+        info += "/" + Integer.toString(texTypes[11]);
+        info += "/" + Integer.toString(texTypes[12]);
+        info += "/" + Integer.toString(texTypes[13]);
+        info += "/" + Integer.toString(texTypes[14]);
+        info += "/" + Integer.toString(texTypes[15]);
 
         final String infoDisplayed = info;
         ((Activity) mActivityContext).runOnUiThread(new Runnable() {
@@ -189,6 +202,9 @@ public class GLRenderer implements GLSurfaceView.Renderer {
                 ((NormalGameActivity) mActivityContext).getBuildingInfoTextView().setText(infoDisplayed);
             }
         });
+
+        // Generate road texture
+        mRoadTextureBitmap = Road.generateTexture();
     }
 
     // This function will generate buildings.
@@ -247,6 +263,9 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         mBrickTextureDataHandle = TextureHelper.loadTexture(mActivityContext, R.drawable.stone_wall_public_domain);
         GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
 
+        mRoadTextureDataHandle = TextureHelper.loadTexture(mRoadTextureBitmap, false);
+        GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
+
         // Load buildings textures
         for(int i=0 ; i < mBuildTextureBitmaps.length ; ++i) {
             mBuildTextureDataHandles[i] = TextureHelper.loadTexture(mBuildTextureBitmaps[i], false);
@@ -294,7 +313,8 @@ public class GLRenderer implements GLSurfaceView.Renderer {
 
         //
         // Road VBO
-        FloatBuffer roadBuffer = BufferHelper.getInterleavedBuffer(Road.positionData, Road.normalsData, new float[0]);
+        FloatBuffer roadBuffer = BufferHelper.getInterleavedBuffer(Road.positionData,
+                Road.normalsData, Road.textureCoordinatesData);
 
         // Second, copy these buffers into OpenGL's memory. After, we don't need to keep the client-side buffers around.
         final int roadTempBuffers[] = new int[1];
@@ -409,12 +429,22 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         drawCube();
 
         //
-        // Draw the roads (without textures)
+        // Draw the roads
         //
 
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mRoadTextureDataHandle);
+        GLES20.glUniform1i(mTextureUniformHandle, 0);
+
+        // Pass in the texture information
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mRoadVBOBuffer);
+        GLES20.glEnableVertexAttribArray(mTextureCoordinateHandle);
+        GLES20.glVertexAttribPointer(mTextureCoordinateHandle, IShape.TEXTURE_COORDINATE_ELEMENTS, GLES20.GL_FLOAT, false,
+                mVBOStride, mVBOTextureOffset);
+
+        //GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         // Disable texture flag
-        GLES20.glUniform1f(mTextureFlagHandle, 0.0f);
+        //GLES20.glUniform1f(mTextureFlagHandle, 0.0f);
 
         // Main roads (2x larger)
         Matrix.setIdentityM(mModelMatrix, 0);
@@ -531,13 +561,13 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mRoadVBOBuffer);
         GLES20.glEnableVertexAttribArray(mPositionHandle);
         GLES20.glVertexAttribPointer(mPositionHandle, IShape.VERTEX_DATA_ELEMENTS, GLES20.GL_FLOAT, false,
-                mVBOStrideNoTex, 0);
+                mVBOStride, 0);
 
         // Pass in the normal information
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mRoadVBOBuffer);
         GLES20.glEnableVertexAttribArray(mNormalHandle);
         GLES20.glVertexAttribPointer(mNormalHandle, IShape.NORMAL_DATA_ELEMENTS, GLES20.GL_FLOAT, false,
-                mVBOStrideNoTex, IShape.VERTEX_DATA_ELEMENTS * IShape.BYTES_PER_FLOAT);
+                mVBOStride, mVBONormalOffset);
 
         // Pass in the color information
         GLES20.glUniform4fv(mColorHandle, 1, Road.colorData, 0);
