@@ -42,7 +42,6 @@
             android:layout_height="wrap_content"
             android:textColor="#ffffffff"
             android:textStyle="bold" />
-
     </LinearLayout>
 
     <LinearLayout

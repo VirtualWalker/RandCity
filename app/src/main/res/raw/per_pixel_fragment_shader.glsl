@@ -25,7 +25,7 @@ void main()
     diffuse = diffuse * (1.0 / (1.0 + (0.25 * distance)));
     
     // Add ambient lighting
-    diffuse = diffuse + 0.7;
+    diffuse = diffuse + 0.5;
 
 	// Multiply the color by the diffuse illumination level and texture value to get final output color.
     // The texture flag enable (or disable) the use of the texture.

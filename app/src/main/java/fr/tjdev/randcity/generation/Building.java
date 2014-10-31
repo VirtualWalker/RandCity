@@ -202,7 +202,7 @@ public class Building {
 
 
         // Generate the texture type
-        if(rand.chance(70)) {
+        if(rand.chance(60)) {
             // Fuzzy
             build.textureType = rand.nextInt(GenUtil.TEX_TYPES_NB / 2);
         } else {

@@ -69,16 +69,57 @@ public class Road extends Floor {
         final int width = (int)GenUtil.ROAD_WIDTH * 10;
         final int height = (int)GenUtil.GRID_SIZE;
 
+        final int lineWidth = 16;
+        final int lineColor = Color.rgb(160, 160, 160);
+        final int backColor = Color.rgb(50, 50, 50);
+
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
-        canvas.drawColor(Color.rgb(50, 50, 50));
+        canvas.drawColor(backColor);
 
         // Left line
-        canvas.clipRect(new Rect(0, 0, width/16, height), Region.Op.REPLACE);
-        canvas.drawRGB(160, 160, 160);
+        canvas.clipRect(new Rect(0, 0, width/lineWidth, height), Region.Op.REPLACE);
+        canvas.drawColor(lineColor);
+
         // Right line
-        canvas.clipRect(new Rect(width - (width/16), 0, width, height), Region.Op.REPLACE);
-        canvas.drawRGB(160, 160, 160);
+        canvas.clipRect(new Rect(width - (width/lineWidth), 0, width, height), Region.Op.REPLACE);
+        canvas.drawColor(lineColor);
+
+        // Middle line (discontinued)
+        final int middleLeft = (width/2) - (width/(lineWidth*2));
+        final int middleRight = (width/2) + (width/(lineWidth*2));
+
+        canvas.clipRect(new Rect(middleLeft, 0, middleRight, height), Region.Op.REPLACE);
+        canvas.drawColor(lineColor);
+
+        // Create the discontinuation
+        for (int i = 0;
+             i <= GenUtil.GRID_SIZE;
+             i += GenUtil.SPACE_BETWEEN_ROADS) {
+
+            // Check for the main road
+            if(i == GenUtil.HALF_GRID_SIZE) {
+                i += GenUtil.MAIN_ROAD_WIDTH - GenUtil.ROAD_WIDTH;
+            }
+
+            // Middle
+            canvas.clipRect(new Rect(middleLeft,
+                    i + (int)((GenUtil.SPACE_BETWEEN_ROADS - GenUtil.ROAD_WIDTH)/2) - 2,
+                    middleRight,
+                    i + (int)((GenUtil.SPACE_BETWEEN_ROADS - GenUtil.ROAD_WIDTH)/2) + 2), Region.Op.REPLACE);
+            // Half middle
+            canvas.clipRect(new Rect(middleLeft,
+                    i + (int)((GenUtil.SPACE_BETWEEN_ROADS - GenUtil.ROAD_WIDTH)/4) - 2,
+                    middleRight,
+                    i + (int)((GenUtil.SPACE_BETWEEN_ROADS - GenUtil.ROAD_WIDTH)/4) + 2), Region.Op.UNION);
+            // Other half middle
+            canvas.clipRect(new Rect(middleLeft,
+                    i + (int)(((GenUtil.SPACE_BETWEEN_ROADS - GenUtil.ROAD_WIDTH)/4)*3) - 2,
+                    middleRight,
+                    i + (int)(((GenUtil.SPACE_BETWEEN_ROADS - GenUtil.ROAD_WIDTH)/4)*3) + 2), Region.Op.UNION);
+
+            canvas.drawColor(backColor);
+        }
 
         // Remove lines on intersections
         for (int i = (int)(GenUtil.SPACE_BETWEEN_ROADS - GenUtil.ROAD_WIDTH);
@@ -91,7 +132,7 @@ public class Road extends Floor {
             } else {
                 canvas.clipRect(new Rect(0, i, width, i + (int)GenUtil.ROAD_WIDTH), Region.Op.REPLACE);
             }
-            canvas.drawRGB(50, 50, 50);
+            canvas.drawColor(backColor);
         }
 
         return bitmap;

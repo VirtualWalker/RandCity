@@ -132,9 +132,9 @@ public class GLRenderer implements GLSurfaceView.Renderer {
 
     // Position the eye in front of the origin.
     public volatile float eyeX = 0.0f;
-    public volatile float eyeY = 250.0f;
+    public volatile float eyeY = 10.0f;
     public volatile float eyeZ = 7.0f;
-    // We are looking toward the distance
+    // We are looking toward this point
     public volatile float lookX = 0.0f;
     public volatile float lookY = 5.0f;
     public volatile float lookZ = 0.0f;
@@ -142,6 +142,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     public volatile float upX = 0.0f;
     public volatile float upY = 1.0f;
     public volatile float upZ = 0.0f;
+
 
     public GLRenderer(final Context activityContext) {
         mActivityContext = activityContext;

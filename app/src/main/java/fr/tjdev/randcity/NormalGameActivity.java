@@ -34,7 +34,6 @@ public class NormalGameActivity extends Activity {
     private static final String TAG = "NormalGameActivity";
 
     private static final float MOVE_STEP = 5.0f;
-    private static final float MOVE_STEP_Y = 5.0f;
 
     /**
      * Hold a reference to our GLSurfaceView
@@ -81,7 +80,6 @@ public class NormalGameActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (mRenderer != null) {
-                    //Log.d(TAG, "Forward button clicked.");
                     mRenderer.eyeZ -= MOVE_STEP;
                     mRenderer.lookZ -= MOVE_STEP;
                 }
@@ -91,7 +89,6 @@ public class NormalGameActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (mRenderer != null) {
-                    //Log.d(TAG, "Backward button clicked.");
                     mRenderer.eyeZ += MOVE_STEP;
                     mRenderer.lookZ += MOVE_STEP;
                 }
@@ -101,7 +98,6 @@ public class NormalGameActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (mRenderer != null) {
-                    //Log.d(TAG, "Left button clicked.");
                     mRenderer.eyeX -= MOVE_STEP;
                     mRenderer.lookX -= MOVE_STEP;
                 }
@@ -111,7 +107,6 @@ public class NormalGameActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (mRenderer != null) {
-                    //Log.d(TAG, "Right button clicked.");
                     mRenderer.eyeX += MOVE_STEP;
                     mRenderer.lookX += MOVE_STEP;
                 }
@@ -121,8 +116,8 @@ public class NormalGameActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (mRenderer != null) {
-                    //Log.d(TAG, "Up button clicked.");
-                    mRenderer.eyeY += MOVE_STEP_Y;
+                    mRenderer.eyeY += MOVE_STEP;
+                    //mRenderer.lookY += MOVE_STEP;
                 }
             }
         });
@@ -130,8 +125,8 @@ public class NormalGameActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (mRenderer != null) {
-                    //Log.d(TAG, "Down button clicked.");
-                    mRenderer.eyeY -= MOVE_STEP_Y;
+                    mRenderer.eyeY -= MOVE_STEP;
+                    //mRenderer.lookY -= MOVE_STEP;
                     if (mRenderer.eyeY < 1.0f) {
                         Log.w(TAG, "Try to go under the floor. Block it !");
                         mRenderer.eyeY = 1.0f;
