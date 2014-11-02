@@ -39,6 +39,7 @@ import fr.tjdev.randcity.generation.GenUtil;
 import fr.tjdev.randcity.shapes.Cube;
 import fr.tjdev.randcity.shapes.IShape;
 import fr.tjdev.randcity.shapes.Road;
+import fr.tjdev.randcity.shapes.SkyBox;
 import fr.tjdev.randcity.util.BufferHelper;
 import fr.tjdev.randcity.util.RawResourceReader;
 import fr.tjdev.randcity.util.ShaderHelper;
@@ -62,6 +63,8 @@ public class GLRenderer implements GLSurfaceView.Renderer {
 
     private int mCubeVBOBuffer;
     private int mBrickTextureDataHandle;
+
+    private int mSkyBoxVBOBuffer;
 
     private int mRoadVBOBuffer;
     private Bitmap mRoadTextureBitmap;
@@ -317,7 +320,6 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         FloatBuffer roadBuffer = BufferHelper.getInterleavedBuffer(Road.positionData,
                 Road.normalsData, Road.textureCoordinatesData);
 
-        // Second, copy these buffers into OpenGL's memory. After, we don't need to keep the client-side buffers around.
         final int roadTempBuffers[] = new int[1];
         GLES20.glGenBuffers(1, roadTempBuffers, 0);
 
@@ -329,6 +331,23 @@ public class GLRenderer implements GLSurfaceView.Renderer {
 
         roadBuffer.limit(0);
         roadBuffer = null;
+
+        //
+        // SkyBox VBO
+        FloatBuffer skyBuffer = BufferHelper.getInterleavedBuffer(SkyBox.positionData,
+                SkyBox.normalsData, new float[0]);
+
+        final int skyTempBuffers[] = new int[1];
+        GLES20.glGenBuffers(1, skyTempBuffers, 0);
+
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, skyTempBuffers[0]);
+        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, skyBuffer.capacity() * IShape.BYTES_PER_FLOAT,
+                skyBuffer, GLES20.GL_STATIC_DRAW);
+
+        mSkyBoxVBOBuffer = skyTempBuffers[0];
+
+        skyBuffer.limit(0);
+        skyBuffer = null;
 
         // Finish the binding
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
@@ -443,10 +462,6 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         GLES20.glVertexAttribPointer(mTextureCoordinateHandle, IShape.TEXTURE_COORDINATE_ELEMENTS, GLES20.GL_FLOAT, false,
                 mVBOStride, mVBOTextureOffset);
 
-        //GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-        // Disable texture flag
-        //GLES20.glUniform1f(mTextureFlagHandle, 0.0f);
-
         // Main roads (2x larger)
         Matrix.setIdentityM(mModelMatrix, 0);
         Matrix.scaleM(mModelMatrix, 0, GenUtil.MAIN_ROAD_SCALE, 1.0f, 1.0f);
@@ -485,6 +500,17 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         // Buildings are created in the constructor
 
         drawAllBuildings();
+
+        //
+        // Draw SkyBox (without textures)
+
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        // Disable texture flag
+        GLES20.glUniform1f(mTextureFlagHandle, 0.0f);
+
+        Matrix.setIdentityM(mModelMatrix, 0);
+        Matrix.scaleM(mModelMatrix, 0, 1000.0f, 1000.0f, 1000.0f);
+        drawSkyBox();
 
         // Clear the currently bound buffer (so future OpenGL calls do not use this buffer).
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
@@ -574,6 +600,26 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         GLES20.glUniform4fv(mColorHandle, 1, Road.colorData, 0);
 
         drawCommon(6);
+    }
+
+    private void drawSkyBox() {
+
+        // Pass in the position information
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mSkyBoxVBOBuffer);
+        GLES20.glEnableVertexAttribArray(mPositionHandle);
+        GLES20.glVertexAttribPointer(mPositionHandle, IShape.VERTEX_DATA_ELEMENTS, GLES20.GL_FLOAT, false,
+                mVBOStrideNoTex, 0);
+
+        // Pass in the normal information
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mSkyBoxVBOBuffer);
+        GLES20.glEnableVertexAttribArray(mNormalHandle);
+        GLES20.glVertexAttribPointer(mNormalHandle, IShape.NORMAL_DATA_ELEMENTS, GLES20.GL_FLOAT, false,
+                mVBOStrideNoTex, mVBONormalOffset);
+
+        // Pass in the color information
+        GLES20.glUniform4fv(mColorHandle, 1, SkyBox.colorData, 0);
+
+        drawCommon(36);
     }
 
     // This function do all matrices operations

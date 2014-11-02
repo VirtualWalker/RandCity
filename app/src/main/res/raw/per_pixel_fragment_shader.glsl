@@ -29,7 +29,19 @@ void main()
 
 	// Multiply the color by the diffuse illumination level and texture value to get final output color.
     // The texture flag enable (or disable) the use of the texture.
-    gl_FragColor = u_TextureFlag * u_Color * diffuse * texture2D(u_Texture, v_TexCoordinate) +
-                   (1.0 - u_TextureFlag) * u_Color * diffuse;
-  }                                                                     	
+    vec4 finalColor = u_TextureFlag * u_Color * diffuse * texture2D(u_Texture, v_TexCoordinate) +
+                            (1.0 - u_TextureFlag) * u_Color * diffuse;
+
+    // Compute the fog
+    const float LOG2 = 1.442695;
+    const float fogDensity = 0.02;
+    float z = gl_FragCoord.z / gl_FragCoord.w;
+    float fogFactor = exp2( -fogDensity * fogDensity * z * z * LOG2 );
+    fogFactor = clamp(fogFactor, 0.0, 1.0);
+
+    vec4 fogColor = vec4(1.0, 1.0, 1.0, 0.0);
+
+    gl_FragColor = mix(fogColor, finalColor, fogFactor );
+    //gl_FragColor = finalColor;
+}
 

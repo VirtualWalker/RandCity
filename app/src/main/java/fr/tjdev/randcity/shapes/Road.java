@@ -71,7 +71,7 @@ public class Road extends Floor {
 
         final int lineWidth = 16;
         final int lineColor = Color.rgb(160, 160, 160);
-        final int backColor = Color.rgb(50, 50, 50);
+        final int backColor = Color.rgb(30, 30, 30);
 
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
