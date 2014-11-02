@@ -110,6 +110,8 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     private int mTextureUniformHandle;
     // This will be used to tell if we use a texture or not.
     private int mTextureFlagHandle;
+    // This will be used to enable the fog
+    private int mFogFlagHandle;
     // This will be used to pass in model position information.
     private int mPositionHandle;
     // This will be used to pass in model normal information.
@@ -145,6 +147,9 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     public volatile float upX = 0.0f;
     public volatile float upY = 1.0f;
     public volatile float upZ = 0.0f;
+
+    // Used to toggle the fog
+    public volatile boolean enableFog = true;
 
 
     public GLRenderer(final Context activityContext) {
@@ -408,10 +413,18 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         mLightPosHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_LightPos");
         mTextureUniformHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_Texture");
         mTextureFlagHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_TextureFlag");
+        mFogFlagHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_FogFlag");
         mColorHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_Color");
         mPositionHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Position");
         mNormalHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Normal");
         mTextureCoordinateHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_TexCoordinate");
+
+        // Enable (or disable) the fog
+        if(enableFog) {
+            GLES20.glUniform1f(mFogFlagHandle, 1.0f);
+        } else {
+            GLES20.glUniform1f(mFogFlagHandle, 0.0f);
+        }
 
         // Calculate position of the light. Rotate and then push into the distance.
         Matrix.setIdentityM(mLightModelMatrix, 0);

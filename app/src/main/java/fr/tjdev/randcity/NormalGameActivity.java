@@ -28,11 +28,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class NormalGameActivity extends Activity {
 
     private static final String TAG = "NormalGameActivity";
+    private static final String BUTTON_FOG_ON_STR = "Disable Fog";
+    private static final String BUTTON_FOG_OFF_STR = "Enable Fog";
 
     private static final float MOVE_STEP = 5.0f;
 
@@ -74,6 +77,13 @@ public class NormalGameActivity extends Activity {
             Log.wtf(TAG, "The device doesn't support OpenGL ES 2.0 !");
             finish();
             return;
+        }
+
+        // Set the first title for the fog button
+        if(mRenderer.enableFog == true) {
+            ((Button) findViewById(R.id.button_toggleFog)).setText(BUTTON_FOG_ON_STR);
+        } else {
+            ((Button) findViewById(R.id.button_toggleFog)).setText(BUTTON_FOG_OFF_STR);
         }
 
         // Handle movements buttons
@@ -135,6 +145,22 @@ public class NormalGameActivity extends Activity {
                 }
             }
         });
+        // Toggle the fog and the button title
+        findViewById(R.id.button_toggleFog).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mRenderer != null) {
+                    if(mRenderer.enableFog == true) {
+                        mRenderer.enableFog = false;
+                        ((Button) findViewById(R.id.button_toggleFog)).setText(BUTTON_FOG_OFF_STR);
+                    } else {
+                        mRenderer.enableFog = true;
+                        ((Button) findViewById(R.id.button_toggleFog)).setText(BUTTON_FOG_ON_STR);
+                    }
+                }
+            }
+        });
+
     }
 
     @Override
