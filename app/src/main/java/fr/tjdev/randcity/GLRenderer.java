@@ -40,6 +40,7 @@ import fr.tjdev.randcity.shapes.Cube;
 import fr.tjdev.randcity.shapes.IShape;
 import fr.tjdev.randcity.shapes.Road;
 import fr.tjdev.randcity.shapes.SkyBox;
+import fr.tjdev.randcity.shapes.Floor;
 import fr.tjdev.randcity.util.BufferHelper;
 import fr.tjdev.randcity.util.RawResourceReader;
 import fr.tjdev.randcity.util.ShaderHelper;
@@ -63,6 +64,9 @@ public class GLRenderer implements GLSurfaceView.Renderer {
 
     private int mCubeVBOBuffer;
     private int mBrickTextureDataHandle;
+
+    // Used to have a floor at the bottom of the treasure
+    private int mFloorVBOBuffer;
 
     private int mSkyBoxVBOBuffer;
 
@@ -162,23 +166,13 @@ public class GLRenderer implements GLSurfaceView.Renderer {
 
         // Bitmaps are generated here.
         // Handles to these textures are generated in onSurfaceCreated() method.
-        mBuildTextureBitmaps[0] = Building.generateFuzzyTexture();
-        mBuildTextureBitmaps[1] = Building.generateFuzzyTexture();
-        mBuildTextureBitmaps[2] = Building.generateFuzzyTexture();
-        mBuildTextureBitmaps[3] = Building.generateFuzzyTexture();
-        mBuildTextureBitmaps[4] = Building.generateFuzzyTexture();
-        mBuildTextureBitmaps[5] = Building.generateFuzzyTexture();
-        mBuildTextureBitmaps[6] = Building.generateFuzzyTexture();
-        mBuildTextureBitmaps[7] = Building.generateFuzzyTexture();
-
-        mBuildTextureBitmaps[8] = Building.generateLinearTexture();
-        mBuildTextureBitmaps[9] = Building.generateLinearTexture();
-        mBuildTextureBitmaps[10] = Building.generateLinearTexture();
-        mBuildTextureBitmaps[11] = Building.generateLinearTexture();
-        mBuildTextureBitmaps[12] = Building.generateLinearTexture();
-        mBuildTextureBitmaps[13] = Building.generateLinearTexture();
-        mBuildTextureBitmaps[14] = Building.generateLinearTexture();
-        mBuildTextureBitmaps[15] = Building.generateLinearTexture();
+        int i;
+        for(i=0 ; i < 8 ; ++i) {
+            mBuildTextureBitmaps[i] = Building.generateFuzzyTexture();
+        }
+        for(; i < 16 ; ++i) {
+            mBuildTextureBitmaps[i] = Building.generateLinearTexture();
+        }
 
         // Update the buildings information on the screen
         String info = "Buildings: " + Integer.toString(mBuildings.size());
@@ -221,16 +215,22 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         mBuildings = Building.generateAllBuildings();
 
         // Define the treasure pos
-        // We replace a random building by the treasure, and get its pos
+        // We replace a random building by the treasure, and get its positions
         Random rand = new Random();
-        final int randIndex = rand.nextInt(mBuildings.size());
+        int randIndex = rand.nextInt(mBuildings.size());
+        // Block the treasure from spawning on the sides of the city
+        final float maxCenterCoords = GenUtil.HALF_GRID_SIZE - GenUtil.HALF_BUILD_SQUARE_WIDTH;
+        while(mBuildings.get(randIndex).centerCoords[0] == maxCenterCoords ||
+                mBuildings.get(randIndex).centerCoords[0] == -maxCenterCoords ||
+                mBuildings.get(randIndex).centerCoords[2] == maxCenterCoords ||
+                mBuildings.get(randIndex).centerCoords[2] == -maxCenterCoords) {
+            randIndex = rand.nextInt(mBuildings.size());
+        }
 
         mTreasurePos = mBuildings.get(randIndex).centerCoords;
 
         Log.d(TAG, "Treasure position set to :");
-        Log.d(TAG, "x=" + Float.toString(mTreasurePos[0]));
-        Log.d(TAG, "y=" + Float.toString(mTreasurePos[1]));
-        Log.d(TAG, "z=" + Float.toString(mTreasurePos[2]));
+        Log.d(TAG, "x=" + Float.toString(mTreasurePos[0]) + " y=" + Float.toString(mTreasurePos[1]) + " z=" + Float.toString(mTreasurePos[2]));
 
         // Remove the building from the list.
         mBuildings.remove(randIndex);
@@ -354,6 +354,24 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         skyBuffer.limit(0);
         skyBuffer = null;
 
+        //
+        // Floor VBO
+        FloatBuffer floorBuffer = BufferHelper.getInterleavedBuffer(Floor.positionData,
+                Floor.normalsData, new float[0]);
+
+
+        final int floorTempBuffers[] = new int[1];
+        GLES20.glGenBuffers(1, floorTempBuffers, 0);
+
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, floorTempBuffers[0]);
+        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, floorBuffer.capacity() * IShape.BYTES_PER_FLOAT,
+                floorBuffer, GLES20.GL_STATIC_DRAW);
+
+        mFloorVBOBuffer = floorTempBuffers[0];
+
+        floorBuffer.limit(0);
+        floorBuffer = null;
+
         // Finish the binding
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
     }
@@ -469,6 +487,18 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mRoadTextureDataHandle);
         GLES20.glUniform1i(mTextureUniformHandle, 0);
 
+        // Pass in the position information
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mRoadVBOBuffer);
+        GLES20.glEnableVertexAttribArray(mPositionHandle);
+        GLES20.glVertexAttribPointer(mPositionHandle, IShape.VERTEX_DATA_ELEMENTS, GLES20.GL_FLOAT, false,
+                mVBOStride, 0);
+
+        // Pass in the normal information
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mRoadVBOBuffer);
+        GLES20.glEnableVertexAttribArray(mNormalHandle);
+        GLES20.glVertexAttribPointer(mNormalHandle, IShape.NORMAL_DATA_ELEMENTS, GLES20.GL_FLOAT, false,
+                mVBOStride, mVBONormalOffset);
+
         // Pass in the texture information
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mRoadVBOBuffer);
         GLES20.glEnableVertexAttribArray(mTextureCoordinateHandle);
@@ -509,13 +539,16 @@ public class GLRenderer implements GLSurfaceView.Renderer {
             drawRoad();
         }
 
+        //
         // Draw buildings
         // Buildings are created in the constructor
+        //
 
         drawAllBuildings();
 
         //
         // Draw SkyBox (without textures)
+        //
 
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         // Disable texture flag
@@ -525,10 +558,22 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         Matrix.scaleM(mModelMatrix, 0, 1000.0f, 1000.0f, 1000.0f);
         drawSkyBox();
 
+        //
+        // Draw the floor for the treasure
+        // (textures are already disabled)
+        //
+        Matrix.setIdentityM(mModelMatrix, 0);
+        Matrix.translateM(mModelMatrix, 0, mTreasurePos[0], 0.0f, mTreasurePos[2]);
+        Matrix.scaleM(mModelMatrix, 0, GenUtil.HALF_BUILD_SQUARE_WIDTH, 0.0f, GenUtil.HALF_BUILD_SQUARE_WIDTH);
+        drawFloor();
+
         // Clear the currently bound buffer (so future OpenGL calls do not use this buffer).
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
+        //
         // Draw the light
+        //
+
         // Draw a point to indicate the light.
         GLES20.glUseProgram(mPointProgramHandle);
         drawLight();
@@ -576,6 +621,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
 
         prepareDraw();
 
+        // Draw sides
         for (int i = 0; i < mBuildings.size(); ++i) {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mBuildTextureDataHandles[mBuildings.get(i).textureType]);
             GLES20.glUniform1i(mTextureUniformHandle, 0);
@@ -596,18 +642,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     }
 
     private void drawRoad() {
-
-        // Pass in the position information
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mRoadVBOBuffer);
-        GLES20.glEnableVertexAttribArray(mPositionHandle);
-        GLES20.glVertexAttribPointer(mPositionHandle, IShape.VERTEX_DATA_ELEMENTS, GLES20.GL_FLOAT, false,
-                mVBOStride, 0);
-
-        // Pass in the normal information
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mRoadVBOBuffer);
-        GLES20.glEnableVertexAttribArray(mNormalHandle);
-        GLES20.glVertexAttribPointer(mNormalHandle, IShape.NORMAL_DATA_ELEMENTS, GLES20.GL_FLOAT, false,
-                mVBOStride, mVBONormalOffset);
+        // Buffers are initialized in the onSurfaceChanged() method
 
         // Pass in the color information
         GLES20.glUniform4fv(mColorHandle, 1, Road.colorData, 0);
@@ -615,8 +650,26 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         drawCommon(6);
     }
 
-    private void drawSkyBox() {
+    private void drawFloor() {
+        // Pass in the position information
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mFloorVBOBuffer);
+        GLES20.glEnableVertexAttribArray(mPositionHandle);
+        GLES20.glVertexAttribPointer(mPositionHandle, IShape.VERTEX_DATA_ELEMENTS, GLES20.GL_FLOAT, false,
+                mVBOStrideNoTex, 0);
 
+        // Pass in the normal information
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mFloorVBOBuffer);
+        GLES20.glEnableVertexAttribArray(mNormalHandle);
+        GLES20.glVertexAttribPointer(mNormalHandle, IShape.NORMAL_DATA_ELEMENTS, GLES20.GL_FLOAT, false,
+                mVBOStrideNoTex, mVBONormalOffset);
+
+        // Pass in the color information
+        GLES20.glUniform4fv(mColorHandle, 1, Floor.colorData, 0);
+
+        drawCommon(6);
+    }
+
+    private void drawSkyBox() {
         // Pass in the position information
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mSkyBoxVBOBuffer);
         GLES20.glEnableVertexAttribArray(mPositionHandle);

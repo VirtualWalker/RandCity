@@ -22,28 +22,18 @@ import fr.tjdev.randcity.generation.GenUtil;
 
 public class Floor implements IShape {
 
-    // X, Y, Z
-    // Mapped as :
-    //   0----2,3
-    //   | \  |
-    //   |  \ |
-    //   1,4--5
-    // With :
-    //   -Z
-    //   /\
-    //   ||--> +X
     static public final float[] positionData = {
-            -GenUtil.HALF_GRID_SIZE, 0.0f, -GenUtil.HALF_GRID_SIZE,
-            -GenUtil.HALF_GRID_SIZE, 0.0f, GenUtil.HALF_GRID_SIZE,
-            GenUtil.HALF_GRID_SIZE, 0.0f, -GenUtil.HALF_GRID_SIZE,
-            GenUtil.HALF_GRID_SIZE, 0.0f, -GenUtil.HALF_GRID_SIZE,
-            -GenUtil.HALF_GRID_SIZE, 0.0f, GenUtil.HALF_GRID_SIZE,
-            GenUtil.HALF_GRID_SIZE, 0.0f, GenUtil.HALF_GRID_SIZE
+            -1.0f, 0.0f, -1.0f,
+            -1.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, -1.0f,
+            1.0f, 0.0f, -1.0f,
+            -1.0f, 0.0f, 1.0f,
+            1.0f, 0.0f, 1.0f
     };
 
     // R, G, B, A
     static public final float[] colorData = {
-            1.0f, 1.0f, 1.0f, 1.0f
+            0.3f, 0.3f, 0.3f, 1.0f
     };
 
     // X, Y, Z
@@ -53,7 +43,7 @@ public class Floor implements IShape {
             0.0f, 1.0f, 0.0f,
             0.0f, 1.0f, 0.0f,
             0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f
     };
 
     // S, T (or X, Y)
@@ -61,10 +51,10 @@ public class Floor implements IShape {
     public static final float[] textureCoordinatesData = {
             // Front face
             0.0f, 0.0f,
-            0.0f, GenUtil.GRID_SIZE,
-            GenUtil.GRID_SIZE, 0.0f,
-            0.0f, GenUtil.GRID_SIZE,
-            GenUtil.GRID_SIZE, GenUtil.GRID_SIZE,
-            GenUtil.GRID_SIZE, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f
     };
 }

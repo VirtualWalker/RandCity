@@ -79,36 +79,37 @@ public class Building {
             0.0f, 1.0f, 0.0f
     };
     // There is no texture coordinates for the top (all set to 0)
+    // The texture is split to match the 4 sides
     public static final float[] textureCoordinates = {
             // Front face
             0.0f, 0.0f,
             0.0f, 1.0f,
-            1.0f, 0.0f,
+            0.25f, 0.0f,
             0.0f, 1.0f,
-            1.0f, 1.0f,
-            1.0f, 0.0f,
+            0.25f, 1.0f,
+            0.25f, 0.0f,
 
             // Right face
-            0.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 1.0f,
-            1.0f, 0.0f,
+            0.25f, 0.0f,
+            0.25f, 1.0f,
+            0.5f, 0.0f,
+            0.25f, 1.0f,
+            0.5f, 1.0f,
+            0.5f, 0.0f,
 
             // Back face
-            0.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 1.0f,
-            1.0f, 0.0f,
+            0.5f, 0.0f,
+            0.5f, 1.0f,
+            0.75f, 0.0f,
+            0.5f, 1.0f,
+            0.75f, 1.0f,
+            0.75f, 0.0f,
 
             // Left face
-            0.0f, 0.0f,
-            0.0f, 1.0f,
+            0.75f, 0.0f,
+            0.75f, 1.0f,
             1.0f, 0.0f,
-            0.0f, 1.0f,
+            0.75f, 1.0f,
             1.0f, 1.0f,
             1.0f, 0.0f,
 
@@ -148,8 +149,8 @@ public class Building {
     // 15 -> "
     //
     // Chance to have a specified texture are :
-    // fuzzy  --> 70 %
-    // linear --> 30 %
+    // fuzzy  --> 60 %
+    // linear --> 40 %
     //
     // In each category of texture, the chance to have one to another are the same
     public int textureType;
@@ -177,28 +178,27 @@ public class Building {
         final int color = rand.intBetween(GenUtil.BUILD_MAX_COLOR, GenUtil.BUILD_MIN_COLOR);
         final int randPercent = rand.nextInt(100);
         int red = color;
-        int green = color;
         int blue = color;
 
         // Possible colors are: red, blue, yellow, white
-        if(randPercent < 25) { // blue
-            blue += rand.nextInt(10);
+        if(randPercent < 30) { // blue
+            blue += rand.nextInt(15);
             if(blue > 100) {
                 blue = 100;
             }
-        } else if (randPercent < 50) { // red
-            red += rand.nextInt(10);
+        } else if (randPercent < 60) { // red
+            red += rand.nextInt(15);
             if(red > 100) {
                 red = 100;
             }
-        } else if (randPercent < 75) { // yellow
-            blue -= rand.nextInt(10);
+        } else if (randPercent < 90) { // yellow
+            blue -= rand.nextInt(15);
             if(blue < 0) {
                 blue = 0;
             }
-        }
+        } // Only 10% of white
 
-        build.color = new float[]{red/100.0f, green/100.0f, blue/100.0f, 1.0f};
+        build.color = new float[]{red/100.0f, color/100.0f, blue/100.0f, 1.0f};
 
 
         // Generate the texture type
@@ -247,7 +247,7 @@ public class Building {
     static public Bitmap generateFuzzyTexture() {
         Random rand = new Random();
         // Randomize width and height (+/- 4 windows)
-        final int nbWinX = rand.moreOrLess(GenUtil.TEX_NB_WINDOW_X, 4);
+        final int nbWinX = rand.moreOrLess(GenUtil.TEX_NB_WINDOW_X, 4) * 4;
         final int nbWinY = rand.moreOrLess(GenUtil.TEX_NB_WINDOW_Y, 4);
 
         // Randomize the percentage of chance to have a white glass
@@ -309,14 +309,14 @@ public class Building {
     static public Bitmap generateLinearTexture() {
         Random rand = new Random();
         // Randomize width and height (+/- 4 windows)
-        final int nbWinX = rand.moreOrLess(GenUtil.TEX_NB_WINDOW_X, 4);
+        final int nbWinX = rand.moreOrLess(GenUtil.TEX_NB_WINDOW_X, 4) * 4;
         final int nbWinY = rand.moreOrLess(GenUtil.TEX_NB_WINDOW_Y, 4);
 
         // Randomize some values
-        final int spaceLength = rand.moreOrLess(11, 3);
-        final int whiteGlassLength = rand.moreOrLess(14, 4);
+        final int spaceLength = rand.moreOrLess(20, 3);
+        final int whiteGlassLength = rand.moreOrLess(16, 4);
         final int chanceToContinue = rand.moreOrLess(25, 5);
-        final int chanceToStartRow = rand.moreOrLess(15, 5);
+        final int chanceToStartRow = rand.moreOrLess(20, 5);
 
         Bitmap bitmap = Bitmap.createBitmap(nbWinX * GenUtil.TEX_WINDOW_WIDTH,
                 nbWinY * GenUtil.TEX_WINDOW_HEIGHT, Bitmap.Config.ARGB_8888);

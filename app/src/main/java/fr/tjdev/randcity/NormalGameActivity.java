@@ -153,9 +153,11 @@ public class NormalGameActivity extends Activity {
                     if(mRenderer.enableFog == true) {
                         mRenderer.enableFog = false;
                         ((Button) findViewById(R.id.button_toggleFog)).setText(BUTTON_FOG_OFF_STR);
+                        Log.d(TAG, "Disabling fog");
                     } else {
                         mRenderer.enableFog = true;
                         ((Button) findViewById(R.id.button_toggleFog)).setText(BUTTON_FOG_ON_STR);
+                        Log.d(TAG, "Enabling fog");
                     }
                 }
             }

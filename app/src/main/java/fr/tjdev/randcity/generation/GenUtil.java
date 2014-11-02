@@ -40,13 +40,13 @@ public class GenUtil {
     static public final int BUILD_MAX_HEIGHT = 200;
     static public final int AVERAGE_BUILD_HEIGHT = (BUILD_MIN_HEIGHT + BUILD_MAX_HEIGHT) / 2;
 
-    static public final int BUILD_MIN_COLOR = 20;
-    static public final int BUILD_MAX_COLOR = 70;
+    static public final int BUILD_MIN_COLOR = 50;
+    static public final int BUILD_MAX_COLOR = 90;
 
     // The square for buildings is smaller than the space between roads since this space
     // is computed from the middle of the road.
     // So, subtract 2 * the half road width.
-    static public final float BUILD_SQUARE_WIDTH = SPACE_BETWEEN_ROADS - (HALF_ROAD_WIDTH * 2.0f);
+    static public final float BUILD_SQUARE_WIDTH = SPACE_BETWEEN_ROADS - ROAD_WIDTH;
     static public final float HALF_BUILD_SQUARE_WIDTH = BUILD_SQUARE_WIDTH / 2.0f;
 
     // There is a margin on each side of the building (we can see the grass at the bottom)
