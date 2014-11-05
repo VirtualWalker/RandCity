@@ -1,8 +1,8 @@
-RandCity
-======
+Rand City
+=========
 
-A proceduraly/generated android game that aims to work without any texture.
-This game will be played with the cardboard or a virtual reality helmet. It will use the cardboard toolkit in the future, but for the moment, it only use common OpenGL ES 2.0 methods.
+A procedurally android game that aims to work without any texture file.
+This game can be played with the google cardboard or a virtual reality helmet. You can also use the test mode to have a "global" view of the city and its features.
 
 See http://ci.tjdev.fr/job/RandCity/ to get the last successful artifact.
 

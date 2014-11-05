@@ -16,12 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package fr.tjdev.randcity;
+package fr.tjdev.randcity.testgame;
 
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
-import android.content.pm.ConfigurationInfo;
+import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,18 +29,18 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class NormalGameActivity extends Activity {
+import fr.tjdev.randcity.R;
+import fr.tjdev.randcity.util.OpenGL;
 
-    private static final String TAG = "NormalGameActivity";
+public class TestGameActivity extends Activity {
+
+    private static final String TAG = "TestGameActivity";
     private static final String BUTTON_FOG_ON_STR = "Disable Fog";
     private static final String BUTTON_FOG_OFF_STR = "Enable Fog";
 
     private static final float MOVE_STEP = 5.0f;
 
-    /**
-     * Hold a reference to our GLSurfaceView
-     */
-    private GLView mGLView;
+    private GLSurfaceView mGLView;
     private GLRenderer mRenderer;
 
     @Override
@@ -55,11 +53,11 @@ public class NormalGameActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_normalgame);
+        setContentView(R.layout.activity_testgame);
 
-        mGLView = (GLView) findViewById(R.id.gl_surface_view);
+        mGLView = (GLSurfaceView) findViewById(R.id.gl_surface_view);
 
-        if (hasOpenGLES20Support()) {
+        if (OpenGL.hasOpenGLES20Support(this)) {
             // Request an OpenGL ES 2.0 compatible context.
             mGLView.setEGLContextClientVersion(2);
             mGLView.setEGLConfigChooser(true);
@@ -67,20 +65,16 @@ public class NormalGameActivity extends Activity {
             mRenderer = new GLRenderer(this);
             mGLView.setRenderer(mRenderer);
 
-            // Render the view only when there is a change in the drawing data
-            // Comment this if objects move without user interaction
-            //mGLView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-
         } else {
             // Here, the device doesn't support OpenGL ES 2.0.
             // It's the time to buy a new one !
-            Log.wtf(TAG, "The device doesn't support OpenGL ES 2.0 !");
+            Log.wtf(TAG, getResources().getString(R.string.noOpenGLSupport));
             finish();
             return;
         }
 
         // Set the first title for the fog button
-        if(mRenderer.enableFog == true) {
+        if(mRenderer.enableFog) {
             ((Button) findViewById(R.id.button_toggleFog)).setText(BUTTON_FOG_ON_STR);
         } else {
             ((Button) findViewById(R.id.button_toggleFog)).setText(BUTTON_FOG_OFF_STR);
@@ -150,7 +144,7 @@ public class NormalGameActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (mRenderer != null) {
-                    if(mRenderer.enableFog == true) {
+                    if(mRenderer.enableFog) {
                         mRenderer.enableFog = false;
                         ((Button) findViewById(R.id.button_toggleFog)).setText(BUTTON_FOG_OFF_STR);
                         Log.d(TAG, "Disabling fog");
@@ -202,13 +196,6 @@ public class NormalGameActivity extends Activity {
                                 | View.SYSTEM_UI_FLAG_FULLSCREEN);
             }
         }
-    }
-
-    // Check if the system supports OpenGL ES 2.0
-    public boolean hasOpenGLES20Support() {
-        final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-        return configurationInfo.reqGlEsVersion >= 0x20000;
     }
 
     public TextView getFPSTextView() {

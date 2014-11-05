@@ -17,11 +17,16 @@
 -->
 <resources>
 
-    <string name="app_name">RandCity</string>
+    <string name="app_name">Rand City</string>
     <string name="headerTitle">Main menu</string>
-    <string name="header">Welcome to RandCity game, please choose your game mode.</string>
-    <string name="normalGameLabel">Normal mode with buttons to move</string>
-    <string name="normalGameSubtitle">Used for testings, you can fly !</string>
+    <string name="header">Welcome to Rand City game, please choose your game mode.</string>
+    <string name="testGameLabel">Test Mode with buttons to move</string>
+    <string name="testGameSubtitle">Used for testings new the game when you don\'t have a VR helmet.</string>
+    <string name="vrGameLabel">VR Mode</string>
+    <string name="vrGameSubtitle">Wear your virtual reality helmet.</string>
+
+    <string name="noOpenGLSupport">The device doesn\'t support OpenGL ES 2.0 !</string>
+
     <string name="left">L</string>
     <string name="right">R</string>
     <string name="forward">F</string>

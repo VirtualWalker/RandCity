@@ -33,13 +33,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fr.tjdev.randcity.testgame.TestGameActivity;
+import fr.tjdev.randcity.vrgame.VRGameActivity;
+
 /**
  * This activity allow users to choose the game mode : normal mode or VR mode
  */
 public class MainActivity extends ListActivity {
-    private static final String ITEM_IMAGE = "item_image";
-    private static final String ITEM_TITLE = "item_title";
-    private static final String ITEM_SUBTITLE = "item_subtitle";
+    private static final String ITEM_IMAGE = "img";
+    private static final String ITEM_TITLE = "title";
+    private static final String ITEM_SUBTITLE = "subtitle";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,11 +58,19 @@ public class MainActivity extends ListActivity {
 
         {
             final Map<String, Object> item = new HashMap<String, Object>();
-            item.put(ITEM_IMAGE, R.drawable.normal_game_icon);
-            item.put(ITEM_TITLE, getText(R.string.normalGameLabel));
-            item.put(ITEM_SUBTITLE, getText(R.string.normalGameSubtitle));
+            item.put(ITEM_IMAGE, R.drawable.test_game_icon);
+            item.put(ITEM_TITLE, getText(R.string.testGameLabel));
+            item.put(ITEM_SUBTITLE, getText(R.string.testGameSubtitle));
             data.add(item);
-            activityMapping.put(i++, NormalGameActivity.class);
+            activityMapping.put(i++, TestGameActivity.class);
+        }
+        {
+            final Map<String, Object> item = new HashMap<String, Object>();
+            item.put(ITEM_IMAGE, R.drawable.icon);
+            item.put(ITEM_TITLE, getText(R.string.vrGameLabel));
+            item.put(ITEM_SUBTITLE, getText(R.string.vrGameSubtitle));
+            data.add(item);
+            activityMapping.put(i, VRGameActivity.class);
         }
 
         final SimpleAdapter dataAdapter = new SimpleAdapter(this, data, R.layout.toc_item, new String[]{ITEM_IMAGE, ITEM_TITLE, ITEM_SUBTITLE}, new int[]{R.id.tocImage, R.id.tocTitle, R.id.tocSubTitle});

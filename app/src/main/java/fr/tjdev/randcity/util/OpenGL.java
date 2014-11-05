@@ -16,20 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package fr.tjdev.randcity;
+package fr.tjdev.randcity.util;
 
+import android.app.ActivityManager;
 import android.content.Context;
-import android.opengl.GLSurfaceView;
-import android.util.AttributeSet;
+import android.content.pm.ConfigurationInfo;
 
-public class GLView extends GLSurfaceView {
+public class OpenGL {
 
-    public GLView(Context context) {
-        super(context);
-    }
-
-    // For use this class from the xml activity file
-    public GLView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    // Check if the system supports OpenGL ES 2.0
+    static public boolean hasOpenGLES20Support(Context context) {
+        final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
+        return configurationInfo.reqGlEsVersion >= 0x20000;
     }
 }

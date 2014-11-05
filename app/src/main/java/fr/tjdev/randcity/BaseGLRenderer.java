@@ -18,134 +18,116 @@
 
 package fr.tjdev.randcity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
-import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 import android.util.Log;
-import android.widget.TextView;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
 import fr.tjdev.randcity.generation.Building;
 import fr.tjdev.randcity.generation.GenUtil;
 import fr.tjdev.randcity.shapes.Cube;
+import fr.tjdev.randcity.shapes.Floor;
 import fr.tjdev.randcity.shapes.IShape;
 import fr.tjdev.randcity.shapes.Road;
 import fr.tjdev.randcity.shapes.SkyBox;
-import fr.tjdev.randcity.shapes.Floor;
 import fr.tjdev.randcity.util.BufferHelper;
+import fr.tjdev.randcity.util.Random;
 import fr.tjdev.randcity.util.RawResourceReader;
 import fr.tjdev.randcity.util.ShaderHelper;
 import fr.tjdev.randcity.util.TextureHelper;
-import fr.tjdev.randcity.util.Random;
 
-public class GLRenderer implements GLSurfaceView.Renderer {
-
-    private static final String TAG = "GLRenderer";
-    private final Context mActivityContext;
+/**
+ * This class contains some methods used by the real renderer.
+ * The methods must be called in the correct order to work correctly.
+ */
+public class BaseGLRenderer {
+    private static final String TAG = "BaseGLRenderer";
+    protected final Context mActivityContext;
 
     // Store different strides used in VBOs buffers
-    private static final int mVBOStride = (IShape.VERTEX_DATA_ELEMENTS + IShape.NORMAL_DATA_ELEMENTS + IShape.TEXTURE_COORDINATE_ELEMENTS)
+    protected static final int mVBOStride = (IShape.VERTEX_DATA_ELEMENTS + IShape.NORMAL_DATA_ELEMENTS + IShape.TEXTURE_COORDINATE_ELEMENTS)
             * IShape.BYTES_PER_FLOAT;
-    private static final int mVBOStrideNoTex = (IShape.VERTEX_DATA_ELEMENTS + IShape.NORMAL_DATA_ELEMENTS)
+    protected static final int mVBOStrideNoTex = (IShape.VERTEX_DATA_ELEMENTS + IShape.NORMAL_DATA_ELEMENTS)
             * IShape.BYTES_PER_FLOAT;
 
     // Store the offset of normals and texture coordinates in VBO buffers
-    private static final int mVBOTextureOffset = mVBOStrideNoTex;
-    private static final int mVBONormalOffset = IShape.VERTEX_DATA_ELEMENTS * IShape.BYTES_PER_FLOAT;
+    protected static final int mVBOTextureOffset = mVBOStrideNoTex;
+    protected static final int mVBONormalOffset = IShape.VERTEX_DATA_ELEMENTS * IShape.BYTES_PER_FLOAT;
 
-    private int mCubeVBOBuffer;
-    private int mBrickTextureDataHandle;
+    protected int mCubeVBOBuffer;
+    protected int mBrickTextureDataHandle;
 
     // Used to have a floor at the bottom of the treasure
-    private int mFloorVBOBuffer;
+    protected int mFloorVBOBuffer;
 
-    private int mSkyBoxVBOBuffer;
+    protected int mSkyBoxVBOBuffer;
 
-    private int mRoadVBOBuffer;
-    private Bitmap mRoadTextureBitmap;
-    private int mRoadTextureDataHandle;
+    protected int mRoadVBOBuffer;
+    protected Bitmap mRoadTextureBitmap;
+    protected int mRoadTextureDataHandle;
 
-    private ArrayList<Building> mBuildings;
+    protected ArrayList<Building> mBuildings;
     // Contains all buffers used for buildings
-    private int[] mBuildVBOBuffers;
+    protected int[] mBuildVBOBuffers;
     // Store all different textures used by buildings
-    private Bitmap mBuildTextureBitmaps[] = new Bitmap[GenUtil.TEX_TYPES_NB];
-    private int mBuildTextureDataHandles[] = new int[GenUtil.TEX_TYPES_NB];
+    protected Bitmap mBuildTextureBitmaps[] = new Bitmap[GenUtil.TEX_TYPES_NB];
+    protected int mBuildTextureDataHandles[] = new int[GenUtil.TEX_TYPES_NB];
 
     // Store the model matrix. This matrix is used to move models from object space (where each model can be thought
     // of being located at the center of the universe) to world space.
-    private float[] mModelMatrix = new float[16];
+    protected float[] mModelMatrix = new float[16];
     // Store the view matrix. This can be thought of as our camera. This matrix transforms world space to eye space;
     // it positions things relative to our eye.
-    private float[] mViewMatrix = new float[16];
+    protected float[] mViewMatrix = new float[16];
     // Store the projection matrix. This is used to project the scene onto a 2D viewport.
-    private float[] mProjectionMatrix = new float[16];
+    protected float[] mProjectionMatrix = new float[16];
+    // Store the model-view matrix
+    protected float[] mMVMatrix = new float[16];
     // Allocate storage for the final combined matrix. This will be passed into the shader program.
-    private float[] mMVPMatrix = new float[16];
-    // A temporary matrix.
-    private float[] mTemporaryMatrix = new float[16];
+    protected float[] mMVPMatrix = new float[16];
     // Stores a copy of the model matrix specifically for the light position.
-    private float[] mLightModelMatrix = new float[16];
+    protected float[] mLightModelMatrix = new float[16];
 
-    // Used to hold a light centered on the origin in model space. We need a 4th coordinate so we can get translations to work when
+    // Used to hold a light centered on on point. We need a 4th coordinate so we can get translations to work when
     // we multiply this by our transformation matrices.
-    private final float[] mLightPosInModelSpace = new float[]{0.0f, 0.0f, 0.0f, 1.0f};
+    protected final float[] mLightPosInModelSpace = new float[]{0.0f, 0.0f, 0.0f, 1.0f};
     // Used to hold the current position of the light in world space (after transformation via model matrix).
-    private final float[] mLightPosInWorldSpace = new float[4];
-    // Used to hold the transformed position of the light in eye space (after transformation via modelview matrix)
-    private final float[] mLightPosInEyeSpace = new float[4];
+    protected final float[] mLightPosInWorldSpace = new float[4];
+    // Used to hold the transformed position of the light in eye space (after transformation via model-view matrix)
+    protected final float[] mLightPosInEyeSpace = new float[4];
 
-    // This will be used to pass in the transformation matrix.
-    private int mMVPMatrixHandle;
-    // This will be used to pass in the modelview matrix.
-    private int mMVMatrixHandle;
-    // This will be used to pass in the light position.
-    private int mLightPosHandle;
-    // This will be used to pass in the texture.
-    private int mTextureUniformHandle;
-    // This will be used to tell if we use a texture or not.
-    private int mTextureFlagHandle;
-    // This will be used to enable the fog
-    private int mFogFlagHandle;
-    // This will be used to pass in model position information.
-    private int mPositionHandle;
-    // This will be used to pass in model normal information.
-    private int mNormalHandle;
-    // This will be used to pass in model color information.
-    private int mColorHandle;
-    // This will be used to pass in model texture coordinate information.
-    private int mTextureCoordinateHandle;
-    // This is a handle to our cube shading program.
-    private int mProgramHandle;
-    // This is a handle to our light point program.
-    private int mPointProgramHandle;
+    protected int mMVPMatrixHandle;
+    protected int mMVMatrixHandle;
+    protected int mLightPosHandle;
+    protected int mTextureUniformHandle;
+    protected int mTextureFlagHandle;
+    protected int mFogFlagHandle;
+    protected int mPositionHandle;
+    protected int mNormalHandle;
+    protected int mColorHandle;
+    protected int mTextureCoordinateHandle;
 
-    // Store the FPS and the last time to compute the fps
-    private int mFPS = 0;
-    private long mLastTime = 0;
-    // Used to display fps
-    private TextView mFPSView;
+    protected int mProgramHandle;
+    protected int mPointProgramHandle;
 
     // Store the position of the "treasure".
     // In fact, the treasure is a special building that you must reach to end the game.
-    private float[] mTreasurePos;
+    protected float[] mTreasurePos;
+    // Store the rotation of the light at the treasure
+    protected float mLightMoveAngle = 0.0f;
 
     // Position the eye in front of the origin.
     public volatile float eyeX = 0.0f;
     public volatile float eyeY = 10.0f;
-    public volatile float eyeZ = 7.0f;
+    public volatile float eyeZ = 0.01f;
     // We are looking toward this point
     public volatile float lookX = 0.0f;
-    public volatile float lookY = 5.0f;
+    public volatile float lookY = 10.0f;
     public volatile float lookZ = 0.0f;
     // Set our up vector. This is where our head would be pointing were we holding the camera.
     public volatile float upX = 0.0f;
@@ -155,63 +137,15 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     // Used to toggle the fog
     public volatile boolean enableFog = true;
 
-
-    public GLRenderer(final Context activityContext) {
+    public BaseGLRenderer(final Context activityContext) {
         mActivityContext = activityContext;
 
-        mFPSView = ((NormalGameActivity) mActivityContext).getFPSTextView();
-
-        // Generate buildings grid
+        // Generate buildings grid and textures
         generateTerrain();
-
-        // Bitmaps are generated here.
-        // Handles to these textures are generated in onSurfaceCreated() method.
-        int i;
-        for(i=0 ; i < 8 ; ++i) {
-            mBuildTextureBitmaps[i] = Building.generateFuzzyTexture();
-        }
-        for(; i < 16 ; ++i) {
-            mBuildTextureBitmaps[i] = Building.generateLinearTexture();
-        }
-
-        // Update the buildings information on the screen
-        String info = "Buildings: " + Integer.toString(mBuildings.size());
-        int texTypes[] = new int[mBuildTextureBitmaps.length];
-        for (Building build : mBuildings) {
-            texTypes[build.textureType]++;
-        }
-        info += "\nFuzzy tex:  " + Integer.toString(texTypes[0]);
-        info += "/" + Integer.toString(texTypes[1]);
-        info += "/" + Integer.toString(texTypes[2]);
-        info += "/" + Integer.toString(texTypes[3]);
-        info += "/" + Integer.toString(texTypes[4]);
-        info += "/" + Integer.toString(texTypes[5]);
-        info += "/" + Integer.toString(texTypes[6]);
-        info += "/" + Integer.toString(texTypes[7]);
-        info += "\nLinear tex: " + Integer.toString(texTypes[8]);
-        info += "/" + Integer.toString(texTypes[9]);
-        info += "/" + Integer.toString(texTypes[10]);
-        info += "/" + Integer.toString(texTypes[11]);
-        info += "/" + Integer.toString(texTypes[12]);
-        info += "/" + Integer.toString(texTypes[13]);
-        info += "/" + Integer.toString(texTypes[14]);
-        info += "/" + Integer.toString(texTypes[15]);
-
-        final String infoDisplayed = info;
-        ((Activity) mActivityContext).runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                ((NormalGameActivity) mActivityContext).getBuildingInfoTextView().setText(infoDisplayed);
-            }
-        });
-
-        // Generate road texture
-        mRoadTextureBitmap = Road.generateTexture();
     }
 
-    // This function will generate buildings.
-    private void generateTerrain() {
+    // This function will generate buildings and textures
+    protected void generateTerrain() {
         mBuildings = Building.generateAllBuildings();
 
         // Define the treasure pos
@@ -234,10 +168,22 @@ public class GLRenderer implements GLSurfaceView.Renderer {
 
         // Remove the building from the list.
         mBuildings.remove(randIndex);
+
+        // Generate textures
+        // Handles to these textures are generated in onSurfaceCreated() method.
+        int i;
+        for(i=0 ; i < 8 ; ++i) {
+            mBuildTextureBitmaps[i] = Building.generateFuzzyTexture();
+        }
+        for(; i < 16 ; ++i) {
+            mBuildTextureBitmaps[i] = Building.generateLinearTexture();
+        }
+
+        // Generate road texture
+        mRoadTextureBitmap = Road.generateTexture();
     }
 
-    @Override
-    public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
+    public void onSurfaceCreated() {
         // Use culling to remove back faces.
         GLES20.glEnable(GLES20.GL_CULL_FACE);
 
@@ -281,10 +227,14 @@ public class GLRenderer implements GLSurfaceView.Renderer {
             GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);
         }
 
-        //
-        // Generate all VBOs
-        //
+        generateVBOs();
+    }
 
+    /**
+     * Generate all VBOs
+     * Called in onSurfaceCreated();
+     */
+    public void generateVBOs() {
         //
         // Building VBOs
         mBuildVBOBuffers = new int[mBuildings.size()];
@@ -376,8 +326,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
     }
 
-    @Override
-    public void onSurfaceChanged(GL10 glUnused, int width, int height) {
+    public void onSurfaceChanged(int width, int height) {
         // Set the OpenGL viewport to the same size as the surface.
         GLES20.glViewport(0, 0, width, height);
 
@@ -388,44 +337,8 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1.0f, 1.0f, 1.0f, 2000.0f);
     }
 
-    @Override
-    public void onDrawFrame(GL10 glUnused) {
-        // Compute the fps
-        final long currentTime = System.currentTimeMillis();
-        final long diffTime = currentTime - mLastTime;
-        mFPS++;
-        if (diffTime >= 1000) {
-            // Create a copy for correct display
-            final int tempFPS = mFPS;
-            ((Activity) mActivityContext).runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    mFPSView.setText("FPS: " + Integer.toString(tempFPS));
-                }
-            });
-            mLastTime = currentTime;
-            mFPS = 0;
-        }
-
-        // Set the background clear color to black.
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        GLES20.glClearDepthf(1.0f);
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-
-        // Set the view matrix. This matrix can be said to represent the camera position.
-        // NOTE: In OpenGL 1, a ModelView matrix is used, which is a combination of a model and
-        // view matrix. In OpenGL 2, we can keep track of these matrices separately if we choose.
-        Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, lookX, lookY, lookZ, upX, upY, upZ);
-
-        // Do a complete rotation every 10 seconds.
-        long time = SystemClock.uptimeMillis() % 10000L;
-        float angleInDegrees = (360.0f / 10000.0f) * ((int) time);
-
-        // Set our per-vertex lighting program.
-        GLES20.glUseProgram(mProgramHandle);
-
-        // Set program handles for cube drawing.
+    // useProgram() must be called first
+    protected void loadUniforms() {
         mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_MVPMatrix");
         mMVMatrixHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_MVMatrix");
         mLightPosHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_LightPos");
@@ -433,28 +346,80 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         mTextureFlagHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_TextureFlag");
         mFogFlagHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_FogFlag");
         mColorHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_Color");
+    }
+
+    protected void loadAttribs() {
         mPositionHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Position");
         mNormalHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Normal");
         mTextureCoordinateHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_TexCoordinate");
+    }
 
+    protected void useProgram() {
+        GLES20.glUseProgram(mProgramHandle);
+    }
+
+    protected void setLookAt() {
+        // Set the view matrix. This matrix can be said to represent the camera position.
+        // NOTE: In OpenGL 1, a ModelView matrix is used, which is a combination of a model and
+        // view matrix. In OpenGL 2, we can keep track of these matrices separately if we choose.
+        Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, lookX, lookY, lookZ, upX, upY, upZ);
+    }
+
+    protected void computeLightMoveAngle() {
+        // Do a complete rotation every 10 seconds.
+        long time = SystemClock.uptimeMillis() % 10000L;
+        mLightMoveAngle = (360.0f / 10000.0f) * ((int) time);
+    }
+
+    protected void clearGLBuffers() {
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        GLES20.glClearDepthf(1.0f);
+    }
+
+    protected void checkFog() {
         // Enable (or disable) the fog
         if(enableFog) {
             GLES20.glUniform1f(mFogFlagHandle, 1.0f);
         } else {
             GLES20.glUniform1f(mFogFlagHandle, 0.0f);
         }
+    }
 
+    protected void updateLightMatrices() {
         // Calculate position of the light. Rotate and then push into the distance.
         Matrix.setIdentityM(mLightModelMatrix, 0);
         Matrix.translateM(mLightModelMatrix, 0, mTreasurePos[0], mTreasurePos[1], mTreasurePos[2]);
         Matrix.translateM(mLightModelMatrix, 0, 0.0f, 0.0f, -2.0f);
-        Matrix.rotateM(mLightModelMatrix, 0, angleInDegrees, 0.0f, 1.0f, 0.0f);
+        Matrix.rotateM(mLightModelMatrix, 0, mLightMoveAngle, 0.0f, 1.0f, 0.0f);
         Matrix.translateM(mLightModelMatrix, 0, 0.0f, 1.5f, 3.5f);
 
         Matrix.multiplyMV(mLightPosInWorldSpace, 0, mLightModelMatrix, 0, mLightPosInModelSpace, 0);
         Matrix.multiplyMV(mLightPosInEyeSpace, 0, mViewMatrix, 0, mLightPosInWorldSpace, 0);
+    }
 
-        // Enable texture here
+    public void onDrawFrame() {
+        clearGLBuffers();
+
+        computeLightMoveAngle();
+
+        setLookAt();
+
+        useProgram();
+        loadUniforms();
+        loadAttribs();
+
+        checkFog();
+
+        updateLightMatrices();
+
+        draw();
+    }
+
+    /**
+     * Draw all elements in the world.
+     */
+    protected void draw() {
         GLES20.glUniform1f(mTextureFlagHandle, 1.0f);
 
         //
@@ -579,7 +544,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         drawLight();
     }
 
-    private void drawCube() {
+    protected void drawCube() {
         // Pass in the position information
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mCubeVBOBuffer);
         GLES20.glEnableVertexAttribArray(mPositionHandle);
@@ -598,7 +563,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         drawCommon(36);
     }
 
-    private void drawAllBuildings() {
+    protected void drawAllBuildings() {
         // All elements that are not in the for() loop are the same for each building.
         Matrix.setIdentityM(mModelMatrix, 0);
 
@@ -641,7 +606,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         }
     }
 
-    private void drawRoad() {
+    protected void drawRoad() {
         // Buffers are initialized in the onSurfaceChanged() method
 
         // Pass in the color information
@@ -650,7 +615,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         drawCommon(6);
     }
 
-    private void drawFloor() {
+    protected void drawFloor() {
         // Pass in the position information
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mFloorVBOBuffer);
         GLES20.glEnableVertexAttribArray(mPositionHandle);
@@ -669,7 +634,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         drawCommon(6);
     }
 
-    private void drawSkyBox() {
+    protected void drawSkyBox() {
         // Pass in the position information
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mSkyBoxVBOBuffer);
         GLES20.glEnableVertexAttribArray(mPositionHandle);
@@ -689,18 +654,16 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     }
 
     // This function do all matrices operations
-    private void prepareDraw() {
+    protected void prepareDraw() {
         // This multiplies the view matrix by the model matrix, and stores the result in the MVP matrix
         // (which currently contains model * view).
-        Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
+        Matrix.multiplyMM(mMVMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
 
-        // Pass in the modelview matrix.
-        GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, mMVPMatrix, 0);
+        // Pass in the model-view matrix.
+        GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, mMVMatrix, 0);
 
-        // This multiplies the modelview matrix by the projection matrix, and stores the result in the MVP matrix
-        // (which now contains model * view * projection).
-        Matrix.multiplyMM(mTemporaryMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
-        System.arraycopy(mTemporaryMatrix, 0, mMVPMatrix, 0, 16);
+        // This multiplies the model-view matrix by the projection matrix, and stores the result in the MVP matrix
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVMatrix, 0);
 
         // Pass in the combined matrix.
         GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
@@ -710,11 +673,11 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     }
 
     // This function is called at the end of other draw functions.
-    private void drawCommon(int verticesNumber) {
+    protected void drawCommon(int verticesNumber) {
         drawCommon(verticesNumber, true);
     }
 
-    private void drawCommon(int verticesNumber, boolean prepareDraw) {
+    protected void drawCommon(int verticesNumber, boolean prepareDraw) {
         if (prepareDraw) {
             prepareDraw();
         }
@@ -724,7 +687,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     /**
      * Draws a point representing the position of the light.
      */
-    private void drawLight() {
+    protected void drawLight() {
         final int pointMVPMatrixHandle = GLES20.glGetUniformLocation(mPointProgramHandle, "u_MVPMatrix");
         final int pointPositionHandle = GLES20.glGetAttribLocation(mPointProgramHandle, "a_Position");
 
@@ -735,9 +698,8 @@ public class GLRenderer implements GLSurfaceView.Renderer {
         GLES20.glDisableVertexAttribArray(pointPositionHandle);
 
         // Pass in the transformation matrix.
-        Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mLightModelMatrix, 0);
-        Matrix.multiplyMM(mTemporaryMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
-        System.arraycopy(mTemporaryMatrix, 0, mMVPMatrix, 0, 16);
+        Matrix.multiplyMM(mMVMatrix, 0, mViewMatrix, 0, mLightModelMatrix, 0);
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVMatrix, 0);
         GLES20.glUniformMatrix4fv(pointMVPMatrixHandle, 1, false, mMVPMatrix, 0);
 
         // Draw the point.
