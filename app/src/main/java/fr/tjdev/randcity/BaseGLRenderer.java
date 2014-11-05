@@ -49,7 +49,7 @@ public class BaseGLRenderer {
     private static final String TAG = "BaseGLRenderer";
 
     public static final float PROJECTION_NEAR = 1.0f;
-    public static final float PROJECTION_FAR = 1100.0f;
+    public static final float PROJECTION_FAR = 2000.0f;
 
     protected final Context mActivityContext;
 
