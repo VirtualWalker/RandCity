@@ -18,7 +18,9 @@
 
 package fr.tjdev.randcity.vrgame;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 
@@ -34,6 +36,7 @@ public class VRGameActivity extends CardboardActivity {
     private static final String TAG = "VRGameActivity";
     private VROverlayView mOverlayView;
     private VRRenderer mRenderer;
+    private Vibrator mVibrator;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,8 @@ public class VRGameActivity extends CardboardActivity {
         CardboardView vrView = (CardboardView) findViewById(R.id.vr_view);
         vrView.setZPlanes(BaseGLRenderer.PROJECTION_NEAR, BaseGLRenderer.PROJECTION_FAR);
         mOverlayView = (VROverlayView) findViewById(R.id.vr_overlay);
+
+        mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         // Check OpenGL ES 2.0 support
         if (OpenGL.hasOpenGLES20Support(this)) {
@@ -78,6 +83,7 @@ public class VRGameActivity extends CardboardActivity {
                 mOverlayView.show3DToast("Enable fog");
                 mRenderer.enableFog = true;
             }
+            mVibrator.vibrate(50);
         }
     }
 }

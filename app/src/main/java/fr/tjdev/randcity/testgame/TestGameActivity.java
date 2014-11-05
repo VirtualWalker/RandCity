@@ -38,7 +38,7 @@ public class TestGameActivity extends Activity {
     private static final String BUTTON_FOG_ON_STR = "Disable Fog";
     private static final String BUTTON_FOG_OFF_STR = "Enable Fog";
 
-    private static final float MOVE_STEP = 5.0f;
+    private static final float MOVE_STEP = 10.0f;
 
     private GLSurfaceView mGLView;
     private GLRenderer mRenderer;
