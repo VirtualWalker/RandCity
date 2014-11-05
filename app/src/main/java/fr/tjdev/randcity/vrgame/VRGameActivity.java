@@ -20,16 +20,20 @@ package fr.tjdev.randcity.vrgame;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.google.vrtoolkit.cardboard.CardboardActivity;
 import com.google.vrtoolkit.cardboard.CardboardView;
 
+import fr.tjdev.randcity.BaseGLRenderer;
 import fr.tjdev.randcity.R;
 import fr.tjdev.randcity.util.OpenGL;
 
 public class VRGameActivity extends CardboardActivity {
 
     private static final String TAG = "VRGameActivity";
+    private VROverlayView mOverlayView;
+    private VRRenderer mRenderer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,16 +41,43 @@ public class VRGameActivity extends CardboardActivity {
 
         setContentView(R.layout.activity_vrgame);
         CardboardView vrView = (CardboardView) findViewById(R.id.vr_view);
+        vrView.setZPlanes(BaseGLRenderer.PROJECTION_NEAR, BaseGLRenderer.PROJECTION_FAR);
+        mOverlayView = (VROverlayView) findViewById(R.id.vr_overlay);
 
         // Check OpenGL ES 2.0 support
         if (OpenGL.hasOpenGLES20Support(this)) {
-            vrView.setRenderer(new VRRenderer(this));
+            mRenderer = new VRRenderer(this);
+            vrView.setRenderer(mRenderer);
             setCardboardView(vrView);
         } else {
             Log.wtf(TAG, getResources().getString(R.string.noOpenGLSupport));
             finish();
             return;
         }
+
+        vrView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleFog();
+            }
+        });
     }
 
+    @Override
+    public void onCardboardTrigger() {
+        toggleFog();
+    }
+
+    // Enable/Disable the fog on trigger the magnet or on touch the screen
+    public void toggleFog() {
+        if (mOverlayView != null && mRenderer != null) {
+            if (mRenderer.enableFog) {
+                mOverlayView.show3DToast("Disable fog");
+                mRenderer.enableFog = false;
+            } else {
+                mOverlayView.show3DToast("Enable fog");
+                mRenderer.enableFog = true;
+            }
+        }
+    }
 }

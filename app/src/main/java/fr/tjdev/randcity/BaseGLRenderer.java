@@ -47,6 +47,10 @@ import fr.tjdev.randcity.util.TextureHelper;
  */
 public class BaseGLRenderer {
     private static final String TAG = "BaseGLRenderer";
+
+    public static final float PROJECTION_NEAR = 1.0f;
+    public static final float PROJECTION_FAR = 1100.0f;
+
     protected final Context mActivityContext;
 
     // Store different strides used in VBOs buffers
@@ -334,7 +338,7 @@ public class BaseGLRenderer {
         // while the width will vary as per aspect ratio.
         final float ratio = (float) width / height;
 
-        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1.0f, 1.0f, 1.0f, 2000.0f);
+        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1.0f, 1.0f, PROJECTION_NEAR, PROJECTION_FAR);
     }
 
     // useProgram() must be called first
