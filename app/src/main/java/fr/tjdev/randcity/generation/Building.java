@@ -279,29 +279,33 @@ public class Building {
         }
 
         // Second pass : Create gradient on the sides of white windows
-        for (int x2 = 0; x2 < nbWinX; ++x2) {
-            for (int y2 = 0; y2 < nbWinY; ++y2) {
-                final int left = x2 * GenUtil.TEX_WINDOW_WIDTH + GenUtil.TEX_WINDOW_H_BORDER;
-                final int top = y2 * GenUtil.TEX_WINDOW_HEIGHT + GenUtil.TEX_WINDOW_V_BORDER;
-                canvas.clipRect(new Rect(left, top, left + GenUtil.TEX_WINDOW_GLASS_WIDTH,
-                        top + GenUtil.TEX_WINDOW_GLASS_HEIGHT), Region.Op.REPLACE);
+        // The second pass is made twice to have a more completed gradient
+        for (int pass = 0 ; pass < 2 ; ++pass) {
+            for (int x2 = 0; x2 < nbWinX; ++x2) {
+                for (int y2 = 0; y2 < nbWinY; ++y2) {
+                    final int left = x2 * GenUtil.TEX_WINDOW_WIDTH + GenUtil.TEX_WINDOW_H_BORDER;
+                    final int top = y2 * GenUtil.TEX_WINDOW_HEIGHT + GenUtil.TEX_WINDOW_V_BORDER;
+                    canvas.clipRect(new Rect(left, top, left + GenUtil.TEX_WINDOW_GLASS_WIDTH,
+                            top + GenUtil.TEX_WINDOW_GLASS_HEIGHT), Region.Op.REPLACE);
 
-                if (Color.blue(bitmap.getPixel(left, top)) != GenUtil.WIN_BRIGHT_1_RGB) {
-                    // Check the brightness of next windows
-                    final int nextBright = getHigherBrightInSideWindow(bitmap, left, top);
-                    // There is a chance to repeat the light
-                    if (rand.chance(chanceToRepeat)) {
-                        if (nextBright == GenUtil.WIN_BRIGHT_1_RGB) { // White
-                            canvas.drawColor(GenUtil.WIN_BRIGHT_2);
-                        } else if (nextBright == GenUtil.WIN_BRIGHT_2_RGB) {
-                            canvas.drawColor(GenUtil.WIN_BRIGHT_3);
-                        } else if (nextBright == GenUtil.WIN_BRIGHT_3_RGB) {
-                            canvas.drawColor(GenUtil.WIN_BRIGHT_4);
+                    if (Color.blue(bitmap.getPixel(left, top)) != GenUtil.WIN_BRIGHT_1_RGB) {
+                        // Check the brightness of next windows
+                        final int nextBright = getHigherBrightInSideWindow(bitmap, left, top);
+                        // There is a chance to repeat the light
+                        if (rand.chance(chanceToRepeat)) {
+                            if (nextBright == GenUtil.WIN_BRIGHT_1_RGB) { // White
+                                canvas.drawColor(GenUtil.WIN_BRIGHT_2);
+                            } else if (nextBright == GenUtil.WIN_BRIGHT_2_RGB) {
+                                canvas.drawColor(GenUtil.WIN_BRIGHT_3);
+                            } else if (nextBright == GenUtil.WIN_BRIGHT_3_RGB) {
+                                canvas.drawColor(GenUtil.WIN_BRIGHT_4);
+                            }
                         }
                     }
                 }
             }
         }
+
 
         return bitmap;
     }
@@ -313,10 +317,10 @@ public class Building {
         final int nbWinY = rand.moreOrLess(GenUtil.TEX_NB_WINDOW_Y, 4);
 
         // Randomize some values
-        final int spaceLength = rand.moreOrLess(20, 3);
-        final int whiteGlassLength = rand.moreOrLess(16, 4);
-        final int chanceToContinue = rand.moreOrLess(25, 5);
-        final int chanceToStartRow = rand.moreOrLess(20, 5);
+        final int spaceLength = rand.moreOrLess(16, 3);
+        final int whiteGlassLength = rand.moreOrLess(16, 3);
+        final int chanceToContinue = rand.moreOrLess(12, 3);
+        final int chanceToStartRow = rand.moreOrLess(12, 3);
 
         Bitmap bitmap = Bitmap.createBitmap(nbWinX * GenUtil.TEX_WINDOW_WIDTH,
                 nbWinY * GenUtil.TEX_WINDOW_HEIGHT, Bitmap.Config.ARGB_8888);
@@ -407,7 +411,7 @@ public class Building {
             rightVal = Color.blue(bitmap.getPixel(left + GenUtil.TEX_WINDOW_WIDTH, top));
         }
 
-        // Return the max value between all window
+        // Return the max value between all windows
         return Math.max(topVal, Math.max(bottomVal, Math.max(leftVal, rightVal)));
     }
 }

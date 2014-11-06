@@ -36,10 +36,9 @@ void main()
 
     // Compute the fog
     const float LOG2 = 1.442695;
-    const float fogDensity = 0.03;
-    const vec4 fogColor = vec4(0.001, 0.001, 0.001, 0.0);
+    const float fogDensity = 0.035;
+    const vec4 fogColor = vec4(0.02, 0.02, 0.02, 0.0);
 
-    //float z = gl_FragCoord.z / gl_FragCoord.w;
     float z = length(v_Position);
     float fogFactor = exp2( -fogDensity * fogDensity * z * z * LOG2 );
     fogFactor = clamp(fogFactor, 0.0, 1.0);

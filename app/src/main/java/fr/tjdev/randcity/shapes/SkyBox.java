@@ -73,6 +73,6 @@ public class SkyBox extends Cube{
 
     // R, G, B, A
     static public final float[] colorData = {
-            1.0f, 0.0f, 0.0f, 1.0f
+            0.0f, 0.0f, 0.0f, 1.0f
     };
 }

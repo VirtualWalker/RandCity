@@ -21,7 +21,7 @@ package fr.tjdev.randcity.generation;
 import android.graphics.Color;
 
 /**
- * Contains some constants useful for generation
+ * Contains some constants useful for generation.
  */
 public class GenUtil {
 

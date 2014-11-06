@@ -234,10 +234,8 @@ public class BaseGLRenderer {
         generateVBOs();
     }
 
-    /**
-     * Generate all VBOs
-     * Called in onSurfaceCreated();
-     */
+    // Generate all VBOs
+    // Called in onSurfaceCreated();
     public void generateVBOs() {
         //
         // Building VBOs
@@ -341,7 +339,7 @@ public class BaseGLRenderer {
         Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1.0f, 1.0f, PROJECTION_NEAR, PROJECTION_FAR);
     }
 
-    // useProgram() must be called first
+    // Load uniforms from the shader
     protected void loadUniforms() {
         mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_MVPMatrix");
         mMVMatrixHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_MVMatrix");
@@ -352,35 +350,39 @@ public class BaseGLRenderer {
         mColorHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_Color");
     }
 
+    // Load attributes from the shader
     protected void loadAttribs() {
         mPositionHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Position");
         mNormalHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Normal");
         mTextureCoordinateHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_TexCoordinate");
     }
 
+    // Use the common program
     protected void useProgram() {
         GLES20.glUseProgram(mProgramHandle);
     }
 
+    // Set the view matrix
     protected void setLookAt() {
-        // Set the view matrix. This matrix can be said to represent the camera position.
-        // NOTE: In OpenGL 1, a ModelView matrix is used, which is a combination of a model and
-        // view matrix. In OpenGL 2, we can keep track of these matrices separately if we choose.
         Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, lookX, lookY, lookZ, upX, upY, upZ);
     }
 
+    // Compute the angle for the light rotation
+    // This angle is applied in updateLightMatrices
     protected void computeLightMoveAngle() {
         // Do a complete rotation every 10 seconds.
         long time = SystemClock.uptimeMillis() % 10000L;
         mLightMoveAngle = (360.0f / 10000.0f) * ((int) time);
     }
 
+    // Clear all buffers, called at the beginning of each rendering
     protected void clearGLBuffers() {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         GLES20.glClearDepthf(1.0f);
     }
 
+    // Check the fog parameter
     protected void checkFog() {
         // Enable (or disable) the fog
         if(enableFog) {
@@ -390,6 +392,7 @@ public class BaseGLRenderer {
         }
     }
 
+    // Update the light matrices to rotate the light in the treasure
     protected void updateLightMatrices() {
         // Calculate position of the light. Rotate and then push into the distance.
         Matrix.setIdentityM(mLightModelMatrix, 0);

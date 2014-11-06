@@ -55,7 +55,7 @@ public class VRGameActivity extends CardboardActivity {
             vrView.setRenderer(mRenderer);
             setCardboardView(vrView);
         } else {
-            Log.wtf(TAG, getResources().getString(R.string.noOpenGLSupport));
+            Log.wtf(TAG, getString(R.string.noOpenGLSupport));
             finish();
             return;
         }

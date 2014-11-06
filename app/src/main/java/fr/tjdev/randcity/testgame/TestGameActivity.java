@@ -68,7 +68,7 @@ public class TestGameActivity extends Activity {
         } else {
             // Here, the device doesn't support OpenGL ES 2.0.
             // It's the time to buy a new one !
-            Log.wtf(TAG, getResources().getString(R.string.noOpenGLSupport));
+            Log.wtf(TAG, getString(R.string.noOpenGLSupport));
             finish();
             return;
         }

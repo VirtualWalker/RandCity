@@ -49,20 +49,9 @@ public class Road extends Floor {
 
     // R, G, B, A
     static public final float[] colorData = {
-            //0.2f, 0.2f, 0.2f, 1.0f
             1.0f, 1.0f, 1.0f, 1.0f
     };
 
-    // S, T (or X, Y)
-    // Texture coordinate data.
-    public static final float[] textureCoordinatesData = {
-            0.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 0.0f,
-            1.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 1.0f
-    };
 
     // Generate a texture for the road
     static public Bitmap generateTexture() {
@@ -79,17 +68,16 @@ public class Road extends Floor {
 
         // Left line
         canvas.clipRect(new Rect(0, 0, width/lineWidth, height), Region.Op.REPLACE);
-        canvas.drawColor(lineColor);
 
         // Right line
-        canvas.clipRect(new Rect(width - (width/lineWidth), 0, width, height), Region.Op.REPLACE);
-        canvas.drawColor(lineColor);
+        canvas.clipRect(new Rect(width - (width/lineWidth), 0, width, height), Region.Op.UNION);
 
         // Middle line (discontinued)
         final int middleLeft = (width/2) - (width/(lineWidth*2));
         final int middleRight = (width/2) + (width/(lineWidth*2));
 
-        canvas.clipRect(new Rect(middleLeft, 0, middleRight, height), Region.Op.REPLACE);
+        canvas.clipRect(new Rect(middleLeft, 0, middleRight, height), Region.Op.UNION);
+        // Paint
         canvas.drawColor(lineColor);
 
         // Create the discontinuation

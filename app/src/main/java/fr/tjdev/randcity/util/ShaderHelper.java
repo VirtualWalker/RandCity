@@ -103,7 +103,7 @@ public class ShaderHelper {
                 }
             }
 
-            // Link the two shaders together into a program.
+            // Link the two shader together into a program.
             GLES20.glLinkProgram(programHandle);
 
             // Get the link status.

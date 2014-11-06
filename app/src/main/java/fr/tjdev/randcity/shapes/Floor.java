@@ -18,8 +18,6 @@
 
 package fr.tjdev.randcity.shapes;
 
-import fr.tjdev.randcity.generation.GenUtil;
-
 public class Floor implements IShape {
 
     static public final float[] positionData = {
@@ -49,12 +47,11 @@ public class Floor implements IShape {
     // S, T (or X, Y)
     // Texture coordinate data.
     public static final float[] textureCoordinatesData = {
-            // Front face
             0.0f, 0.0f,
             0.0f, 1.0f,
             1.0f, 0.0f,
+            1.0f, 0.0f,
             0.0f, 1.0f,
-            1.0f, 1.0f,
-            1.0f, 0.0f
+            1.0f, 1.0f
     };
 }
