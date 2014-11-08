@@ -34,4 +34,9 @@
     <string name="up">U</string>
     <string name="down">D</string>
 
+    <string name="fogEnable">Enable fog</string>
+    <string name="fogDisable">Disable fog</string>
+    <string name="fogOn">Fog enabled</string>
+    <string name="fogOff">Fog disabled</string>
+
 </resources>

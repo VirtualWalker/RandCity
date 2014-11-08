@@ -77,10 +77,10 @@ public class VRGameActivity extends CardboardActivity {
     public void toggleFog() {
         if (mOverlayView != null && mRenderer != null) {
             if (mRenderer.enableFog) {
-                mOverlayView.show3DToast("Disable fog");
+                mOverlayView.show3DToast(getString(R.string.fogOff));
                 mRenderer.enableFog = false;
             } else {
-                mOverlayView.show3DToast("Enable fog");
+                mOverlayView.show3DToast(getString(R.string.fogOn));
                 mRenderer.enableFog = true;
             }
             mVibrator.vibrate(50);

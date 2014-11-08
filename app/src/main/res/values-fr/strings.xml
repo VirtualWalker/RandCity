@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This file is part of RandCity.
+     Copyright (c) 2014 Fabien Caylus <toutjuste13@gmail.com>
+
+     This file is free software: you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+     the Free Software Foundation, either version 3 of the License, or
+     (at your option) any later version.
+
+     This file is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+
+     You should have received a copy of the GNU General Public License
+     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+
+    <string name="headerTitle">Menu principal</string>
+    <string name="header">Bienvenue dans le jeu Rand City. Sélectionnez votre mode de jeu:</string>
+    <string name="testGameLabel">Mode de test (avec des boutons à l\'écran)</string>
+    <string name="testGameSubtitle">Permet de tester le jeu sans casque de réalité virtuelle.</string>
+    <string name="vrGameLabel">Mode en réalité virtuelle</string>
+    <string name="vrGameSubtitle">Veuillez enfiler votre casque.</string>
+
+    <string name="noOpenGLSupport">Cet appareil ne supporte pas OpenGL ES 2.0 !</string>
+
+    <string name="fogEnable">Activer brouillard</string>
+    <string name="fogDisable">Enlever brouillard</string>
+    <string name="fogOn">Brouillard activé</string>
+    <string name="fogOff">Brouillard enlevé</string>
+
+</resources>

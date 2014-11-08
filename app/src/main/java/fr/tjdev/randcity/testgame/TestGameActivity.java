@@ -35,8 +35,6 @@ import fr.tjdev.randcity.util.OpenGL;
 public class TestGameActivity extends Activity {
 
     private static final String TAG = "TestGameActivity";
-    private static final String BUTTON_FOG_ON_STR = "Disable Fog";
-    private static final String BUTTON_FOG_OFF_STR = "Enable Fog";
 
     private static final float MOVE_STEP = 10.0f;
 
@@ -75,9 +73,9 @@ public class TestGameActivity extends Activity {
 
         // Set the first title for the fog button
         if(mRenderer.enableFog) {
-            ((Button) findViewById(R.id.button_toggleFog)).setText(BUTTON_FOG_ON_STR);
+            ((Button) findViewById(R.id.button_toggleFog)).setText(getText(R.string.fogDisable));
         } else {
-            ((Button) findViewById(R.id.button_toggleFog)).setText(BUTTON_FOG_OFF_STR);
+            ((Button) findViewById(R.id.button_toggleFog)).setText(getText(R.string.fogEnable));
         }
 
         // Handle movements buttons
@@ -146,12 +144,10 @@ public class TestGameActivity extends Activity {
                 if (mRenderer != null) {
                     if(mRenderer.enableFog) {
                         mRenderer.enableFog = false;
-                        ((Button) findViewById(R.id.button_toggleFog)).setText(BUTTON_FOG_OFF_STR);
-                        Log.d(TAG, "Disabling fog");
+                        ((Button) findViewById(R.id.button_toggleFog)).setText(getText(R.string.fogEnable));
                     } else {
                         mRenderer.enableFog = true;
-                        ((Button) findViewById(R.id.button_toggleFog)).setText(BUTTON_FOG_ON_STR);
-                        Log.d(TAG, "Enabling fog");
+                        ((Button) findViewById(R.id.button_toggleFog)).setText(getText(R.string.fogDisable));
                     }
                 }
             }
