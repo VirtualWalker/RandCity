@@ -18,6 +18,7 @@
 
 package fr.tjdev.randcity.testgame;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
@@ -176,22 +177,29 @@ public class TestGameActivity extends Activity {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                mGLView.setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                mGLView.setSystemUiVisibility(getUIVisibilityApi19());
             } else {
-                mGLView.setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_FULLSCREEN);
+                mGLView.setSystemUiVisibility(getUIVisibility());
             }
         }
+    }
+
+    @TargetApi(19)
+    private int getUIVisibilityApi19() {
+        return View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+    }
+
+    private int getUIVisibility() {
+        return View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
     }
 
     public TextView getFPSTextView() {
