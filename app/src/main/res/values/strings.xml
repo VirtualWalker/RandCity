@@ -17,7 +17,8 @@
 -->
 <resources>
 
-    <string name="app_name">Rand City</string>
+    <string translatable="false" name="app_name">Rand City</string>
+
     <string name="headerTitle">Main menu</string>
     <string name="header">Welcome to Rand City game, please choose your game mode.</string>
     <string name="testGameLabel">Test Mode with buttons to move</string>
@@ -27,12 +28,12 @@
 
     <string name="noOpenGLSupport">The device doesn\'t support OpenGL ES 2.0 !</string>
 
-    <string name="left">L</string>
-    <string name="right">R</string>
-    <string name="forward">F</string>
-    <string name="backward">B</string>
-    <string name="up">U</string>
-    <string name="down">D</string>
+    <string translatable="false" name="left">L</string>
+    <string translatable="false" name="right">R</string>
+    <string translatable="false" name="forward">F</string>
+    <string translatable="false" name="backward">B</string>
+    <string translatable="false" name="up">U</string>
+    <string translatable="false" name="down">D</string>
 
     <string name="fogEnable">Enable fog</string>
     <string name="fogDisable">Disable fog</string>
