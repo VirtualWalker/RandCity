@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
@@ -242,7 +243,7 @@ public class BluetoothManager {
         // Remove comments and spaces
         for (String line : list) {
             line = line.replaceAll("\\s+", "");
-            line = line.toUpperCase();
+            line = line.toUpperCase(Locale.US);
             // Check that is not a comment and it's a MAC address
             if (!line.startsWith("#") && BluetoothAdapter.checkBluetoothAddress(line)) {
                 mAllowedServers.add(line);
@@ -278,7 +279,9 @@ public class BluetoothManager {
             // Get a BluetoothSocket to connect with the given BluetoothDevice
             try {
                 tmp = device.createRfcommSocketToServiceRecord(mUUID);
-            } catch (IOException e) { }
+            } catch (IOException e) {
+                Log.e(TAG, "Exception:", e);
+            }
             mmSocket = tmp;
         }
 
@@ -294,7 +297,9 @@ public class BluetoothManager {
                 // Unable to connect; close the socket and get out
                 try {
                     mmSocket.close();
-                } catch (IOException closeException) { }
+                } catch (IOException closeException) {
+                    Log.e(TAG, "Exception:", closeException);
+                }
                 return;
             }
 
@@ -311,7 +316,9 @@ public class BluetoothManager {
         public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+                Log.e(TAG, "Exception:", e);
+            }
         }
     }
 
@@ -333,7 +340,9 @@ public class BluetoothManager {
             try {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+                Log.e(TAG, "Exception:", e);
+            }
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
@@ -352,6 +361,7 @@ public class BluetoothManager {
                     mHandler.obtainMessage(HANDLER_MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
                 } catch (IOException e) {
+                    Log.e(TAG, "Exception:", e);
                     break;
                 }
             }
@@ -361,14 +371,18 @@ public class BluetoothManager {
         public void write(byte[] bytes) {
             try {
                 mmOutStream.write(bytes);
-            } catch (IOException e) { }
+            } catch (IOException e) {
+                Log.e(TAG, "Exception:", e);
+            }
         }
 
         /* Call this from the main activity to shutdown the connection */
         public void cancel() {
             try {
                 mmSocket.close();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+                Log.e(TAG, "Exception:", e);
+            }
         }
     }
 }
