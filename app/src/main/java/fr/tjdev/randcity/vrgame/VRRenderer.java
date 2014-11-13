@@ -28,12 +28,12 @@ import com.google.vrtoolkit.cardboard.Viewport;
 
 import javax.microedition.khronos.egl.EGLConfig;
 
-import fr.tjdev.randcity.BaseGLRenderer;
+import fr.tjdev.randcity.CommonGLRenderer;
 
 /**
  * Renderer used for virtual reality game.
  */
-public class VRRenderer extends BaseGLRenderer implements CardboardView.StereoRenderer {
+public class VRRenderer extends CommonGLRenderer implements CardboardView.StereoRenderer {
 
     protected float[] mHeadView = new float[16];
 

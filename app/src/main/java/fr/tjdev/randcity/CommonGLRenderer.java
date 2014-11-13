@@ -30,38 +30,30 @@ import java.util.ArrayList;
 
 import fr.tjdev.randcity.generation.Building;
 import fr.tjdev.randcity.generation.GenUtil;
-import fr.tjdev.randcity.shapes.Cube;
+import fr.tjdev.commonvrlibrary.shapes.Cube;
 import fr.tjdev.randcity.shapes.Floor;
-import fr.tjdev.randcity.shapes.IShape;
+import fr.tjdev.commonvrlibrary.shapes.IShape;
 import fr.tjdev.randcity.shapes.Road;
 import fr.tjdev.randcity.shapes.SkyBox;
-import fr.tjdev.randcity.util.BufferHelper;
-import fr.tjdev.randcity.util.Random;
-import fr.tjdev.randcity.util.RawResourceReader;
-import fr.tjdev.randcity.util.ShaderHelper;
-import fr.tjdev.randcity.util.TextureHelper;
+import fr.tjdev.commonvrlibrary.util.BufferHelper;
+import fr.tjdev.commonvrlibrary.util.Random;
+import fr.tjdev.commonvrlibrary.util.RawResourceReader;
+import fr.tjdev.commonvrlibrary.util.ShaderHelper;
+import fr.tjdev.commonvrlibrary.util.TextureHelper;
+
+import fr.tjdev.commonvrlibrary.BaseGLRenderer;
 
 /**
- * This class contains some methods used by the real renderer.
+ * This class contains some methods used by real renderer.
  * The methods must be called in the correct order to work correctly.
  */
-public class BaseGLRenderer {
-    private static final String TAG = "BaseGLRenderer";
+public class CommonGLRenderer extends BaseGLRenderer {
+    private static final String TAG = "CommonGLRenderer";
 
     public static final float PROJECTION_NEAR = 1.0f;
     public static final float PROJECTION_FAR = 2000.0f;
 
     protected final Context mActivityContext;
-
-    // Store different strides used in VBOs buffers
-    protected static final int mVBOStride = (IShape.VERTEX_DATA_ELEMENTS + IShape.NORMAL_DATA_ELEMENTS + IShape.TEXTURE_COORDINATE_ELEMENTS)
-            * IShape.BYTES_PER_FLOAT;
-    protected static final int mVBOStrideNoTex = (IShape.VERTEX_DATA_ELEMENTS + IShape.NORMAL_DATA_ELEMENTS)
-            * IShape.BYTES_PER_FLOAT;
-
-    // Store the offset of normals and texture coordinates in VBO buffers
-    protected static final int mVBOTextureOffset = mVBOStrideNoTex;
-    protected static final int mVBONormalOffset = IShape.VERTEX_DATA_ELEMENTS * IShape.BYTES_PER_FLOAT;
 
     protected int mCubeVBOBuffer;
     protected int mBrickTextureDataHandle;
@@ -82,18 +74,6 @@ public class BaseGLRenderer {
     protected Bitmap mBuildTextureBitmaps[] = new Bitmap[GenUtil.TEX_TYPES_NB];
     protected int mBuildTextureDataHandles[] = new int[GenUtil.TEX_TYPES_NB];
 
-    // Store the model matrix. This matrix is used to move models from object space (where each model can be thought
-    // of being located at the center of the universe) to world space.
-    protected float[] mModelMatrix = new float[16];
-    // Store the view matrix. This can be thought of as our camera. This matrix transforms world space to eye space;
-    // it positions things relative to our eye.
-    protected float[] mViewMatrix = new float[16];
-    // Store the projection matrix. This is used to project the scene onto a 2D viewport.
-    protected float[] mProjectionMatrix = new float[16];
-    // Store the model-view matrix
-    protected float[] mMVMatrix = new float[16];
-    // Allocate storage for the final combined matrix. This will be passed into the shader program.
-    protected float[] mMVPMatrix = new float[16];
     // Stores a copy of the model matrix specifically for the light position.
     protected float[] mLightModelMatrix = new float[16];
 
@@ -116,7 +96,7 @@ public class BaseGLRenderer {
     protected int mColorHandle;
     protected int mTextureCoordinateHandle;
 
-    protected int mProgramHandle;
+    // mProgramHandle is created in BaseGLRenderer
     protected int mPointProgramHandle;
 
     // Store the position of the "treasure".
@@ -125,23 +105,10 @@ public class BaseGLRenderer {
     // Store the rotation of the light at the treasure
     protected float mLightMoveAngle = 0.0f;
 
-    // Position the eye in front of the origin.
-    public volatile float eyeX = 0.0f;
-    public volatile float eyeY = 10.0f;
-    public volatile float eyeZ = 0.01f;
-    // We are looking toward this point
-    public volatile float lookX = 0.0f;
-    public volatile float lookY = 10.0f;
-    public volatile float lookZ = 0.0f;
-    // Set our up vector. This is where our head would be pointing were we holding the camera.
-    public volatile float upX = 0.0f;
-    public volatile float upY = 1.0f;
-    public volatile float upZ = 0.0f;
-
     // Used to toggle the fog
     public volatile boolean enableFog = true;
 
-    public BaseGLRenderer(final Context activityContext) {
+    public CommonGLRenderer(final Context activityContext) {
         mActivityContext = activityContext;
 
         // Generate buildings grid and textures
@@ -357,29 +324,12 @@ public class BaseGLRenderer {
         mTextureCoordinateHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_TexCoordinate");
     }
 
-    // Use the common program
-    protected void useProgram() {
-        GLES20.glUseProgram(mProgramHandle);
-    }
-
-    // Set the view matrix
-    protected void setLookAt() {
-        Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, lookX, lookY, lookZ, upX, upY, upZ);
-    }
-
     // Compute the angle for the light rotation
     // This angle is applied in updateLightMatrices
     protected void computeLightMoveAngle() {
         // Do a complete rotation every 10 seconds.
         long time = SystemClock.uptimeMillis() % 10000L;
         mLightMoveAngle = (360.0f / 10000.0f) * ((int) time);
-    }
-
-    // Clear all buffers, called at the beginning of each rendering
-    protected void clearGLBuffers() {
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        GLES20.glClearDepthf(1.0f);
     }
 
     // Check the fog parameter

@@ -26,8 +26,8 @@ import android.graphics.Region;
 
 import java.util.ArrayList;
 
-import fr.tjdev.randcity.shapes.Cube;
-import fr.tjdev.randcity.util.Random;
+import fr.tjdev.commonvrlibrary.shapes.Cube;
+import fr.tjdev.commonvrlibrary.util.Random;
 
 /**
  * This class represent a building (with some information)

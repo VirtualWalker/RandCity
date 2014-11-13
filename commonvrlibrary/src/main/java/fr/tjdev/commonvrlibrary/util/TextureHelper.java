@@ -1,5 +1,4 @@
 /*
- * This file is part of RandCity.
  * Copyright (c) 2014 Fabien Caylus <toutjuste13@gmail.com>
  *
  *  This file is free software: you can redistribute it and/or modify
@@ -33,7 +32,7 @@
  *    limitations under the License.
  */
 
-package fr.tjdev.randcity.util;
+package fr.tjdev.commonvrlibrary.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;

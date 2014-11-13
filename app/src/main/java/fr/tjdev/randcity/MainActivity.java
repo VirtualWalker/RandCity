@@ -21,13 +21,16 @@ package fr.tjdev.randcity;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CheckBox;
 import android.widget.SimpleAdapter;
 
+import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +46,12 @@ public class MainActivity extends ListActivity {
     private static final String ITEM_IMAGE = "img";
     private static final String ITEM_TITLE = "title";
     private static final String ITEM_SUBTITLE = "subtitle";
+
+    public static final String PREF_BT = "bt";
+    public static final String PREF_BT_RESET = "bt_reset";
+
+    private boolean mBluetoothEnabled;
+    private boolean mBluetoothReset;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,9 +93,43 @@ public class MainActivity extends ListActivity {
 
                 if (activityToLaunch != null) {
                     final Intent launchIntent = new Intent(MainActivity.this, activityToLaunch);
+                    // Check the bluetooth support
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean(PREF_BT, mBluetoothEnabled);
+                    bundle.putBoolean(PREF_BT_RESET, mBluetoothReset);
+                    launchIntent.putExtras(bundle);
+
                     startActivity(launchIntent);
                 }
             }
         });
+
+        // Get the preferences
+        mBluetoothEnabled = getPreferences(MODE_PRIVATE).getBoolean(PREF_BT, false);
+        if (mBluetoothEnabled) {
+            ((CheckBox) findViewById(R.id.checkBoxBluetooth)).setChecked(true);
+        }
+        mBluetoothReset = getPreferences(MODE_PRIVATE).getBoolean(PREF_BT_RESET, false);
+        if (mBluetoothReset) {
+            ((CheckBox) findViewById(R.id.checkBoxBluetoothReset)).setChecked(true);
+        }
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        // Save preferences
+        SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+        editor.putBoolean(PREF_BT, mBluetoothEnabled);
+        editor.putBoolean(PREF_BT_RESET, mBluetoothReset);
+        editor.apply();
+    }
+
+    // Listen to the check box click
+    public void onBTCheckBoxClicked(View view) {
+        mBluetoothEnabled = ((CheckBox) view).isChecked();
+    }
+    public void onBTResetCheckBoxClicked(View view) {
+        mBluetoothReset = ((CheckBox) view).isChecked();
     }
 }

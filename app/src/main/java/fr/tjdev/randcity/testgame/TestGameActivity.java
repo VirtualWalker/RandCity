@@ -30,8 +30,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import fr.tjdev.commonvrlibrary.util.OpenGLCheck;
 import fr.tjdev.randcity.R;
-import fr.tjdev.randcity.util.OpenGL;
 
 public class TestGameActivity extends Activity {
 
@@ -56,7 +56,7 @@ public class TestGameActivity extends Activity {
 
         mGLView = (GLSurfaceView) findViewById(R.id.gl_surface_view);
 
-        if (OpenGL.hasOpenGLES20Support(this)) {
+        if (OpenGLCheck.hasOpenGLES20Support(this)) {
             // Request an OpenGL ES 2.0 compatible context.
             mGLView.setEGLContextClientVersion(2);
             mGLView.setEGLConfigChooser(true);

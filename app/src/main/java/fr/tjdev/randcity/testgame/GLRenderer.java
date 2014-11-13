@@ -20,38 +20,19 @@ package fr.tjdev.randcity.testgame;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.opengl.Matrix;
-import android.os.SystemClock;
-import android.util.Log;
 import android.widget.TextView;
-
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import fr.tjdev.randcity.BaseGLRenderer;
+import fr.tjdev.randcity.CommonGLRenderer;
 import fr.tjdev.randcity.generation.Building;
-import fr.tjdev.randcity.generation.GenUtil;
-import fr.tjdev.randcity.shapes.Cube;
-import fr.tjdev.randcity.shapes.IShape;
-import fr.tjdev.randcity.shapes.Road;
-import fr.tjdev.randcity.shapes.SkyBox;
-import fr.tjdev.randcity.shapes.Floor;
-import fr.tjdev.randcity.util.BufferHelper;
-import fr.tjdev.randcity.util.RawResourceReader;
-import fr.tjdev.randcity.util.ShaderHelper;
-import fr.tjdev.randcity.util.TextureHelper;
-import fr.tjdev.randcity.util.Random;
 
 /**
  * Renderer used for the test game.
  */
-public class GLRenderer extends BaseGLRenderer implements GLSurfaceView.Renderer {
+public class GLRenderer extends CommonGLRenderer implements GLSurfaceView.Renderer {
 
     // Store the FPS and the last time to compute the fps
     private int mFPS = 0;

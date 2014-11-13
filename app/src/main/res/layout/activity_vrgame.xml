@@ -26,9 +26,9 @@
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentLeft="true" />
 
-    <fr.tjdev.randcity.vrgame.VROverlayView
+    <fr.tjdev.commonvrlibrary.VROverlayView
         android:id="@+id/vr_overlay"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

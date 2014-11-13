@@ -40,4 +40,7 @@
     <string name="fogOn">Fog enabled</string>
     <string name="fogOff">Fog disabled</string>
 
+    <string name="checkBoxBluetooth">Enable Bluetooth to receive positions data</string>
+    <string name="checkBoxBluetoothReset">Reset bluetooth on exit the app</string>
+
 </resources>

@@ -1,5 +1,4 @@
 /*
- * This file is part of RandCity.
  * Copyright (c) 2014 Fabien Caylus <toutjuste13@gmail.com>
  *
  * This file is free software: you can redistribute it and/or modify
@@ -16,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package fr.tjdev.randcity.util;
+package fr.tjdev.commonvrlibrary.util;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import fr.tjdev.randcity.shapes.IShape;
+import fr.tjdev.commonvrlibrary.shapes.IShape;
 
 public class BufferHelper {
 

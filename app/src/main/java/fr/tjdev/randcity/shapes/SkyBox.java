@@ -18,8 +18,10 @@
 
 package fr.tjdev.randcity.shapes;
 
+import fr.tjdev.commonvrlibrary.shapes.Cube;
+
 // Inverted cube that represent the sky box
-public class SkyBox extends Cube{
+public class SkyBox extends Cube {
 
     static public final float[] positionData = {
             // Back face

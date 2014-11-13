@@ -1,5 +1,4 @@
 /*
- * This file is part of RandCity.
  * Copyright (c) 2014 Fabien Caylus <toutjuste13@gmail.com>
  *
  * This file is free software: you can redistribute it and/or modify
@@ -16,18 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package fr.tjdev.randcity.util;
+package fr.tjdev.commonvrlibrary.util;
 
-import android.app.ActivityManager;
-import android.content.Context;
-import android.content.pm.ConfigurationInfo;
+public class Random extends java.util.Random {
+    public Random() {
+        super();
+    }
+    public Random(long seed) {
+        super(seed);
+    }
+    
+    public int intBetween(int max, int min) {
+        return nextInt((max - min) + 1) + min;
+    }
 
-public class OpenGL {
+    public int moreOrLess(int baseValue, int moreOrLess) {
+        return baseValue + nextInt((moreOrLess * 2) + 1) - moreOrLess;
+    }
 
-    // Check if the system supports OpenGL ES 2.0
-    static public boolean hasOpenGLES20Support(Context context) {
-        final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-        return configurationInfo.reqGlEsVersion >= 0x20000;
+    // Have a chance to succeed, base on the percentage arg
+    public boolean chance(int percentage) {
+        return nextInt(100) < percentage;
     }
 }

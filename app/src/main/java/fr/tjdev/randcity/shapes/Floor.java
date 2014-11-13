@@ -18,40 +18,11 @@
 
 package fr.tjdev.randcity.shapes;
 
-public class Floor implements IShape {
-
-    static public final float[] positionData = {
-            -1.0f, 0.0f, -1.0f,
-            -1.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, -1.0f,
-            1.0f, 0.0f, -1.0f,
-            -1.0f, 0.0f, 1.0f,
-            1.0f, 0.0f, 1.0f
-    };
+// Re-implement color data to have a grey floor
+public class Floor extends fr.tjdev.commonvrlibrary.shapes.Floor {
 
     // R, G, B, A
     static public final float[] colorData = {
             0.3f, 0.3f, 0.3f, 1.0f
-    };
-
-    // X, Y, Z
-    static public final float[] normalsData = {
-            0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f,
-            0.0f, 1.0f, 0.0f
-    };
-
-    // S, T (or X, Y)
-    // Texture coordinate data.
-    public static final float[] textureCoordinatesData = {
-            0.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 0.0f,
-            1.0f, 0.0f,
-            0.0f, 1.0f,
-            1.0f, 1.0f
     };
 }
