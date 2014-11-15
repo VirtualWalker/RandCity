@@ -53,8 +53,16 @@ public class BluetoothManager {
     // The activity that the manager depends on
     private Activity mParentActivity;
 
+    // Custom handles
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int HANDLER_MESSAGE_READ = 2;
+
+    // Custom Broadcasts (associated strings)
+    // The activity can create a BroadcastReceiver to listen to these actions
+    public static final String ACTION_NO_SERVERS_FOUND = "fr.tjdev.commonvrlibrary.bluetooth.action.NO_SERVERS_FOUND";
+    public static final String ACTION_SERVER_FOUND = "fr.tjdev.commonvrlibrary.bluetooth.action.SERVER_FOUND";
+    public static final String ACTION_CONNECT_FAILED = "fr.tjdev.commonvrlibrary.bluetooth.action.CONNECT_FAILED";
+    public static final String ACTION_CONNECT_SUCCESS = "fr.tjdev.commonvrlibrary.bluetooth.action.CONNECT_SUCCESS";
 
     // Used to get the bluetooth support
     private BluetoothAdapter mBluetoothAdapter;
@@ -123,6 +131,7 @@ public class BluetoothManager {
                             if (btDevice.getAddress().equals(allowed)) {
                                 // A device were found
                                 Log.d(TAG, "Use device: " + btDevice.getAddress());
+                                mParentActivity.sendBroadcast(new Intent(ACTION_SERVER_FOUND));
 
                                 // Clean up previous connected devices
                                 if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
@@ -140,6 +149,7 @@ public class BluetoothManager {
 
                     // Here, no devices were found
                     Log.w(TAG, "No bluetooth servers were found ...");
+                    mParentActivity.sendBroadcast(new Intent(ACTION_NO_SERVERS_FOUND));
                 }
                 if (mFirstScan) {
                     mFirstScan = false;
@@ -315,8 +325,13 @@ public class BluetoothManager {
                 } catch (IOException closeException) {
                     Log.e(TAG, "Exception:", closeException);
                 }
+                // Send an error broadcast
+                mParentActivity.sendBroadcast(new Intent(ACTION_CONNECT_FAILED));
                 return;
             }
+
+            // Here, we are connected
+            mParentActivity.sendBroadcast(new Intent(ACTION_CONNECT_SUCCESS));
 
             // Reset the ConnectThread because we're done
             synchronized (BluetoothManager.this) {
