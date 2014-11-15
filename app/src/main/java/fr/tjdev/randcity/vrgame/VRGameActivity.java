@@ -54,7 +54,7 @@ public class VRGameActivity extends CardboardActivity {
         if (bundle.getBoolean(MainActivity.PREF_BT, false)) {
             Log.d(TAG, "Bluetooth support enabled !");
             mBluetooth = true;
-            mBTManager = new BluetoothManager(this, bundle.getBoolean(MainActivity.PREF_BT_RESET, false));
+            mBTManager = new BluetoothManager(this);
         } else {
             mBluetooth = false;
         }

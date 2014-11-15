@@ -77,6 +77,20 @@ public class BluetoothManager {
 
     private boolean mFirstScan = true;
 
+    // Static methods used to disable/enable the bluetooth (don't use it without an user prompt)
+    public static void disableBluetooth() {
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        if (adapter != null) {
+            adapter.disable();
+        }
+    }
+    public static void enableBluetooth() {
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        if (adapter != null) {
+            adapter.enable();
+        }
+    }
+
     // Broadcast receiver
     // Used to listen to these actions :
     // - ACTION_FOUND : when a new device is found
@@ -148,6 +162,10 @@ public class BluetoothManager {
             return true;
         }
     });
+
+    public BluetoothManager(Activity activity) {
+        this(activity, false);
+    }
 
     public BluetoothManager(Activity activity, boolean resetOnDestroy) {
         mParentActivity = activity;

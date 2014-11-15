@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fr.tjdev.commonvrlibrary.BluetoothManager;
 import fr.tjdev.commonvrlibrary.FullScreenManager;
 import fr.tjdev.commonvrlibrary.R;
 
@@ -94,7 +95,8 @@ public class MainMenuActivity extends ListActivity {
                     // Check the bluetooth support
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(PREF_BT, mBluetoothEnabled);
-                    bundle.putBoolean(PREF_BT_RESET, mBluetoothReset);
+                    // The Bluetooth is reset in the main activity, not in the game
+                    //bundle.putBoolean(PREF_BT_RESET, mBluetoothReset);
                     launchIntent.putExtras(bundle);
 
                     startActivity(launchIntent);
@@ -104,13 +106,23 @@ public class MainMenuActivity extends ListActivity {
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
         // Save preferences
         SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
         editor.putBoolean(PREF_BT, mBluetoothEnabled);
         editor.putBoolean(PREF_BT_RESET, mBluetoothReset);
         editor.apply();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Reset the bluetooth if needed
+        if (mBluetoothReset) {
+            BluetoothManager.disableBluetooth();
+        }
     }
 
     @Override
