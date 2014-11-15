@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fr.tjdev.commonvrlibrary.FullScreenManager;
 import fr.tjdev.commonvrlibrary.R;
 
 /**
@@ -50,6 +51,8 @@ public class MainMenuActivity extends ListActivity {
     protected boolean mBluetoothEnabled;
     protected boolean mBluetoothReset;
 
+    private FullScreenManager mFullScreenMgr = new FullScreenManager(this);
+
     // Initialize the list of activities
     private List<Map<String, Object>> mData = new ArrayList<Map<String, Object>>();
     private List<Class<? extends Activity>> mActivityMapping = new ArrayList<Class<? extends Activity>>();
@@ -57,9 +60,8 @@ public class MainMenuActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFullScreenMgr.onCreate();
 
-        // Set the default title
-        setTitle(R.string.mainMenuHeaderTitle);
         // Set the default layout (with games modes and bluetooth checkboxes)
         setContentView(R.layout.activity_mainmenu);
 
@@ -109,6 +111,12 @@ public class MainMenuActivity extends ListActivity {
         editor.putBoolean(PREF_BT, mBluetoothEnabled);
         editor.putBoolean(PREF_BT_RESET, mBluetoothReset);
         editor.apply();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        mFullScreenMgr.onWindowFocusChanged(hasFocus);
     }
 
     // Listen to the check box click

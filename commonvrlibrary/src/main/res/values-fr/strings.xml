@@ -16,7 +16,6 @@
 -->
 <resources>
 
-    <string name="mainMenuHeaderTitle">Menu principal</string>
     <string name="mainMenuHeader">Sélectionnez votre mode de jeu :</string>
 
     <string name="mainMenuCheckBoxBluetooth">Activer le bluetooth pour recevoir des données de position</string>

@@ -19,7 +19,7 @@
 
     <string translatable="false" name="app_name">Rand City</string>
 
-    <string name="header">Welcome to Rand City game, please choose your game mode.</string>
+    <string name="header">Welcome to Rand City game\nPlease choose your game mode.</string>
     <string name="testGameLabel">Test Mode with buttons to move</string>
     <string name="testGameSubtitle">Used for testings new the game when you don\'t have a VR helmet.</string>
     <string name="vrGameLabel">VR Mode</string>

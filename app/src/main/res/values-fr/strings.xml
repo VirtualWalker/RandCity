@@ -17,7 +17,7 @@
 -->
 <resources>
 
-    <string name="header">Bienvenue dans le jeu Rand City. Sélectionnez votre mode de jeu:</string>
+    <string name="header">Bienvenue dans le jeu Rand City\nSélectionnez votre mode de jeu:</string>
     <string name="testGameLabel">Mode de test (avec des boutons à l\'écran)</string>
     <string name="testGameSubtitle">Permet de tester le jeu sans casque de réalité virtuelle.</string>
     <string name="vrGameLabel">Mode en réalité virtuelle</string>
