@@ -19,7 +19,6 @@
 
     <string translatable="false" name="app_name">Rand City</string>
 
-    <string name="headerTitle">Main menu</string>
     <string name="header">Welcome to Rand City game, please choose your game mode.</string>
     <string name="testGameLabel">Test Mode with buttons to move</string>
     <string name="testGameSubtitle">Used for testings new the game when you don\'t have a VR helmet.</string>
@@ -39,8 +38,5 @@
     <string name="fogDisable">Disable fog</string>
     <string name="fogOn">Fog enabled</string>
     <string name="fogOff">Fog disabled</string>
-
-    <string name="checkBoxBluetooth">Enable Bluetooth to receive positions data</string>
-    <string name="checkBoxBluetoothReset">Reset bluetooth on exit the app</string>
 
 </resources>

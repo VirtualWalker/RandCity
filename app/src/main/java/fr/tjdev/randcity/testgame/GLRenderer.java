@@ -26,13 +26,13 @@ import android.widget.TextView;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import fr.tjdev.randcity.CommonGLRenderer;
+import fr.tjdev.randcity.CommonGLRenderManager;
 import fr.tjdev.randcity.generation.Building;
 
 /**
  * Renderer used for the test game.
  */
-public class GLRenderer extends CommonGLRenderer implements GLSurfaceView.Renderer {
+public class GLRenderer extends CommonGLRenderManager implements GLSurfaceView.Renderer {
 
     // Store the FPS and the last time to compute the fps
     private int mFPS = 0;
@@ -68,6 +68,7 @@ public class GLRenderer extends CommonGLRenderer implements GLSurfaceView.Render
         info += "/" + Integer.toString(texTypes[14]);
         info += "/" + Integer.toString(texTypes[15]);
 
+        // Create a copy of the string to have a correct rendering
         final String infoDisplayed = info;
         ((Activity) mActivityContext).runOnUiThread(new Runnable() {
 

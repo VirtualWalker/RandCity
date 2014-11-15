@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This file is part of RandCity.
-     Copyright (c) 2014 Fabien Caylus <toutjuste13@gmail.com>
+<!-- Copyright (c) 2014 Fabien Caylus <toutjuste13@gmail.com>
 
      This file is free software: you can redistribute it and/or modify
      it under the terms of the GNU General Public License as published by
@@ -16,6 +15,11 @@
      along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-    <style name="AppTheme" parent="android:Theme.Holo.Light">
-    </style>
+
+    <string name="mainMenuHeaderTitle">Menu principal</string>
+    <string name="mainMenuHeader">Sélectionnez votre mode de jeu :</string>
+
+    <string name="mainMenuCheckBoxBluetooth">Activer le bluetooth pour recevoir des données de position</string>
+    <string name="mainMenuCheckBoxBluetoothReset">Eteindre le bluetooth à la fermeture de l\'application</string>
+
 </resources>

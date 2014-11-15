@@ -28,26 +28,25 @@ import android.util.Log;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
+import fr.tjdev.commonvrlibrary.BaseGLRenderManager;
 import fr.tjdev.randcity.generation.Building;
 import fr.tjdev.randcity.generation.GenUtil;
 import fr.tjdev.commonvrlibrary.shapes.Cube;
 import fr.tjdev.randcity.shapes.Floor;
 import fr.tjdev.commonvrlibrary.shapes.IShape;
 import fr.tjdev.randcity.shapes.Road;
-import fr.tjdev.randcity.shapes.SkyBox;
+import fr.tjdev.commonvrlibrary.shapes.SkyBox;
 import fr.tjdev.commonvrlibrary.util.BufferHelper;
 import fr.tjdev.commonvrlibrary.util.Random;
 import fr.tjdev.commonvrlibrary.util.RawResourceReader;
 import fr.tjdev.commonvrlibrary.util.ShaderHelper;
 import fr.tjdev.commonvrlibrary.util.TextureHelper;
 
-import fr.tjdev.commonvrlibrary.BaseGLRenderer;
-
 /**
  * This class contains some methods used by real renderer.
  * The methods must be called in the correct order to work correctly.
  */
-public class CommonGLRenderer extends BaseGLRenderer {
+public class CommonGLRenderManager extends BaseGLRenderManager {
     private static final String TAG = "CommonGLRenderer";
 
     public static final float PROJECTION_NEAR = 1.0f;
@@ -108,7 +107,7 @@ public class CommonGLRenderer extends BaseGLRenderer {
     // Used to toggle the fog
     public volatile boolean enableFog = true;
 
-    public CommonGLRenderer(final Context activityContext) {
+    public CommonGLRenderManager(final Context activityContext) {
         mActivityContext = activityContext;
 
         // Generate buildings grid and textures

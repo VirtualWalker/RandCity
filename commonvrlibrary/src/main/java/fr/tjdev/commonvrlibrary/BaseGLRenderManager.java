@@ -25,7 +25,7 @@ import fr.tjdev.commonvrlibrary.shapes.IShape;
 /**
  * Contains some elements used by all OpenGL renderer.
  */
-public class BaseGLRenderer {
+public class BaseGLRenderManager {
 
     // Store different strides used in VBOs buffers
     protected static final int mVBOStride = (IShape.VERTEX_DATA_ELEMENTS + IShape.NORMAL_DATA_ELEMENTS + IShape.TEXTURE_COORDINATE_ELEMENTS)

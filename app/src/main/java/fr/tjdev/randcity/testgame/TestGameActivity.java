@@ -18,22 +18,18 @@
 
 package fr.tjdev.randcity.testgame;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.opengl.GLSurfaceView;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import fr.tjdev.commonvrlibrary.activities.FullScreenActivity;
 import fr.tjdev.commonvrlibrary.util.OpenGLCheck;
 import fr.tjdev.randcity.R;
 
-public class TestGameActivity extends Activity {
+public class TestGameActivity extends FullScreenActivity {
 
     private static final String TAG = "TestGameActivity";
 
@@ -45,12 +41,6 @@ public class TestGameActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Set the fullscreen mode
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_testgame);
 
@@ -170,36 +160,6 @@ public class TestGameActivity extends Activity {
         if (mGLView != null) {
             mGLView.onPause();
         }
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                mGLView.setSystemUiVisibility(getUIVisibilityApi19());
-            } else {
-                mGLView.setSystemUiVisibility(getUIVisibility());
-            }
-        }
-    }
-
-    @TargetApi(19)
-    private int getUIVisibilityApi19() {
-        return View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-    }
-
-    private int getUIVisibility() {
-        return View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN;
     }
 
     public TextView getFPSTextView() {

@@ -70,8 +70,6 @@ public class BluetoothManager {
     // Contains all devices found.
     private ArrayList<BluetoothDevice> mDevices = new ArrayList<BluetoothDevice>();
 
-    // Contains the connected device.
-    private BluetoothDevice mConnectedDevice = null;
     private ConnectThread mConnectThread = null;
     private ConnectedThread mConnectedThread = null;
 
@@ -116,8 +114,7 @@ public class BluetoothManager {
                                 if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
                                 if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
 
-                                mConnectedDevice = btDevice;
-                                mConnectThread = new ConnectThread(mConnectedDevice);
+                                mConnectThread = new ConnectThread(btDevice);
                                 mConnectThread.run();
 
                                 // Exit the loop
@@ -147,7 +144,7 @@ public class BluetoothManager {
             // At this stage, just print the received value
             Log.d(TAG, "Received string :");
             byte[] bts = ((byte[]) msg.obj);
-            Log.d(TAG, new String(bts) + " (raw: " + bts.toString() + ")");
+            Log.d(TAG, new String(bts));
             return true;
         }
     });

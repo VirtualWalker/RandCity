@@ -1,5 +1,4 @@
 /*
- * This file is part of RandCity.
  * Copyright (c) 2014 Fabien Caylus <toutjuste13@gmail.com>
  *
  * This file is free software: you can redistribute it and/or modify
@@ -16,9 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package fr.tjdev.randcity.shapes;
-
-import fr.tjdev.commonvrlibrary.shapes.Cube;
+package fr.tjdev.commonvrlibrary.shapes;
 
 // Inverted cube that represent the sky box
 public class SkyBox extends Cube {

@@ -31,7 +31,7 @@ import com.google.vrtoolkit.cardboard.CardboardView;
 import fr.tjdev.commonvrlibrary.BluetoothManager;
 import fr.tjdev.commonvrlibrary.VROverlayView;
 import fr.tjdev.commonvrlibrary.util.OpenGLCheck;
-import fr.tjdev.randcity.CommonGLRenderer;
+import fr.tjdev.randcity.CommonGLRenderManager;
 import fr.tjdev.randcity.MainActivity;
 import fr.tjdev.randcity.R;
 
@@ -62,7 +62,7 @@ public class VRGameActivity extends CardboardActivity {
         setContentView(R.layout.activity_vrgame);
         CardboardView vrView = (CardboardView) findViewById(R.id.vr_view);
         // Set the projection matrix
-        vrView.setZPlanes(CommonGLRenderer.PROJECTION_NEAR, CommonGLRenderer.PROJECTION_FAR);
+        vrView.setZPlanes(CommonGLRenderManager.PROJECTION_NEAR, CommonGLRenderManager.PROJECTION_FAR);
         mOverlayView = (VROverlayView) findViewById(R.id.vr_overlay);
 
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);

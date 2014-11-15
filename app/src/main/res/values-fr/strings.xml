@@ -17,7 +17,6 @@
 -->
 <resources>
 
-    <string name="headerTitle">Menu principal</string>
     <string name="header">Bienvenue dans le jeu Rand City. Sélectionnez votre mode de jeu:</string>
     <string name="testGameLabel">Mode de test (avec des boutons à l\'écran)</string>
     <string name="testGameSubtitle">Permet de tester le jeu sans casque de réalité virtuelle.</string>
@@ -30,8 +29,5 @@
     <string name="fogDisable">Enlever brouillard</string>
     <string name="fogOn">Brouillard activé</string>
     <string name="fogOff">Brouillard enlevé</string>
-
-    <string name="checkBoxBluetooth">Activer le bluetooth pour recevoir des données de position</string>
-    <string name="checkBoxBluetoothReset">Eteindre le bluetooth à la fermeture de l\'application</string>
 
 </resources>
