@@ -21,4 +21,10 @@
     <string name="mainMenuCheckBoxBluetooth">Activer le bluetooth pour recevoir des données de position</string>
     <string name="mainMenuCheckBoxBluetoothReset">Eteindre le bluetooth à la fermeture de l\'application</string>
 
+    <string name="bluetoothNotEnabled">Bluetooth non activé !</string>
+    <string name="bluetoothConnectFailed">Impossible de se connecter !</string>
+    <string name="bluetoothConnectSuccess">Connecté !</string>
+    <string name="bluetoothNoServersFound">Aucun serveur trouvé !</string>
+    <string name="bluetoothSearchStart">Recherche de serveurs Bluetooth &#8230;</string>
+
 </resources>

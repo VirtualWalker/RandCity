@@ -60,9 +60,12 @@ public class BluetoothManager {
     // Custom Broadcasts (associated strings)
     // The activity can create a BroadcastReceiver to listen to these actions
     public static final String ACTION_NO_SERVERS_FOUND = "fr.tjdev.commonvrlibrary.bluetooth.action.NO_SERVERS_FOUND";
-    public static final String ACTION_SERVER_FOUND = "fr.tjdev.commonvrlibrary.bluetooth.action.SERVER_FOUND";
     public static final String ACTION_CONNECT_FAILED = "fr.tjdev.commonvrlibrary.bluetooth.action.CONNECT_FAILED";
     public static final String ACTION_CONNECT_SUCCESS = "fr.tjdev.commonvrlibrary.bluetooth.action.CONNECT_SUCCESS";
+    public static final String ACTION_BT_ENABLED = "fr.tjdev.commonvrlibrary.bluetooth.action.BT_ENABLED";
+    public static final String ACTION_BT_NOT_ENABLED = "fr.tjdev.commonvrlibrary.bluetooth.action.BT_NOT_ENABLED";
+    public static final String ACTION_SEARCH_START = "fr.tjdev.commonvrlibrary.bluetooth.action.SEARCH_START";
+    public static final String ACTION_SEARCH_END = "fr.tjdev.commonvrlibrary.bluetooth.action.SEARCH_END";
 
     // Used to get the bluetooth support
     private BluetoothAdapter mBluetoothAdapter;
@@ -118,6 +121,7 @@ public class BluetoothManager {
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 if (mFirstScan) {
                     Log.d(TAG, "Discovery finished");
+                    mParentActivity.sendBroadcast(new Intent(ACTION_SEARCH_END));
 
                     // Print devices addresses
                     Log.d(TAG, "Near devices: ");
@@ -131,7 +135,6 @@ public class BluetoothManager {
                             if (btDevice.getAddress().equals(allowed)) {
                                 // A device were found
                                 Log.d(TAG, "Use device: " + btDevice.getAddress());
-                                mParentActivity.sendBroadcast(new Intent(ACTION_SERVER_FOUND));
 
                                 // Clean up previous connected devices
                                 if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
@@ -217,10 +220,12 @@ public class BluetoothManager {
         if (requestCode == REQUEST_ENABLE_BT) {
            if (resultCode == Activity.RESULT_OK) {
                Log.d(TAG, "Successfully enabling Bluetooth.");
+               mParentActivity.sendBroadcast(new Intent(ACTION_BT_ENABLED));
                searchForDevices();
                return true;
            } else {
                Log.e(TAG, "Error when enabling Bluetooth !");
+               mParentActivity.sendBroadcast(new Intent(ACTION_BT_NOT_ENABLED));
                return false;
            }
         }
@@ -256,6 +261,7 @@ public class BluetoothManager {
         //
         // Search for new devices
         // The end of this function will be executed in the mScanFinishedReceiver
+        mParentActivity.sendBroadcast(new Intent(ACTION_SEARCH_START));
         mBluetoothAdapter.startDiscovery();
     }
 

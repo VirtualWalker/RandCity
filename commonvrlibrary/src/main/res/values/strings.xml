@@ -23,4 +23,10 @@
     <string name="mainMenuCheckBoxBluetooth">Enable Bluetooth to receive positions data</string>
     <string name="mainMenuCheckBoxBluetoothReset">Reset bluetooth on exit the app</string>
 
+    <string name="bluetoothNotEnabled">Bluetooth not enabled !</string>
+    <string name="bluetoothConnectFailed">Connection failed !</string>
+    <string name="bluetoothConnectSuccess">Connected !</string>
+    <string name="bluetoothNoServersFound">No servers found !</string>
+    <string name="bluetoothSearchStart">Search for Bluetooth server &#8230;</string>
+
 </resources>

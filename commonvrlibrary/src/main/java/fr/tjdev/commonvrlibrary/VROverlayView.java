@@ -52,8 +52,8 @@ import android.widget.TextView;
  * Contains two sub-views to provide a simple stereo HUD.
  */
 public class VROverlayView extends LinearLayout {
-    private final CardboardOverlayEyeView mLeftView;
-    private final CardboardOverlayEyeView mRightView;
+    private final VROverlayEyeView mLeftView;
+    private final VROverlayEyeView mRightView;
     private AlphaAnimation mTextFadeAnimation;
 
     public VROverlayView(Context context, AttributeSet attrs) {
@@ -64,33 +64,51 @@ public class VROverlayView extends LinearLayout {
             LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1.0f);
         params.setMargins(0, 0, 0, 0);
 
-        mLeftView = new CardboardOverlayEyeView(context, attrs);
+        mLeftView = new VROverlayEyeView(context, attrs);
         mLeftView.setLayoutParams(params);
         addView(mLeftView);
 
-        mRightView = new CardboardOverlayEyeView(context, attrs);
+        mRightView = new VROverlayEyeView(context, attrs);
         mRightView.setLayoutParams(params);
         addView(mRightView);
 
         // Set some reasonable defaults.
         setDepthOffset(0.016f);
-        setColor(Color.rgb(150, 255, 180));
+        resetColor();
         setVisibility(View.VISIBLE);
 
         mTextFadeAnimation = new AlphaAnimation(1.0f, 0.0f);
-        mTextFadeAnimation.setDuration(5000);
+        mTextFadeAnimation.setDuration(3500);
     }
 
-    public void show3DToast(String message) {
+    private void show3DToastInternal(String message) {
         setText(message);
         setTextAlpha(1f);
         mTextFadeAnimation.setAnimationListener(new EndAnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {
                 setTextAlpha(0f);
+                resetColor();
             }
         });
         startAnimation(mTextFadeAnimation);
+    }
+
+    public void show3DToast(String message) {
+        resetColor();
+        show3DToastInternal(message);
+    }
+
+    // Print a message in red
+    public void showError3DToast(String message) {
+        setColor(Color.RED);
+        show3DToastInternal(message);
+    }
+
+    // Print a message in yellow
+    public void showWarning3DToast(String message) {
+        setColor(Color.YELLOW);
+        show3DToastInternal(message);
     }
 
     private abstract class EndAnimationListener implements Animation.AnimationListener {
@@ -113,23 +131,27 @@ public class VROverlayView extends LinearLayout {
         mRightView.setTextViewAlpha(alpha);
     }
 
-    private void setColor(int color) {
+    public void setColor(int color) {
         mLeftView.setColor(color);
         mRightView.setColor(color);
+    }
+
+    public void resetColor() {
+        setColor(Color.rgb(150, 255, 180));
     }
 
     /**
      * A simple view group containing some horizontally centered text underneath a horizontally
      * centered image.
      *
-     * This is a helper class for CardboardOverlayView.
+     * This is a helper class for VROverlayView.
      */
-    private class CardboardOverlayEyeView extends ViewGroup {
+    private class VROverlayEyeView extends ViewGroup {
         private final ImageView imageView;
         private final TextView textView;
         private float offset;
 
-        public CardboardOverlayEyeView(Context context, AttributeSet attrs) {
+        public VROverlayEyeView(Context context, AttributeSet attrs) {
             super(context, attrs);
             imageView = new ImageView(context, attrs);
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);

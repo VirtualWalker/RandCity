@@ -18,67 +18,38 @@
 
 package fr.tjdev.randcity.vrgame;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 
-import com.google.vrtoolkit.cardboard.CardboardActivity;
-import com.google.vrtoolkit.cardboard.CardboardView;
-
-import fr.tjdev.commonvrlibrary.BluetoothManager;
-import fr.tjdev.commonvrlibrary.VROverlayView;
+import fr.tjdev.commonvrlibrary.activities.VRActivity;
 import fr.tjdev.commonvrlibrary.util.OpenGLCheck;
 import fr.tjdev.randcity.CommonGLRenderManager;
-import fr.tjdev.randcity.MainActivity;
 import fr.tjdev.randcity.R;
 
-public class VRGameActivity extends CardboardActivity {
+public class VRGameActivity extends VRActivity {
 
     private static final String TAG = "VRGameActivity";
-    private VROverlayView mOverlayView;
     private VRRenderer mRenderer;
-    private Vibrator mVibrator;
-
-    private boolean mBluetooth;
-    private BluetoothManager mBTManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Get the bluetooth param
-        Bundle bundle = getIntent().getExtras();
-        if (bundle.getBoolean(MainActivity.PREF_BT, false)) {
-            Log.d(TAG, "Bluetooth support enabled !");
-            mBluetooth = true;
-            mBTManager = new BluetoothManager(this);
-        } else {
-            mBluetooth = false;
-        }
-
-        setContentView(R.layout.activity_vrgame);
-        CardboardView vrView = (CardboardView) findViewById(R.id.vr_view);
         // Set the projection matrix
-        vrView.setZPlanes(CommonGLRenderManager.PROJECTION_NEAR, CommonGLRenderManager.PROJECTION_FAR);
-        mOverlayView = (VROverlayView) findViewById(R.id.vr_overlay);
-
-        mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        mVrView.setZPlanes(CommonGLRenderManager.PROJECTION_NEAR, CommonGLRenderManager.PROJECTION_FAR);
 
         // Check OpenGL ES 2.0 support
         if (OpenGLCheck.hasOpenGLES20Support(this)) {
             mRenderer = new VRRenderer(this);
-            vrView.setRenderer(mRenderer);
-            setCardboardView(vrView);
+            mVrView.setRenderer(mRenderer);
         } else {
             Log.wtf(TAG, getString(R.string.noOpenGLSupport));
             finish();
             return;
         }
 
-        vrView.setOnClickListener(new View.OnClickListener() {
+        mVrView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 toggleFog();
@@ -102,24 +73,6 @@ public class VRGameActivity extends CardboardActivity {
                 mRenderer.enableFog = true;
             }
             mVibrator.vibrate(50);
-        }
-    }
-
-    // Pass the results info to the Bluetooth Manager.
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (mBluetooth) {
-            if (!mBTManager.onActivityResult(requestCode, resultCode)) {
-               mBluetooth = false;
-            }
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mBluetooth) {
-            mBTManager.onDestroy();
         }
     }
 }
