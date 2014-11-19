@@ -39,16 +39,10 @@ public class VRGameActivity extends VRActivity {
         // Set the projection matrix
         mVrView.setZPlanes(CommonGLRenderManager.PROJECTION_NEAR, CommonGLRenderManager.PROJECTION_FAR);
 
-        // Check OpenGL ES 2.0 support
-        if (OpenGLCheck.hasOpenGLES20Support(this)) {
-            mRenderer = new VRRenderer(this);
-            mVrView.setRenderer(mRenderer);
-        } else {
-            Log.wtf(TAG, getString(R.string.noOpenGLSupport));
-            finish();
-            return;
-        }
+        mRenderer = new VRRenderer(this);
+        enableRenderer(mRenderer);
 
+        // Toggle fog on click
         mVrView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

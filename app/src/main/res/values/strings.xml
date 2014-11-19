@@ -25,8 +25,6 @@
     <string name="vrGameLabel">VR Mode</string>
     <string name="vrGameSubtitle">Wear your virtual reality helmet.</string>
 
-    <string name="noOpenGLSupport">The device doesn\'t support OpenGL ES 2.0 !</string>
-
     <string translatable="false" name="left">L</string>
     <string translatable="false" name="right">R</string>
     <string translatable="false" name="forward">F</string>

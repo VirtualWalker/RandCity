@@ -31,6 +31,7 @@ import com.google.vrtoolkit.cardboard.CardboardView;
 import fr.tjdev.commonvrlibrary.BluetoothManager;
 import fr.tjdev.commonvrlibrary.R;
 import fr.tjdev.commonvrlibrary.VROverlayView;
+import fr.tjdev.commonvrlibrary.util.OpenGLCheck;
 
 public class VRActivity extends CardboardActivity {
     private static final String TAG = "VRActivity";
@@ -90,6 +91,20 @@ public class VRActivity extends CardboardActivity {
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         // You need to set the renderer on your own in the child class
+        // and call enableRenderer() to enable it
+    }
+
+    // Must be call only once in the onCreate() method of the child
+    protected void enableRenderer(CardboardView.StereoRenderer stereoRenderer) {
+        // Check OpenGL ES 2.0 support
+        if (OpenGLCheck.hasOpenGLES20Support(this)) {
+            if (stereoRenderer != null) {
+                mVrView.setRenderer(stereoRenderer);
+            }
+        } else {
+            Log.wtf(TAG, getString(R.string.noOpenGLSupport));
+            finish();
+        }
     }
 
     // Pass the results info to the Bluetooth Manager.

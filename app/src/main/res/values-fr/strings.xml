@@ -23,8 +23,6 @@
     <string name="vrGameLabel">Mode en réalité virtuelle</string>
     <string name="vrGameSubtitle">Veuillez enfiler votre casque.</string>
 
-    <string name="noOpenGLSupport">Cet appareil ne supporte pas OpenGL ES 2.0 !</string>
-
     <string name="fogEnable">Activer brouillard</string>
     <string name="fogDisable">Enlever brouillard</string>
     <string name="fogOn">Brouillard activé</string>

@@ -27,4 +27,6 @@
     <string name="bluetoothNoServersFound">Aucun serveur trouvé !</string>
     <string name="bluetoothSearchStart">Recherche de serveurs Bluetooth &#8230;</string>
 
+    <string name="noOpenGLSupport">Cet appareil ne supporte pas OpenGL ES 2.0 !</string>
+
 </resources>
