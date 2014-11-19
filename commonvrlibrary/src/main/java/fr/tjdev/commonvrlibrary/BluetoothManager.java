@@ -153,6 +153,8 @@ public class BluetoothManager {
                     // Here, no devices were found
                     Log.w(TAG, "No bluetooth servers were found ...");
                     mParentActivity.sendBroadcast(new Intent(ACTION_NO_SERVERS_FOUND));
+                    // Disable bluetooth
+                    mBluetoothAdapter.disable();
                 }
                 if (mFirstScan) {
                     mFirstScan = false;
@@ -333,6 +335,7 @@ public class BluetoothManager {
                 }
                 // Send an error broadcast
                 mParentActivity.sendBroadcast(new Intent(ACTION_CONNECT_FAILED));
+                mBluetoothAdapter.disable();
                 return;
             }
 
