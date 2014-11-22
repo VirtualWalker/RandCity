@@ -12,11 +12,6 @@
         android:theme="@style/AppTheme" >
 
         <activity
-            android:name=".activities.MainMenuActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="landscape" >
-        </activity>
-        <activity
             android:name=".activities.FullScreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="landscape" >

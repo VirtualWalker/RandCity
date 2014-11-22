@@ -23,6 +23,7 @@ android {
         release {
             runProguard true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            //noinspection GroovyAssignabilityCheck
             signingConfig signingConfigs.release
         }
     }

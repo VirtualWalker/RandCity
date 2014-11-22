@@ -8,6 +8,6 @@ See http://ci.tjdev.fr/job/RandCity/ to get the last successful artifact.
 
 This game re-use the concept of PixelCity created by Shamus Young. See http://www.shamusyoung.com/twentysidedtale/?p=2940 to have a look at his work.
 
-The keystore password is "android". This password is used to enable the release build.
+The key-store password is "android". This password is used to enable the release build.
 
 This game is distributed under the GNU General Public License v3 (GPL v3).

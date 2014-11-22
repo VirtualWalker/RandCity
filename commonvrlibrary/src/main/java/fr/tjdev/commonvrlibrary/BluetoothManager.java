@@ -51,7 +51,7 @@ public class BluetoothManager {
     private static final String TAG = "BluetoothManager";
 
     // The activity that the manager depends on
-    private Activity mParentActivity;
+    private final Activity mParentActivity;
 
     // Custom handles
     private static final int REQUEST_ENABLE_BT = 1;
@@ -68,7 +68,7 @@ public class BluetoothManager {
     public static final String ACTION_SEARCH_END = "fr.tjdev.commonvrlibrary.bluetooth.action.SEARCH_END";
 
     // Used to get the bluetooth support
-    private BluetoothAdapter mBluetoothAdapter;
+    private final BluetoothAdapter mBluetoothAdapter;
 
     private final boolean mResetOnDestroy;
 
@@ -164,7 +164,7 @@ public class BluetoothManager {
     };
 
     // Handler to receive read data
-    private Handler mHandler = new Handler(new Handler.Callback() {
+    private final Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             if (msg.what != HANDLER_MESSAGE_READ) {
@@ -284,8 +284,8 @@ public class BluetoothManager {
         }
 
         Log.d(TAG, "Allowed Bluetooth servers: ");
-        for (String serv : mAllowedServers) {
-            Log.d(TAG, serv);
+        for (String server : mAllowedServers) {
+            Log.d(TAG, server);
         }
     }
 

@@ -41,7 +41,7 @@ import fr.tjdev.commonvrlibrary.R;
  * This class is a list activity that contains all games modes.
  * The desired activities must be added in the onCreate() method because the final layout is created in onStart().
  */
-public class MainMenuActivity extends ListActivity {
+public abstract class MainMenuActivity extends ListActivity {
     private static final String ITEM_IMAGE = "img";
     private static final String ITEM_TITLE = "title";
     private static final String ITEM_SUBTITLE = "subtitle";
@@ -52,7 +52,7 @@ public class MainMenuActivity extends ListActivity {
     protected boolean mBluetoothEnabled;
     protected boolean mBluetoothReset;
 
-    private FullScreenManager mFullScreenMgr = new FullScreenManager(this);
+    private final FullScreenManager mFullScreenMgr = new FullScreenManager(this);
 
     // Initialize the list of activities
     private List<Map<String, Object>> mData = new ArrayList<Map<String, Object>>();

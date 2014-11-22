@@ -17,6 +17,7 @@
 
 package fr.tjdev.commonvrlibrary.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 
@@ -25,6 +26,7 @@ import fr.tjdev.commonvrlibrary.FullScreenManager;
 /**
  * Simple full-screen and landscape activity
  */
+@SuppressLint("Registered")
 public class FullScreenActivity extends Activity {
 
     private final FullScreenManager mFullScreenMgr = new FullScreenManager(this);

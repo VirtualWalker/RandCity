@@ -38,7 +38,7 @@ public class GLRenderer extends CommonGLRenderManager implements GLSurfaceView.R
     private int mFPS = 0;
     private long mLastTime = 0;
     // Used to display fps
-    private TextView mFPSView;
+    private final TextView mFPSView;
 
     public GLRenderer(final Context activityContext) {
         super(activityContext);

@@ -123,15 +123,15 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
         Random rand = new Random();
         int randIndex = rand.nextInt(mBuildings.size());
         // Block the treasure from spawning on the sides of the city
-        final float maxCenterCoords = GenUtil.HALF_GRID_SIZE - GenUtil.HALF_BUILD_SQUARE_WIDTH;
-        while(mBuildings.get(randIndex).centerCoords[0] == maxCenterCoords ||
-                mBuildings.get(randIndex).centerCoords[0] == -maxCenterCoords ||
-                mBuildings.get(randIndex).centerCoords[2] == maxCenterCoords ||
-                mBuildings.get(randIndex).centerCoords[2] == -maxCenterCoords) {
+        final float maxCenterCoordinates = GenUtil.HALF_GRID_SIZE - GenUtil.HALF_BUILD_SQUARE_WIDTH;
+        while(mBuildings.get(randIndex).centerCoordinates[0] == maxCenterCoordinates ||
+                mBuildings.get(randIndex).centerCoordinates[0] == -maxCenterCoordinates ||
+                mBuildings.get(randIndex).centerCoordinates[2] == maxCenterCoordinates ||
+                mBuildings.get(randIndex).centerCoordinates[2] == -maxCenterCoordinates) {
             randIndex = rand.nextInt(mBuildings.size());
         }
 
-        mTreasurePos = mBuildings.get(randIndex).centerCoords;
+        mTreasurePos = mBuildings.get(randIndex).centerCoordinates;
 
         Log.d(TAG, "Treasure position set to :");
         Log.d(TAG, "x=" + Float.toString(mTreasurePos[0]) + " y=" + Float.toString(mTreasurePos[1]) + " z=" + Float.toString(mTreasurePos[2]));
@@ -218,7 +218,6 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
                     buildBuffer, GLES20.GL_STATIC_DRAW);
 
             buildBuffer.limit(0);
-            buildBuffer = null;
         }
 
         //
@@ -234,9 +233,7 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
                 cubeBuffer, GLES20.GL_STATIC_DRAW);
 
         mCubeVBOBuffer = cubeTempBuffer[0];
-
         cubeBuffer.limit(0);
-        cubeBuffer = null;
 
         //
         // Road VBO
@@ -251,9 +248,7 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
                 roadBuffer, GLES20.GL_STATIC_DRAW);
 
         mRoadVBOBuffer = roadTempBuffers[0];
-
         roadBuffer.limit(0);
-        roadBuffer = null;
 
         //
         // SkyBox VBO
@@ -268,9 +263,7 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
                 skyBuffer, GLES20.GL_STATIC_DRAW);
 
         mSkyBoxVBOBuffer = skyTempBuffers[0];
-
         skyBuffer.limit(0);
-        skyBuffer = null;
 
         //
         // Floor VBO
@@ -286,9 +279,7 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
                 floorBuffer, GLES20.GL_STATIC_DRAW);
 
         mFloorVBOBuffer = floorTempBuffers[0];
-
         floorBuffer.limit(0);
-        floorBuffer = null;
 
         // Finish the binding
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);

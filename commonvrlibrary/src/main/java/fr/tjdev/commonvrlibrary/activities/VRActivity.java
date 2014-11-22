@@ -33,7 +33,7 @@ import fr.tjdev.commonvrlibrary.R;
 import fr.tjdev.commonvrlibrary.VROverlayView;
 import fr.tjdev.commonvrlibrary.util.OpenGLCheck;
 
-public class VRActivity extends CardboardActivity {
+public abstract class VRActivity extends CardboardActivity {
     private static final String TAG = "VRActivity";
 
     protected VROverlayView mOverlayView;

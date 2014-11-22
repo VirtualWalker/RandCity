@@ -54,7 +54,7 @@ import android.widget.TextView;
 public class VROverlayView extends LinearLayout {
     private final VROverlayEyeView mLeftView;
     private final VROverlayEyeView mRightView;
-    private AlphaAnimation mTextFadeAnimation;
+    private final AlphaAnimation mTextFadeAnimation;
 
     public VROverlayView(Context context, AttributeSet attrs) {
         super(context, attrs);

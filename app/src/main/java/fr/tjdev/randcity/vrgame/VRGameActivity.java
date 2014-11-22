@@ -19,17 +19,13 @@
 package fr.tjdev.randcity.vrgame;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import fr.tjdev.commonvrlibrary.activities.VRActivity;
-import fr.tjdev.commonvrlibrary.util.OpenGLCheck;
 import fr.tjdev.randcity.CommonGLRenderManager;
 import fr.tjdev.randcity.R;
 
 public class VRGameActivity extends VRActivity {
-
-    private static final String TAG = "VRGameActivity";
     private VRRenderer mRenderer;
 
     @Override

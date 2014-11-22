@@ -127,7 +127,7 @@ public class Building {
     // Contains the color of the building
     public float[] color;
     // Contains the coordinates of the center of the building square.
-    public float[] centerCoords;
+    public float[] centerCoordinates;
 
     // Contains the type of texture used by this building.
     // Index are mapped as this :
@@ -159,7 +159,7 @@ public class Building {
         Building build = new Building();
 
         // Generate the center coordinates
-        build.centerCoords = new float[]{
+        build.centerCoordinates = new float[]{
                 topLeftX + GenUtil.HALF_BUILD_SQUARE_WIDTH,
                 0.0f,
                 topLeftZ + GenUtil.HALF_BUILD_SQUARE_WIDTH
