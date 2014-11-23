@@ -1,4 +1,4 @@
-Rand City
+Rand City [![Build Status](http://ci.tjdev.fr/buildStatus/icon?job=RandCity)](http://ci.tjdev.fr/job/RandCity/)
 =========
 
 A procedurally android game that aims to work without any texture file.
