@@ -54,6 +54,8 @@ import fr.tjdev.commonvrlibrary.R;
  * The desired activities must be added in the onCreate() method because the final layout is created in onStart().
  */
 public abstract class MainMenuActivity extends ListActivity {
+    private static final String TAG = "MainMenuActivity";
+
     private static final String ITEM_IMAGE = "img";
     private static final String ITEM_TITLE = "title";
     private static final String ITEM_SUBTITLE = "subtitle";
@@ -113,6 +115,8 @@ public abstract class MainMenuActivity extends ListActivity {
                     Toast.makeText(MainMenuActivity.this, R.string.rfcommChannelWarning, Toast.LENGTH_LONG).show();
                     return;
                 }
+                mBluetoothChannel = Integer.parseInt(mRFCOMMChannelEdit.getText().toString());
+                Log.d(TAG, "Using RFCOMM channel: " + Integer.toString(mBluetoothChannel));
 
                 final Class<? extends Activity> activityToLaunch = mActivityMapping.get(position);
 
@@ -137,6 +141,7 @@ public abstract class MainMenuActivity extends ListActivity {
         SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
         editor.putBoolean(PREF_BT, mBluetoothEnabled);
         editor.putBoolean(PREF_BT_RESET, mBluetoothReset);
+        mBluetoothChannel = Integer.parseInt(mRFCOMMChannelEdit.getText().toString());
         editor.putInt(PREF_BT_CHANNEL, mBluetoothChannel);
         editor.apply();
 

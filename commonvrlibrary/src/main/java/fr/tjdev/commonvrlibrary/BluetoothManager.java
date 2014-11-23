@@ -91,6 +91,9 @@ public class BluetoothManager {
     // Contains all devices found.
     private ArrayList<BluetoothDevice> mDevices = new ArrayList<BluetoothDevice>();
 
+    // Contains the address of the connected device
+    private String mDeviceAddress;
+
     private ConnectThread mConnectThread = null;
     private ConnectedThread mConnectedThread = null;
 
@@ -146,7 +149,8 @@ public class BluetoothManager {
                         for (BluetoothDevice btDevice : mDevices) {
                             if (btDevice.getAddress().equals(allowed)) {
                                 // A device were found
-                                Log.d(TAG, "Use device: " + btDevice.getAddress());
+                                mDeviceAddress = btDevice.getAddress();
+                                Log.d(TAG, "Use device: " + mDeviceAddress);
 
                                 // Clean up previous connected devices
                                 if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
@@ -291,6 +295,7 @@ public class BluetoothManager {
         // Search for new devices
         // The end of this function will be executed in the mScanFinishedReceiver
         mParentActivity.sendBroadcast(new Intent(ACTION_SEARCH_START));
+        Log.d(TAG, "Starting discovery ...");
         mBluetoothAdapter.startDiscovery();
     }
 
@@ -386,6 +391,7 @@ public class BluetoothManager {
 
             // Here, we are connected
             mParentActivity.sendBroadcast(new Intent(ACTION_CONNECT_SUCCESS));
+            Log.d(TAG, "Connected to device: " + mDeviceAddress);
 
             // Do work to manage the connection (in a separate thread)
             manageConnectedSocket(mmSocket);
