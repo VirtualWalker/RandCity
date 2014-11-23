@@ -19,16 +19,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/mainMenuHeader"
-        android:text="@string/mainMenuHeader"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:textStyle="bold"
-        android:textColor="#ff909090"
-        android:gravity="center"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/mainMenuHeader"
+            android:text="@string/mainMenuHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:textStyle="bold"
+            android:textColor="#ff909090"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="end"
+            android:text="@string/exit"
+            android:id="@+id/exitButton" />
+
+        </FrameLayout>
 
     <ListView
         android:id="@android:id/list"

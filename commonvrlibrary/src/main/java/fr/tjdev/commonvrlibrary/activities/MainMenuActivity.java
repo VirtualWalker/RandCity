@@ -22,9 +22,6 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -34,16 +31,10 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import fr.tjdev.commonvrlibrary.BluetoothManager;
 import fr.tjdev.commonvrlibrary.FullScreenManager;
@@ -96,6 +87,15 @@ public abstract class MainMenuActivity extends ListActivity {
         mBluetoothChannel = getPreferences(MODE_PRIVATE).getInt(PREF_BT_CHANNEL, BluetoothManager.DEFAULT_RFCOMM_CHANNEL);
         mRFCOMMChannelEdit = (EditText) findViewById(R.id.rfcommChannelEditText);
         mRFCOMMChannelEdit.setText(Integer.toString(mBluetoothChannel));
+
+        // Exit when the exit button is clicked
+        findViewById(R.id.exitButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Exit the application ...");
+                finish();
+            }
+        });
     }
 
     @Override

@@ -18,6 +18,8 @@
 
     <string translatable="false" name="app_name">CommonVRLibrary</string>
 
+    <string name="exit">Exit</string>
+
     <string name="mainMenuHeader">Choose your game mode:</string>
 
     <string name="mainMenuCheckBoxBluetooth">Enable Bluetooth to receive positions data</string>

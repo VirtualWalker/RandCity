@@ -107,12 +107,14 @@ public class BluetoothManager {
     public static void disableBluetooth() {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter != null) {
+            Log.d(TAG, "Disabling bluetooth.");
             adapter.disable();
         }
     }
     public static void enableBluetooth() {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter != null) {
+            Log.d(TAG, "Enabling bluetooth.");
             adapter.enable();
         }
     }

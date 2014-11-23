@@ -18,6 +18,8 @@
 
     <string name="mainMenuHeader">Sélectionnez votre mode de jeu :</string>
 
+    <string name="exit">Quitter</string>
+
     <string name="mainMenuCheckBoxBluetooth">Activer le bluetooth pour recevoir des données de position</string>
     <string name="mainMenuCheckBoxBluetoothReset">Eteindre le bluetooth à la fermeture de l\'application</string>
 
