@@ -22,16 +22,28 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import fr.tjdev.commonvrlibrary.BluetoothManager;
 import fr.tjdev.commonvrlibrary.FullScreenManager;
@@ -48,9 +60,13 @@ public abstract class MainMenuActivity extends ListActivity {
 
     public static final String PREF_BT = "bt";
     public static final String PREF_BT_RESET = "bt_reset";
+    public static final String PREF_BT_CHANNEL = "bt_channel";
 
     protected boolean mBluetoothEnabled;
     protected boolean mBluetoothReset;
+    protected int mBluetoothChannel;
+
+    protected EditText mRFCOMMChannelEdit;
 
     private final FullScreenManager mFullScreenMgr = new FullScreenManager(this);
 
@@ -75,6 +91,9 @@ public abstract class MainMenuActivity extends ListActivity {
         if (mBluetoothReset) {
             ((CheckBox) findViewById(R.id.checkBoxBluetoothReset)).setChecked(true);
         }
+        mBluetoothChannel = getPreferences(MODE_PRIVATE).getInt(PREF_BT_CHANNEL, BluetoothManager.DEFAULT_RFCOMM_CHANNEL);
+        mRFCOMMChannelEdit = (EditText) findViewById(R.id.rfcommChannelEditText);
+        mRFCOMMChannelEdit.setText(Integer.toString(mBluetoothChannel));
     }
 
     @Override
@@ -88,6 +107,13 @@ public abstract class MainMenuActivity extends ListActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
+
+                // Check for RFCOMM Channel here
+                if (!isRFCOMMChannelValid(mRFCOMMChannelEdit.getText().toString())) {
+                    Toast.makeText(MainMenuActivity.this, R.string.rfcommChannelWarning, Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 final Class<? extends Activity> activityToLaunch = mActivityMapping.get(position);
 
                 if (activityToLaunch != null) {
@@ -95,8 +121,7 @@ public abstract class MainMenuActivity extends ListActivity {
                     // Check the bluetooth support
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(PREF_BT, mBluetoothEnabled);
-                    // The Bluetooth is reset in the main activity, not in the game
-                    //bundle.putBoolean(PREF_BT_RESET, mBluetoothReset);
+                    bundle.putInt(PREF_BT_CHANNEL, mBluetoothChannel);
                     launchIntent.putExtras(bundle);
 
                     startActivity(launchIntent);
@@ -112,6 +137,7 @@ public abstract class MainMenuActivity extends ListActivity {
         SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
         editor.putBoolean(PREF_BT, mBluetoothEnabled);
         editor.putBoolean(PREF_BT_RESET, mBluetoothReset);
+        editor.putInt(PREF_BT_CHANNEL, mBluetoothChannel);
         editor.apply();
 
     }
@@ -153,7 +179,14 @@ public abstract class MainMenuActivity extends ListActivity {
     protected void setHeaderText(int text) {
         ((TextView) findViewById(R.id.mainMenuHeader)).setText(text);
     }
-    protected void setHeaderText(String text) {
-        ((TextView) findViewById(R.id.mainMenuHeader)).setText(text);
+
+    // Check if the RFCOMM Channel is a number in range 1-30
+    private boolean isRFCOMMChannelValid(final String str) {
+        if (!str.matches("[0-9]+")) {
+            return false;
+        }
+
+        final int number = Integer.parseInt(str);
+        return number > 0 && number < 31;
     }
 }

@@ -21,6 +21,9 @@
     <string name="mainMenuCheckBoxBluetooth">Activer le bluetooth pour recevoir des données de position</string>
     <string name="mainMenuCheckBoxBluetoothReset">Eteindre le bluetooth à la fermeture de l\'application</string>
 
+    <string name="rfcommChannelTextView">Canal utilisé pour le Bluetooth (entre 1 et 30) :</string>
+    <string name="rfcommChannelWarning">Le canal spécifé doit être compris entre 1 et 30</string>
+
     <string name="bluetoothNotEnabled">Bluetooth non activé !</string>
     <string name="bluetoothConnectFailed">Impossible de se connecter !</string>
     <string name="bluetoothConnectSuccess">Connecté !</string>

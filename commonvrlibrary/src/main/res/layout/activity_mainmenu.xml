@@ -24,7 +24,7 @@
         android:text="@string/mainMenuHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         android:textStyle="bold"
         android:textColor="#ff909090"
         android:gravity="center"
@@ -33,21 +33,49 @@
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
-    <CheckBox
-        android:id="@+id/checkBoxBluetooth"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/mainMenuCheckBoxBluetooth"
-        android:onClick="onBTCheckBoxClicked" />
+        android:orientation="vertical"
+        android:layout_margin="5dp">
 
-    <CheckBox
-        android:id="@+id/checkBoxBluetoothReset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/mainMenuCheckBoxBluetoothReset"
-        android:onClick="onBTResetCheckBoxClicked" />
+        <CheckBox
+            android:id="@+id/checkBoxBluetooth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mainMenuCheckBoxBluetooth"
+            android:onClick="onBTCheckBoxClicked" />
+
+        <CheckBox
+            android:id="@+id/checkBoxBluetoothReset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mainMenuCheckBoxBluetoothReset"
+            android:onClick="onBTResetCheckBoxClicked" />
+
+        <!-- Allow the user to change the RFCOMM Channel used for connections -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/rfcommChannelTextView"
+                android:text="@string/rfcommChannelTextView" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/rfcommChannelEditText"
+                android:inputType="number" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
 </LinearLayout>

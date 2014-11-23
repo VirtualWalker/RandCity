@@ -32,6 +32,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +40,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
+import fr.tjdev.commonvrlibrary.util.FileHelper;
 import fr.tjdev.commonvrlibrary.util.RawResourceReader;
 
 /**
@@ -49,6 +51,14 @@ import fr.tjdev.commonvrlibrary.util.RawResourceReader;
  */
 public class BluetoothManager {
     private static final String TAG = "BluetoothManager";
+
+    // Names of files in the external storage
+    private static final String ALLOWED_SERVER_FILENAME = "allowed_bt_servers.txt";
+
+    // Default RFCOMM CHANNEL
+    public static final int DEFAULT_RFCOMM_CHANNEL = 22;
+
+    private int mRFCOMMChannel;
 
     // The activity that the manager depends on
     private final Activity mParentActivity;
@@ -84,7 +94,9 @@ public class BluetoothManager {
     private ConnectThread mConnectThread = null;
     private ConnectedThread mConnectedThread = null;
 
-    private static final UUID mUUID = UUID.fromString("c1b549ed-71a1-4b9b-870c-c48de880553e");
+    // This UUID represent a connection with the Serial Port Protocol
+    // Not used since we directly use the RFCOMM channel to connect with the server
+    private static final UUID mUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     private boolean mFirstScan = true;
 
@@ -178,13 +190,28 @@ public class BluetoothManager {
         }
     });
 
+    // Constructors
     public BluetoothManager(Activity activity) {
-        this(activity, false);
+        this(activity, false, DEFAULT_RFCOMM_CHANNEL);
     }
 
     public BluetoothManager(Activity activity, boolean resetOnDestroy) {
+        this(activity, resetOnDestroy, DEFAULT_RFCOMM_CHANNEL);
+    }
+
+    public BluetoothManager(Activity activity, int rfcommChannel) {
+        this(activity, false, rfcommChannel);
+    }
+
+    public BluetoothManager(Activity activity, boolean resetOnDestroy, int rfcommChannel) {
         mParentActivity = activity;
         mResetOnDestroy = resetOnDestroy;
+        mRFCOMMChannel = rfcommChannel;
+
+        // Copy some resources files if needed
+        if (!FileHelper.hasExternalStoragePrivateFile(mParentActivity, ALLOWED_SERVER_FILENAME)) {
+            FileHelper.createExternalStoragePrivateFile(mParentActivity, ALLOWED_SERVER_FILENAME, R.raw.allowed_bt_servers);
+        }
 
         // Check Bluetooth support
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -267,8 +294,19 @@ public class BluetoothManager {
         mBluetoothAdapter.startDiscovery();
     }
 
+    // The list of allowed servers is read from the external storage first, and from the
+    // app-resource if doesn't exists
     private void getAllowedServers() {
-        final String txtFile = RawResourceReader.readTextFileFromRawResource(mParentActivity, R.raw.allowed_bt_servers);
+        String txtFile = null;
+        if (FileHelper.hasExternalStoragePrivateFile(mParentActivity, ALLOWED_SERVER_FILENAME)) {
+            txtFile = FileHelper.readExternalStoragePrivateFile(mParentActivity, ALLOWED_SERVER_FILENAME);
+        }
+
+        // If the file is null, it's because there is no file on external storage, or an error
+        // So, read it from the resources.
+        if (txtFile == null) {
+            txtFile = RawResourceReader.readTextFileFromRawResource(mParentActivity, R.raw.allowed_bt_servers);
+        }
 
         final List<String> list = Arrays.asList(txtFile.split("\n"));
         mAllowedServers.clear();
@@ -291,7 +329,6 @@ public class BluetoothManager {
 
     // Create the ConnectedThread
     private void manageConnectedSocket(BluetoothSocket socket) {
-        if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
         if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
 
         mConnectedThread = new ConnectedThread(socket);
@@ -311,8 +348,15 @@ public class BluetoothManager {
 
             // Get a BluetoothSocket to connect with the given BluetoothDevice
             try {
-                tmp = device.createRfcommSocketToServiceRecord(mUUID);
-            } catch (IOException e) {
+                //tmp = device.createInsecureRfcommSocketToServiceRecord(mUUID);
+                tmp = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(device, mRFCOMMChannel);
+            /*} catch (IOException e) {
+                Log.e(TAG, "Exception:", e);*/
+            } catch (NoSuchMethodException e) {
+                Log.e(TAG, "Exception:", e);
+            } catch (IllegalAccessException e) {
+                Log.e(TAG, "Exception:", e);
+            } catch (InvocationTargetException e) {
                 Log.e(TAG, "Exception:", e);
             }
             mmSocket = tmp;
@@ -328,6 +372,7 @@ public class BluetoothManager {
                 mmSocket.connect();
             } catch (IOException connectException) {
                 // Unable to connect; close the socket and get out
+                Log.e(TAG, "Exception:", connectException);
                 try {
                     mmSocket.close();
                 } catch (IOException closeException) {
@@ -341,11 +386,6 @@ public class BluetoothManager {
 
             // Here, we are connected
             mParentActivity.sendBroadcast(new Intent(ACTION_CONNECT_SUCCESS));
-
-            // Reset the ConnectThread because we're done
-            synchronized (BluetoothManager.this) {
-                mConnectThread = null;
-            }
 
             // Do work to manage the connection (in a separate thread)
             manageConnectedSocket(mmSocket);
