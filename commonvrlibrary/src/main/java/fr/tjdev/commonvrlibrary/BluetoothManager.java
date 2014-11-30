@@ -63,7 +63,7 @@ public class BluetoothManager {
     // The activity that the manager depends on
     private final Activity mParentActivity;
 
-    // Custom handles
+    // Custom handlers
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int HANDLER_MESSAGE_READ = 2;
 
@@ -159,7 +159,7 @@ public class BluetoothManager {
                                 if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
 
                                 mConnectThread = new ConnectThread(btDevice);
-                                mConnectThread.run();
+                                mConnectThread.start();
 
                                 // Exit the loop
                                 mFirstScan = false;
@@ -181,20 +181,12 @@ public class BluetoothManager {
         }
     };
 
-    // Handler to receive read data
-    private final Handler mHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            if (msg.what != HANDLER_MESSAGE_READ) {
-                return false;
-            }
-            // At this stage, just print the received value
-            Log.d(TAG, "Received string :");
-            byte[] bts = ((byte[]) msg.obj);
-            Log.d(TAG, new String(bts));
-            return true;
-        }
-    });
+    // Custom listener used when data are received with bluetooth
+    public interface OnBluetoothDataListener {
+        void onNewData(final int walkSpeed, final int orientation);
+    }
+
+    private OnBluetoothDataListener mOnBTDataListener;
 
     // Constructors
     public BluetoothManager(Activity activity) {
@@ -278,6 +270,10 @@ public class BluetoothManager {
         }
     }
 
+    public void setOnBluetoothDataListener(OnBluetoothDataListener listener) {
+        mOnBTDataListener = listener;
+    }
+
     private void searchForDevices() {
         mDevices.clear();
 
@@ -339,7 +335,7 @@ public class BluetoothManager {
         if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
 
         mConnectedThread = new ConnectedThread(socket);
-        mConnectedThread.run();
+        mConnectedThread.start();
     }
 
     /**
@@ -357,14 +353,12 @@ public class BluetoothManager {
             try {
                 //tmp = device.createInsecureRfcommSocketToServiceRecord(mUUID);
                 tmp = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(device, mRFCOMMChannel);
-            /*} catch (IOException e) {
-                Log.e(TAG, "Exception:", e);*/
             } catch (NoSuchMethodException e) {
-                Log.e(TAG, "Exception:", e);
+                Log.e(TAG, "ConnectThread exception:", e);
             } catch (IllegalAccessException e) {
-                Log.e(TAG, "Exception:", e);
+                Log.e(TAG, "ConnectThread exception:", e);
             } catch (InvocationTargetException e) {
-                Log.e(TAG, "Exception:", e);
+                Log.e(TAG, "ConnectThread exception:", e);
             }
             mmSocket = tmp;
         }
@@ -379,11 +373,11 @@ public class BluetoothManager {
                 mmSocket.connect();
             } catch (IOException connectException) {
                 // Unable to connect; close the socket and get out
-                Log.e(TAG, "Exception:", connectException);
+                Log.e(TAG, "ConnectThread run exception:", connectException);
                 try {
                     mmSocket.close();
                 } catch (IOException closeException) {
-                    Log.e(TAG, "Exception:", closeException);
+                    Log.e(TAG, "ConnectThread run exception:", closeException);
                 }
                 // Send an error broadcast
                 mParentActivity.sendBroadcast(new Intent(ACTION_CONNECT_FAILED));
@@ -404,7 +398,7 @@ public class BluetoothManager {
             try {
                 mmSocket.close();
             } catch (IOException e) {
-                Log.e(TAG, "Exception:", e);
+                Log.e(TAG, "ConnectThread cancel exception:", e);
             }
         }
     }
@@ -428,7 +422,7 @@ public class BluetoothManager {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
             } catch (IOException e) {
-                Log.e(TAG, "Exception:", e);
+                Log.e(TAG, "ConnectedThread exception:", e);
             }
 
             mmInStream = tmpIn;
@@ -436,19 +430,35 @@ public class BluetoothManager {
         }
 
         public void run() {
-            byte[] buffer = new byte[1024];  // buffer store for the stream
-            int bytes; // bytes returned from read()
+            // Store 3 numbers
+            byte[] buffer = new byte[3];
+            int bytesCount; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs
             while (true) {
                 try {
                     // Read from the InputStream
-                    bytes = mmInStream.read(buffer);
-                    // Send the obtained bytes to the UI activity
-                    mHandler.obtainMessage(HANDLER_MESSAGE_READ, bytes, -1, buffer)
-                            .sendToTarget();
+                    bytesCount = mmInStream.read(buffer);
+                    if (bytesCount == 3) {
+                        // Check if the first byte is 0xFF
+                        final int messageCheck = buffer[0] & 0xFF;
+                        if (messageCheck == 0xFF) {
+                            // Get the speed and the orientation
+                            final int walkSpeed = buffer[1] & 0xFF;
+                            final int orientation = buffer[2] & 0xFF;
+                            final int realOrientation = (int) (orientation * (360.0f/255.0f));
+                            Log.d(TAG, "Receive data: speed=" + Integer.toString(walkSpeed)
+                                    + " orientation=" + Integer.toString(orientation)
+                                    + " (real orientation: " + Integer.toString(realOrientation) + ")");
+
+                            // Send data to the listener
+                            if (mOnBTDataListener != null) {
+                                mOnBTDataListener.onNewData(walkSpeed, realOrientation);
+                            }
+                        }
+                    }
                 } catch (IOException e) {
-                    Log.e(TAG, "Exception:", e);
+                    Log.e(TAG, "ConnectedThread run exception:", e);
                     break;
                 }
             }
@@ -459,7 +469,7 @@ public class BluetoothManager {
             try {
                 mmOutStream.write(bytes);
             } catch (IOException e) {
-                Log.e(TAG, "Exception:", e);
+                Log.e(TAG, "ConnectedThread write exception:", e);
             }
         }
 
@@ -468,7 +478,7 @@ public class BluetoothManager {
             try {
                 mmSocket.close();
             } catch (IOException e) {
-                Log.e(TAG, "Exception:", e);
+                Log.e(TAG, "ConnectedThread cancel exception:", e);
             }
         }
     }

@@ -21,6 +21,7 @@ package fr.tjdev.randcity.vrgame;
 import android.os.Bundle;
 import android.view.View;
 
+import fr.tjdev.commonvrlibrary.BluetoothManager;
 import fr.tjdev.commonvrlibrary.activities.VRActivity;
 import fr.tjdev.randcity.CommonGLRenderManager;
 import fr.tjdev.randcity.R;
@@ -45,6 +46,18 @@ public class VRGameActivity extends VRActivity {
                 toggleFog();
             }
         });
+
+        // Set the bluetooth listener
+        if (mBluetooth) {
+            mBTManager.setOnBluetoothDataListener(new BluetoothManager.OnBluetoothDataListener() {
+                @Override
+                public void onNewData(int walkSpeed, int orientation) {
+                    final float move = walkSpeed / 100.0f;
+                    mRenderer.eyeZ += move;
+                    mRenderer.lookZ += move;
+                }
+            });
+        }
     }
 
     @Override
