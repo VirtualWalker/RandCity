@@ -434,6 +434,10 @@ public class BluetoothManager {
             byte[] buffer = new byte[3];
             int bytesCount; // bytes returned from read()
 
+            // Used to show less debug output
+            final int printFrequency = 10;
+            int dataCount = 0;
+
             // Keep listening to the InputStream until an exception occurs
             while (true) {
                 try {
@@ -443,17 +447,25 @@ public class BluetoothManager {
                         // Check if the first byte is 0xFF
                         final int messageCheck = buffer[0] & 0xFF;
                         if (messageCheck == 0xFF) {
+                            dataCount++;
                             // Get the speed and the orientation
                             final int walkSpeed = buffer[1] & 0xFF;
                             final int orientation = buffer[2] & 0xFF;
                             final int realOrientation = (int) (orientation * (360.0f/255.0f));
-                            Log.d(TAG, "Receive data: speed=" + Integer.toString(walkSpeed)
-                                    + " orientation=" + Integer.toString(orientation)
-                                    + " (real orientation: " + Integer.toString(realOrientation) + ")");
 
-                            // Send data to the listener
-                            if (mOnBTDataListener != null) {
-                                mOnBTDataListener.onNewData(walkSpeed, realOrientation);
+                            if (dataCount == printFrequency) {
+                                dataCount = 0;
+                                // Don't show the message if received data are null
+                                if (walkSpeed != 0 || orientation != 0) {
+                                    Log.v(TAG, "Receive data: speed=" + Integer.toString(walkSpeed)
+                                            + " orientation=" + Integer.toString(orientation)
+                                            + " (real orientation: " + Integer.toString(realOrientation) + ")");
+                                }
+
+                                // Send data to the listener
+                                if (mOnBTDataListener != null) {
+                                    mOnBTDataListener.onNewData(walkSpeed, realOrientation);
+                                }
                             }
                         }
                     }

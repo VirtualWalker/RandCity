@@ -52,9 +52,15 @@ public class VRGameActivity extends VRActivity {
             mBTManager.setOnBluetoothDataListener(new BluetoothManager.OnBluetoothDataListener() {
                 @Override
                 public void onNewData(int walkSpeed, int orientation) {
-                    final float move = walkSpeed / 100.0f;
-                    mRenderer.eyeZ += move;
-                    mRenderer.lookZ += move;
+                    final float move = walkSpeed / 80.0f;
+                    final float moveZ = (float) (Math.cos(Math.toRadians(orientation)) * move);
+                    final float moveX = (float) (Math.sin(Math.toRadians(orientation)) * move);
+
+                    mRenderer.lookZ -= moveZ;
+                    mRenderer.eyeZ -= moveZ;
+
+                    mRenderer.lookX += moveX;
+                    mRenderer.eyeX += moveX;
                 }
             });
         }
