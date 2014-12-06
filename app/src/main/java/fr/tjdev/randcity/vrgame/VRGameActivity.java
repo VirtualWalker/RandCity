@@ -56,11 +56,7 @@ public class VRGameActivity extends VRActivity {
                     final float moveZ = (float) (Math.cos(Math.toRadians(orientation)) * move);
                     final float moveX = (float) (Math.sin(Math.toRadians(orientation)) * move);
 
-                    mRenderer.lookZ -= moveZ;
-                    mRenderer.eyeZ -= moveZ;
-
-                    mRenderer.lookX += moveX;
-                    mRenderer.eyeX += moveX;
+                    mRenderer.movePlayer(moveX, moveZ);
                 }
             });
         }

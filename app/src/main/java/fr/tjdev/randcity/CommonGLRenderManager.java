@@ -20,6 +20,7 @@ package fr.tjdev.randcity;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.RectF;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.os.SystemClock;
@@ -67,6 +68,7 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
     protected int mRoadTextureDataHandle;
 
     protected ArrayList<Building> mBuildings;
+    protected ArrayList<RectF> mRestrictedAreas;
     // Contains all buffers used for buildings
     protected int[] mBuildVBOBuffers;
     // Store all different textures used by buildings
@@ -117,6 +119,8 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
     // This function will generate buildings and textures
     protected void generateTerrain() {
         mBuildings = Building.generateAllBuildings();
+        // Generate restricted areas
+        mRestrictedAreas = Building.generateRestrictedAreas(mBuildings);
 
         // Define the treasure pos
         // We replace a random building by the treasure, and get its positions
@@ -124,7 +128,7 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
         int randIndex = rand.nextInt(mBuildings.size());
         // Block the treasure from spawning on the sides of the city
         final float maxCenterCoordinates = GenUtil.HALF_GRID_SIZE - GenUtil.HALF_BUILD_SQUARE_WIDTH;
-        while(mBuildings.get(randIndex).centerCoordinates[0] == maxCenterCoordinates ||
+        while (mBuildings.get(randIndex).centerCoordinates[0] == maxCenterCoordinates ||
                 mBuildings.get(randIndex).centerCoordinates[0] == -maxCenterCoordinates ||
                 mBuildings.get(randIndex).centerCoordinates[2] == maxCenterCoordinates ||
                 mBuildings.get(randIndex).centerCoordinates[2] == -maxCenterCoordinates) {
@@ -142,15 +146,49 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
         // Generate textures
         // Handles to these textures are generated in onSurfaceCreated() method.
         int i;
-        for(i=0 ; i < 8 ; ++i) {
+        for (i=0 ; i < 8 ; ++i) {
             mBuildTextureBitmaps[i] = Building.generateFuzzyTexture();
         }
-        for(; i < 16 ; ++i) {
+        for (; i < 16 ; ++i) {
             mBuildTextureBitmaps[i] = Building.generateLinearTexture();
         }
 
         // Generate road texture
         mRoadTextureBitmap = Road.generateTexture();
+    }
+
+    // Utility function to move the player
+    // This function check for buildings positions
+    public void movePlayer(final float moveX, final float moveZ) {
+        movePlayerX(moveX);
+        movePlayerZ(moveZ);
+    }
+
+    public void movePlayerX(final float moveX) {
+        lookX += moveX;
+        eyeX += moveX;
+
+        // Check if the new x pos is in a restricted area
+        /*for (RectF area : mRestrictedAreas) {
+            if (area.left < eyeX && area.right > eyeX) {
+                // Re-init the value since we are in a building
+                lookX -= moveX;
+                eyeX -= moveX;
+            }
+        }*/
+    }
+
+    public void movePlayerZ(final float moveZ) {
+        lookZ -= moveZ;
+        eyeZ -= moveZ;
+
+        // Check if the new z pos is in a restricted area
+        /*for (RectF area : mRestrictedAreas) {
+            if (area.bottom > eyeX && area.top < eyeX) {
+                lookZ += moveZ;
+                eyeZ += moveZ;
+            }
+        }*/
     }
 
     public void onSurfaceCreated() {
@@ -325,7 +363,7 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
     // Check the fog parameter
     protected void checkFog() {
         // Enable (or disable) the fog
-        if(enableFog) {
+        if (enableFog) {
             GLES20.glUniform1f(mFogFlagHandle, 1.0f);
         } else {
             GLES20.glUniform1f(mFogFlagHandle, 0.0f);

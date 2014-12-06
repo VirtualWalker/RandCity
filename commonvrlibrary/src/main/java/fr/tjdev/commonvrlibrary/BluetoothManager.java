@@ -25,8 +25,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
 import java.io.IOException;
@@ -37,8 +35,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.UUID;
 
 import fr.tjdev.commonvrlibrary.util.FileHelper;
 import fr.tjdev.commonvrlibrary.util.RawResourceReader;
@@ -55,7 +51,7 @@ public class BluetoothManager {
     // Names of files in the external storage
     private static final String ALLOWED_SERVER_FILENAME = "allowed_bt_servers.txt";
 
-    // Default RFCOMM CHANNEL
+    // Default RFCOMM Channel
     public static final int DEFAULT_RFCOMM_CHANNEL = 22;
 
     private int mRFCOMMChannel;
@@ -65,7 +61,6 @@ public class BluetoothManager {
 
     // Custom handlers
     private static final int REQUEST_ENABLE_BT = 1;
-    private static final int HANDLER_MESSAGE_READ = 2;
 
     // Custom Broadcasts (associated strings)
     // The activity can create a BroadcastReceiver to listen to these actions
@@ -99,7 +94,7 @@ public class BluetoothManager {
 
     // This UUID represent a connection with the Serial Port Protocol
     // Not used since we directly use the RFCOMM channel to connect with the server
-    private static final UUID mUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    //private static final UUID mUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     private boolean mFirstScan = true;
 
@@ -276,20 +271,6 @@ public class BluetoothManager {
 
     private void searchForDevices() {
         mDevices.clear();
-
-        //
-        // Querying paired devices
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-        // If there are paired devices
-        if (pairedDevices.size() > 0) {
-            // Loop through paired devices
-            for (BluetoothDevice device : pairedDevices) {
-                // Add the address
-                mDevices.add(device);
-            }
-        }
-
-        //
         // Search for new devices
         // The end of this function will be executed in the mScanFinishedReceiver
         mParentActivity.sendBroadcast(new Intent(ACTION_SEARCH_START));
@@ -300,14 +281,12 @@ public class BluetoothManager {
     // The list of allowed servers is read from the external storage first, and from the
     // app-resource if doesn't exists
     private void getAllowedServers() {
-        String txtFile = null;
-        if (FileHelper.hasExternalStoragePrivateFile(mParentActivity, ALLOWED_SERVER_FILENAME)) {
+        String txtFile;
+        boolean hasExternalStorage = FileHelper.hasExternalStoragePrivateFile(mParentActivity, ALLOWED_SERVER_FILENAME);
+        if (hasExternalStorage) {
             txtFile = FileHelper.readExternalStoragePrivateFile(mParentActivity, ALLOWED_SERVER_FILENAME);
-        }
-
-        // If the file is null, it's because there is no file on external storage, or an error
-        // So, read it from the resources.
-        if (txtFile == null) {
+        } else {
+            // Read the file from the resources, since there is no external storage
             txtFile = RawResourceReader.readTextFileFromRawResource(mParentActivity, R.raw.allowed_bt_servers);
         }
 
@@ -332,7 +311,9 @@ public class BluetoothManager {
 
     // Create the ConnectedThread
     private void manageConnectedSocket(BluetoothSocket socket) {
-        if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel(); mConnectedThread = null;
+        }
 
         mConnectedThread = new ConnectedThread(socket);
         mConnectedThread.start();
@@ -372,16 +353,17 @@ public class BluetoothManager {
                 // until it succeeds or throws an exception
                 mmSocket.connect();
             } catch (IOException connectException) {
-                // Unable to connect; close the socket and get out
+                // Unable to connect, close the socket and get out
                 Log.e(TAG, "ConnectThread run exception:", connectException);
-                try {
-                    mmSocket.close();
-                } catch (IOException closeException) {
-                    Log.e(TAG, "ConnectThread run exception:", closeException);
-                }
                 // Send an error broadcast
                 mParentActivity.sendBroadcast(new Intent(ACTION_CONNECT_FAILED));
-                mBluetoothAdapter.disable();
+
+                try {
+                    mmSocket.close();
+                    mBluetoothAdapter.disable();
+                } catch (IOException closeException) {
+                    Log.e(TAG, "ConnectThread run exception 2:", closeException);
+                }
                 return;
             }
 
@@ -453,6 +435,7 @@ public class BluetoothManager {
                             final int orientation = buffer[2] & 0xFF;
                             final int realOrientation = (int) (orientation * (360.0f/255.0f));
 
+                            // Show debug output only every second
                             if (dataCount == printFrequency) {
                                 dataCount = 0;
                                 // Don't show the message if received data are null
@@ -461,11 +444,11 @@ public class BluetoothManager {
                                             + " orientation=" + Integer.toString(orientation)
                                             + " (real orientation: " + Integer.toString(realOrientation) + ")");
                                 }
+                            }
 
-                                // Send data to the listener
-                                if (mOnBTDataListener != null) {
-                                    mOnBTDataListener.onNewData(walkSpeed, realOrientation);
-                                }
+                            // Send data to the listener
+                            if (mOnBTDataListener != null) {
+                                mOnBTDataListener.onNewData(walkSpeed, realOrientation);
                             }
                         }
                     }
@@ -476,16 +459,7 @@ public class BluetoothManager {
             }
         }
 
-        /* Call this from the main activity to send data to the remote device */
-        public void write(byte[] bytes) {
-            try {
-                mmOutStream.write(bytes);
-            } catch (IOException e) {
-                Log.e(TAG, "ConnectedThread write exception:", e);
-            }
-        }
-
-        /* Call this from the main activity to shutdown the connection */
+        // Call this to shutdown the connection
         public void cancel() {
             try {
                 mmSocket.close();

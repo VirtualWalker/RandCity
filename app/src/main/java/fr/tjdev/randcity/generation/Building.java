@@ -22,6 +22,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Region;
 
 import java.util.ArrayList;
@@ -239,6 +240,21 @@ public class Building {
         }
 
         return builds;
+    }
+
+    /**
+     * Generate a list of areas where the buildings are. Used to prevent user to walk inside buildings
+     */
+    static public ArrayList<RectF> generateRestrictedAreas(ArrayList<Building> buildings) {
+        ArrayList<RectF> restrictedAreas = new ArrayList<RectF>();
+
+        for (Building build : buildings) {
+            restrictedAreas.add(new RectF(build.centerCoordinates[0] - GenUtil.HALF_BUILD_SQUARE_WIDTH,
+                    build.centerCoordinates[2] - GenUtil.HALF_BUILD_SQUARE_WIDTH,
+                    build.centerCoordinates[0] + GenUtil.HALF_BUILD_SQUARE_WIDTH,
+                    build.centerCoordinates[2] + GenUtil.HALF_BUILD_SQUARE_WIDTH));
+        }
+        return restrictedAreas;
     }
 
     /**
