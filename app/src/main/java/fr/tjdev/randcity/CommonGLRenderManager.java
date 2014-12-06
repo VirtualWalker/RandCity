@@ -160,35 +160,29 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
     // Utility function to move the player
     // This function check for buildings positions
     public void movePlayer(final float moveX, final float moveZ) {
-        movePlayerX(moveX);
-        movePlayerZ(moveZ);
-    }
-
-    public void movePlayerX(final float moveX) {
         lookX += moveX;
         eyeX += moveX;
 
-        // Check if the new x pos is in a restricted area
-        /*for (RectF area : mRestrictedAreas) {
-            if (area.left < eyeX && area.right > eyeX) {
-                // Re-init the value since we are in a building
-                lookX -= moveX;
-                eyeX -= moveX;
-            }
-        }*/
-    }
-
-    public void movePlayerZ(final float moveZ) {
         lookZ -= moveZ;
         eyeZ -= moveZ;
 
-        // Check if the new z pos is in a restricted area
-        /*for (RectF area : mRestrictedAreas) {
-            if (area.bottom > eyeX && area.top < eyeX) {
-                lookZ += moveZ;
-                eyeZ += moveZ;
+        // Check if we are in a building
+        for (RectF area : mRestrictedAreas) {
+            if (area.contains(eyeX, eyeZ)) {
+                // Check if the wrong value is the X or the Z and restore old values
+                if (area.left < eyeX && area.right > eyeX) {
+                    //Log.d(TAG, "Bad X pos: " + Float.toString(eyeX) + " (area: " + Float.toString(area.left) + " / " + Float.toString(area.right) + ")");
+                    lookX -= moveX;
+                    eyeX -= moveX;
+                }
+                if (area.top < eyeZ && area.bottom > eyeZ) {
+                    //Log.d(TAG, "Bad Z pos: " + Float.toString(eyeZ) + " (area: " + Float.toString(area.bottom) + " / " + Float.toString(area.top) + ")");
+                    lookZ += moveZ;
+                    eyeZ += moveZ;
+                }
             }
-        }*/
+        }
+
     }
 
     public void onSurfaceCreated() {

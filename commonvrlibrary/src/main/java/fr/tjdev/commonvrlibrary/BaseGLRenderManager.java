@@ -53,15 +53,15 @@ public class BaseGLRenderManager {
     protected int mProgramHandle;
 
     // Used in the setLookAt function.
-    // Position the eye in front of the origin.
+    // Position the eye.
     public volatile float eyeX = 0.0f;
     public volatile float eyeY = 10.0f;
-    public volatile float eyeZ = 0.01f;
+    public volatile float eyeZ = 0.0f;
     // We are looking toward this point
     public volatile float lookX = 0.0f;
-    public volatile float lookY = 10.0f;
-    public volatile float lookZ = 0.0f;
-    // Set our up vector. This is where our head would be pointing were we holding the camera.
+    public volatile float lookY = eyeY;
+    public volatile float lookZ = eyeZ - 1.0f; // Just look at the front
+    // Set up vector.
     public volatile float upX = 0.0f;
     public volatile float upY = 1.0f;
     public volatile float upZ = 0.0f;

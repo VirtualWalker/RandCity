@@ -248,11 +248,13 @@ public class Building {
     static public ArrayList<RectF> generateRestrictedAreas(ArrayList<Building> buildings) {
         ArrayList<RectF> restrictedAreas = new ArrayList<RectF>();
 
+        // All areas contains a margin of 0.8 on each side
+        final float margin = 0.8f;
         for (Building build : buildings) {
-            restrictedAreas.add(new RectF(build.centerCoordinates[0] - GenUtil.HALF_BUILD_SQUARE_WIDTH,
-                    build.centerCoordinates[2] - GenUtil.HALF_BUILD_SQUARE_WIDTH,
-                    build.centerCoordinates[0] + GenUtil.HALF_BUILD_SQUARE_WIDTH,
-                    build.centerCoordinates[2] + GenUtil.HALF_BUILD_SQUARE_WIDTH));
+            restrictedAreas.add(new RectF(build.centerCoordinates[0] - GenUtil.HALF_BUILD_SQUARE_WIDTH - margin,
+                    build.centerCoordinates[2] - GenUtil.HALF_BUILD_SQUARE_WIDTH - margin,
+                    build.centerCoordinates[0] + GenUtil.HALF_BUILD_SQUARE_WIDTH + margin,
+                    build.centerCoordinates[2] + GenUtil.HALF_BUILD_SQUARE_WIDTH + margin));
         }
         return restrictedAreas;
     }

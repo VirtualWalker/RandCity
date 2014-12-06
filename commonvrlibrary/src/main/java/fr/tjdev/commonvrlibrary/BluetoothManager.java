@@ -29,7 +29,6 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -391,24 +390,20 @@ public class BluetoothManager {
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
 
         public ConnectedThread(BluetoothSocket socket) {
             mmSocket = socket;
             InputStream tmpIn = null;
-            OutputStream tmpOut = null;
 
             // Get the input and output streams, using temp objects because
             // member streams are final
             try {
                 tmpIn = socket.getInputStream();
-                tmpOut = socket.getOutputStream();
             } catch (IOException e) {
                 Log.e(TAG, "ConnectedThread exception:", e);
             }
 
             mmInStream = tmpIn;
-            mmOutStream = tmpOut;
         }
 
         public void run() {
@@ -454,6 +449,12 @@ public class BluetoothManager {
                     }
                 } catch (IOException e) {
                     Log.e(TAG, "ConnectedThread run exception:", e);
+                    try {
+                        mmSocket.close();
+                        mBluetoothAdapter.disable();
+                    } catch (IOException closeException) {
+                        Log.e(TAG, "ConnectedThread run exception 2:", closeException);
+                    }
                     break;
                 }
             }
