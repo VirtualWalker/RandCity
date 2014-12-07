@@ -119,8 +119,6 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
     // This function will generate buildings and textures
     protected void generateTerrain() {
         mBuildings = Building.generateAllBuildings();
-        // Generate restricted areas
-        mRestrictedAreas = Building.generateRestrictedAreas(mBuildings);
 
         // Define the treasure pos
         // We replace a random building by the treasure, and get its positions
@@ -136,12 +134,16 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
         }
 
         mTreasurePos = mBuildings.get(randIndex).centerCoordinates;
-
-        Log.d(TAG, "Treasure position set to :");
-        Log.d(TAG, "x=" + Float.toString(mTreasurePos[0]) + " y=" + Float.toString(mTreasurePos[1]) + " z=" + Float.toString(mTreasurePos[2]));
-
         // Remove the building from the list.
         mBuildings.remove(randIndex);
+
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "Treasure position set to :");
+            Log.d(TAG, "x=" + Float.toString(mTreasurePos[0]) + " y=" + Float.toString(mTreasurePos[1]) + " z=" + Float.toString(mTreasurePos[2]));
+        }
+
+        // Generate restricted areas
+        mRestrictedAreas = Building.generateRestrictedAreas(mBuildings, mTreasurePos);
 
         // Generate textures
         // Handles to these textures are generated in onSurfaceCreated() method.
@@ -171,12 +173,16 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
             if (area.contains(eyeX, eyeZ)) {
                 // Check if the wrong value is the X or the Z and restore old values
                 if (area.left < eyeX && area.right > eyeX) {
-                    //Log.d(TAG, "Bad X pos: " + Float.toString(eyeX) + " (area: " + Float.toString(area.left) + " / " + Float.toString(area.right) + ")");
+                    if (BuildConfig.DEBUG) {
+                        Log.v(TAG, "Bad X pos: " + Float.toString(eyeX) + " (area: " + Float.toString(area.left) + " / " + Float.toString(area.right) + ")");
+                    }
                     lookX -= moveX;
                     eyeX -= moveX;
                 }
                 if (area.top < eyeZ && area.bottom > eyeZ) {
-                    //Log.d(TAG, "Bad Z pos: " + Float.toString(eyeZ) + " (area: " + Float.toString(area.bottom) + " / " + Float.toString(area.top) + ")");
+                    if (BuildConfig.DEBUG) {
+                        Log.v(TAG, "Bad Z pos: " + Float.toString(eyeZ) + " (area: " + Float.toString(area.bottom) + " / " + Float.toString(area.top) + ")");
+                    }
                     lookZ += moveZ;
                     eyeZ += moveZ;
                 }

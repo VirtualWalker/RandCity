@@ -29,6 +29,7 @@ import com.google.vrtoolkit.cardboard.CardboardActivity;
 import com.google.vrtoolkit.cardboard.CardboardView;
 
 import fr.tjdev.commonvrlibrary.BluetoothManager;
+import fr.tjdev.commonvrlibrary.BuildConfig;
 import fr.tjdev.commonvrlibrary.R;
 import fr.tjdev.commonvrlibrary.VROverlayView;
 import fr.tjdev.commonvrlibrary.util.OpenGLCheck;
@@ -68,7 +69,9 @@ public abstract class VRActivity extends CardboardActivity {
         // Get the bluetooth param
         Bundle bundle = getIntent().getExtras();
         if (bundle.getBoolean(MainMenuActivity.PREF_BT, false)) {
-            Log.d(TAG, "Bluetooth support enabled !");
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "Bluetooth support enabled !");
+            }
             mBluetooth = true;
             mBTManager = new BluetoothManager(this, bundle.getInt(MainMenuActivity.PREF_BT_CHANNEL, BluetoothManager.DEFAULT_RFCOMM_CHANNEL));
 

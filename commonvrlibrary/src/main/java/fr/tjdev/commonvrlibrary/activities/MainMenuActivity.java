@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 import fr.tjdev.commonvrlibrary.BluetoothManager;
+import fr.tjdev.commonvrlibrary.BuildConfig;
 import fr.tjdev.commonvrlibrary.FullScreenManager;
 import fr.tjdev.commonvrlibrary.R;
 
@@ -92,7 +93,9 @@ public abstract class MainMenuActivity extends ListActivity {
         findViewById(R.id.exitButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "Exit the application ...");
+                if (BuildConfig.DEBUG) {
+                    Log.d(TAG, "Exit the application ...");
+                }
                 finish();
             }
         });
@@ -107,8 +110,7 @@ public abstract class MainMenuActivity extends ListActivity {
 
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 // Check for RFCOMM Channel here
                 if (!isRFCOMMChannelValid(mRFCOMMChannelEdit.getText().toString())) {
@@ -116,7 +118,9 @@ public abstract class MainMenuActivity extends ListActivity {
                     return;
                 }
                 mBluetoothChannel = Integer.parseInt(mRFCOMMChannelEdit.getText().toString());
-                Log.d(TAG, "Using RFCOMM channel: " + Integer.toString(mBluetoothChannel));
+                if (BuildConfig.DEBUG) {
+                    Log.d(TAG, "Using RFCOMM channel: " + Integer.toString(mBluetoothChannel));
+                }
 
                 final Class<? extends Activity> activityToLaunch = mActivityMapping.get(position);
 

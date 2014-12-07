@@ -101,14 +101,18 @@ public class BluetoothManager {
     public static void disableBluetooth() {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter != null) {
-            Log.d(TAG, "Disabling bluetooth.");
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "Disabling bluetooth.");
+            }
             adapter.disable();
         }
     }
     public static void enableBluetooth() {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter != null) {
-            Log.d(TAG, "Enabling bluetooth.");
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "Enabling bluetooth.");
+            }
             adapter.enable();
         }
     }
@@ -131,13 +135,17 @@ public class BluetoothManager {
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 if (mFirstScan) {
-                    Log.d(TAG, "Discovery finished");
+                    if (BuildConfig.DEBUG) {
+                        Log.d(TAG, "Discovery finished");
+                    }
                     mParentActivity.sendBroadcast(new Intent(ACTION_SEARCH_END));
 
                     // Print devices addresses
-                    Log.d(TAG, "Near devices: ");
-                    for (BluetoothDevice device : mDevices) {
-                        Log.d(TAG, device.getAddress() + " (" + device.getName() + ")");
+                    if (BuildConfig.DEBUG) {
+                        Log.d(TAG, "Near devices: ");
+                        for (BluetoothDevice device : mDevices) {
+                            Log.d(TAG, device.getAddress() + " (" + device.getName() + ")");
+                        }
                     }
 
                     // The scan is finished, check if a device is in the mAllowedServers list.
@@ -146,7 +154,9 @@ public class BluetoothManager {
                             if (btDevice.getAddress().equals(allowed)) {
                                 // A device were found
                                 mDeviceAddress = btDevice.getAddress();
-                                Log.d(TAG, "Use device: " + mDeviceAddress);
+                                if (BuildConfig.DEBUG) {
+                                    Log.d(TAG, "Use device: " + mDeviceAddress);
+                                }
 
                                 // Clean up previous connected devices
                                 if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
@@ -212,7 +222,9 @@ public class BluetoothManager {
             mParentActivity.finish();
             return;
         }
-        Log.d(TAG, "This device supports Bluetooth.");
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "This device supports Bluetooth.");
+        }
 
         // Get a list of allowed servers
         getAllowedServers();
@@ -228,10 +240,14 @@ public class BluetoothManager {
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             mParentActivity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            Log.d(TAG, "Enabling Bluetooth ...");
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "Enabling Bluetooth ...");
+            }
         } else {
             // The bluetooth is already on.
-            Log.d(TAG, "Bluetooth is already enabled.");
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "Bluetooth is already enabled.");
+            }
             searchForDevices();
         }
     }
@@ -240,12 +256,16 @@ public class BluetoothManager {
     public boolean onActivityResult(int requestCode, int resultCode) {
         if (requestCode == REQUEST_ENABLE_BT) {
            if (resultCode == Activity.RESULT_OK) {
-               Log.d(TAG, "Successfully enabling Bluetooth.");
+               if (BuildConfig.DEBUG) {
+                   Log.d(TAG, "Successfully enabling Bluetooth.");
+               }
                mParentActivity.sendBroadcast(new Intent(ACTION_BT_ENABLED));
                searchForDevices();
                return true;
            } else {
-               Log.e(TAG, "Error when enabling Bluetooth !");
+               if (BuildConfig.DEBUG) {
+                   Log.e(TAG, "Error when enabling Bluetooth !");
+               }
                mParentActivity.sendBroadcast(new Intent(ACTION_BT_NOT_ENABLED));
                return false;
            }
@@ -273,7 +293,9 @@ public class BluetoothManager {
         // Search for new devices
         // The end of this function will be executed in the mScanFinishedReceiver
         mParentActivity.sendBroadcast(new Intent(ACTION_SEARCH_START));
-        Log.d(TAG, "Starting discovery ...");
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "Starting discovery ...");
+        }
         mBluetoothAdapter.startDiscovery();
     }
 
@@ -302,9 +324,11 @@ public class BluetoothManager {
             }
         }
 
-        Log.d(TAG, "Allowed Bluetooth servers: ");
-        for (String server : mAllowedServers) {
-            Log.d(TAG, server);
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "Allowed Bluetooth servers: ");
+            for (String server : mAllowedServers) {
+                Log.d(TAG, server);
+            }
         }
     }
 
@@ -368,7 +392,9 @@ public class BluetoothManager {
 
             // Here, we are connected
             mParentActivity.sendBroadcast(new Intent(ACTION_CONNECT_SUCCESS));
-            Log.d(TAG, "Connected to device: " + mDeviceAddress);
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "Connected to device: " + mDeviceAddress);
+            }
 
             // Do work to manage the connection (in a separate thread)
             manageConnectedSocket(mmSocket);
@@ -424,20 +450,22 @@ public class BluetoothManager {
                         // Check if the first byte is 0xFF
                         final int messageCheck = buffer[0] & 0xFF;
                         if (messageCheck == 0xFF) {
-                            dataCount++;
                             // Get the speed and the orientation
                             final int walkSpeed = buffer[1] & 0xFF;
                             final int orientation = buffer[2] & 0xFF;
                             final int realOrientation = (int) (orientation * (360.0f/255.0f));
 
-                            // Show debug output only every second
-                            if (dataCount == printFrequency) {
-                                dataCount = 0;
-                                // Don't show the message if received data are null
-                                if (walkSpeed != 0 || orientation != 0) {
-                                    Log.v(TAG, "Receive data: speed=" + Integer.toString(walkSpeed)
-                                            + " orientation=" + Integer.toString(orientation)
-                                            + " (real orientation: " + Integer.toString(realOrientation) + ")");
+                            if (BuildConfig.DEBUG) {
+                                dataCount++;
+                                // Show debug output only every second
+                                if (dataCount == printFrequency) {
+                                    dataCount = 0;
+                                    // Don't show the message if received data are null
+                                    if (walkSpeed != 0 || orientation != 0) {
+                                        Log.v(TAG, "Receive data: speed=" + Integer.toString(walkSpeed)
+                                                + " orientation=" + Integer.toString(orientation)
+                                                + " (real orientation: " + Integer.toString(realOrientation) + ")");
+                                    }
                                 }
                             }
 
