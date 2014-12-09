@@ -21,7 +21,7 @@ android {
     }
     buildTypes {
         release {
-            runProguard true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             //noinspection GroovyAssignabilityCheck
             signingConfig signingConfigs.release
