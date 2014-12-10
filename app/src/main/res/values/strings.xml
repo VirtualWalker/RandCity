@@ -37,4 +37,6 @@
     <string name="fogOn">Fog enabled</string>
     <string name="fogOff">Fog disabled</string>
 
+    <string name="treasureFound">Treasure found !</string>
+
 </resources>

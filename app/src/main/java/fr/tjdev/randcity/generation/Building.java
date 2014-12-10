@@ -251,8 +251,8 @@ public class Building {
         // All areas contains a margin of 0.8 on each side
         final float margin = 0.8f;
         for (Building build : buildings) {
-            // Check if the building is the treasure
-            if (build.centerCoordinates == treasureCenterCoordinates) {
+            // Check if the building is not the treasure
+            if (build.centerCoordinates != treasureCenterCoordinates) {
                 restrictedAreas.add(new RectF(build.centerCoordinates[0] - GenUtil.HALF_BUILD_SQUARE_WIDTH - margin,
                         build.centerCoordinates[2] - GenUtil.HALF_BUILD_SQUARE_WIDTH - margin,
                         build.centerCoordinates[0] + GenUtil.HALF_BUILD_SQUARE_WIDTH + margin,

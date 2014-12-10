@@ -103,11 +103,22 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
     // Store the position of the "treasure".
     // In fact, the treasure is a special building that you must reach to end the game.
     protected float[] mTreasurePos;
+    protected RectF mTreasureArea;
     // Store the rotation of the light at the treasure
     protected float mLightMoveAngle = 0.0f;
 
     // Used to toggle the fog
     public volatile boolean enableFog = true;
+
+    // Custom listener called when the treasure is found
+    public interface OnTreasureFoundListener {
+        void onTreasureFound();
+    }
+    protected OnTreasureFoundListener mTreasureFoundListener;
+
+    public void setOnTreasureFoundListener(OnTreasureFoundListener listener) {
+        mTreasureFoundListener = listener;
+    }
 
     public CommonGLRenderManager(final Context activityContext) {
         mActivityContext = activityContext;
@@ -144,6 +155,10 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
 
         // Generate restricted areas
         mRestrictedAreas = Building.generateRestrictedAreas(mBuildings, mTreasurePos);
+        mTreasureArea = new RectF(mTreasurePos[0] - GenUtil.HALF_BUILD_SQUARE_WIDTH,
+                mTreasurePos[2] - GenUtil.HALF_BUILD_SQUARE_WIDTH,
+                mTreasurePos[0] + GenUtil.HALF_BUILD_SQUARE_WIDTH,
+                mTreasurePos[2] + GenUtil.HALF_BUILD_SQUARE_WIDTH);
 
         // Generate textures
         // Handles to these textures are generated in onSurfaceCreated() method.
@@ -162,15 +177,21 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
     // Utility function to move the player
     // This function check for buildings positions
     public void movePlayer(final float moveX, final float moveZ) {
+
+
         lookX += moveX;
         eyeX += moveX;
 
         lookZ -= moveZ;
         eyeZ -= moveZ;
 
+        // Used to know if we are in a restricted area or not
+        boolean inRestrictedArea = false;
+
         // Check if we are in a building
         for (RectF area : mRestrictedAreas) {
             if (area.contains(eyeX, eyeZ)) {
+                inRestrictedArea = true;
                 // Check if the wrong value is the X or the Z and restore old values
                 if (area.left < eyeX && area.right > eyeX) {
                     if (BuildConfig.DEBUG) {
@@ -186,6 +207,20 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
                     lookZ += moveZ;
                     eyeZ += moveZ;
                 }
+            }
+        }
+
+        // Check if we are at the treasure pos
+        if(!inRestrictedArea && mTreasureArea.contains(eyeX, eyeY))
+        {
+            // Here the treasure is found !
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "Treasure found by the player !");
+            }
+
+            // Call the corresponding listener (if exists)
+            if (mTreasureFoundListener != null) {
+                mTreasureFoundListener.onTreasureFound();
             }
         }
 

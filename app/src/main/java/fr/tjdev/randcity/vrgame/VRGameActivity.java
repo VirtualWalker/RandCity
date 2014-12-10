@@ -19,6 +19,7 @@
 package fr.tjdev.randcity.vrgame;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 
 import fr.tjdev.commonvrlibrary.BluetoothManager;
@@ -38,6 +39,22 @@ public class VRGameActivity extends VRActivity {
 
         mRenderer = new VRRenderer(this);
         enableRenderer(mRenderer);
+
+        mRenderer.setOnTreasureFoundListener(new CommonGLRenderManager.OnTreasureFoundListener() {
+            @Override
+            public void onTreasureFound() {
+                mOverlayView.show3DToast(getString(R.string.treasureFound));
+
+                // Schedule the exit of the game
+                Handler scheduler = new Handler();
+                scheduler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                }, 1500);
+            }
+        });
 
         // Toggle fog on click
         mVrView.setOnClickListener(new View.OnClickListener() {

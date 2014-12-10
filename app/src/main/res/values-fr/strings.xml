@@ -28,4 +28,6 @@
     <string name="fogOn">Brouillard activé</string>
     <string name="fogOff">Brouillard enlevé</string>
 
+    <string name="treasureFound">Trésor trouvé !</string>
+
 </resources>
