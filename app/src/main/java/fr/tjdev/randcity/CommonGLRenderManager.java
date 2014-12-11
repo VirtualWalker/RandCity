@@ -210,19 +210,33 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
             }
         }
 
-        // Check if we are at the treasure pos
-        if(!inRestrictedArea && mTreasureArea.contains(eyeX, eyeY))
-        {
-            // Here the treasure is found !
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "Treasure found by the player !");
+        if (!inRestrictedArea) {
+            // Check if we are at the treasure pos
+            if (mTreasureArea.contains(eyeX, eyeY)) {
+                // Here the treasure is found !
+                if (BuildConfig.DEBUG) {
+                    Log.d(TAG, "Treasure found by the player !");
+                }
+
+                // Call the corresponding listener (if exists)
+                if (mTreasureFoundListener != null) {
+                    mTreasureFoundListener.onTreasureFound();
+                }
             }
 
-            // Call the corresponding listener (if exists)
-            if (mTreasureFoundListener != null) {
-                mTreasureFoundListener.onTreasureFound();
+            // Check if the player is out of the city
+            else if (eyeX >= GenUtil.HALF_GRID_SIZE || eyeX <= -GenUtil.HALF_GRID_SIZE) {
+                lookX -= moveX;
+                eyeX -= moveX;
+            } else if (eyeZ >= GenUtil.HALF_GRID_SIZE || eyeZ <= -GenUtil.HALF_GRID_SIZE) {
+                lookZ += moveZ;
+                eyeZ += moveZ;
             }
         }
+
+
+
+
 
     }
 

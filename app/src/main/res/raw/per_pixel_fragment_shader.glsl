@@ -45,4 +45,3 @@ void main()
 
     gl_FragColor = u_FogFlag * mix(fogColor, finalColor, fogFactor) + (1.0 - u_FogFlag) * finalColor;
 }
-
