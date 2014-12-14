@@ -72,26 +72,6 @@
             android:text="@string/mainMenuCheckBoxBluetoothReset"
             android:onClick="onBTResetCheckBoxClicked" />
 
-        <!-- Allow the user to change the RFCOMM Channel used for connections -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/rfcommChannelTextView"
-                android:text="@string/rfcommChannelTextView" />
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/rfcommChannelEditText"
-                android:inputType="number" />
-
-            </LinearLayout>
-
         </LinearLayout>
 
 </LinearLayout>

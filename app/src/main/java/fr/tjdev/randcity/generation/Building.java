@@ -218,7 +218,7 @@ public class Building {
      * Generate a list of buildings (all buildings in the city grid)
      */
     static public ArrayList<Building> generateAllBuildings() {
-        ArrayList<Building> builds = new ArrayList<Building>();
+        ArrayList<Building> builds = new ArrayList<>();
         final float firstPoint = GenUtil.HALF_ROAD_WIDTH + GenUtil.HALF_DIFF_BETWEEN_ROADS;
 
         for (float x = firstPoint;
@@ -246,7 +246,7 @@ public class Building {
      * Generate a list of areas where the buildings are. Used to prevent user to walk inside buildings
      */
     static public ArrayList<RectF> generateRestrictedAreas(ArrayList<Building> buildings, final float[] treasureCenterCoordinates) {
-        ArrayList<RectF> restrictedAreas = new ArrayList<RectF>();
+        ArrayList<RectF> restrictedAreas = new ArrayList<>();
 
         // All areas contains a margin of 0.8 on each side
         final float margin = 0.8f;

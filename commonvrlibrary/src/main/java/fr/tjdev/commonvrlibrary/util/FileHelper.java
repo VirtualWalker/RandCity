@@ -63,12 +63,12 @@ public class FileHelper {
 
     static public boolean deleteExternalStoragePrivateFile(Context context, final String fileName) {
         File file = new File(context.getExternalFilesDir(null), fileName);
-        return file != null && file.delete();
+        return file.delete();
     }
 
     static public boolean hasExternalStoragePrivateFile(Context context, final String fileName) {
         File file = new File(context.getExternalFilesDir(null), fileName);
-        return file != null && file.exists();
+        return file.exists();
     }
 
     // Read a file from a specified input stream

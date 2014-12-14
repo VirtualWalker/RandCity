@@ -25,9 +25,6 @@
     <string name="mainMenuCheckBoxBluetooth">Enable Bluetooth to receive positions data</string>
     <string name="mainMenuCheckBoxBluetoothReset">Reset bluetooth on exiting the app</string>
 
-    <string name="rfcommChannelTextView">Channel used for Bluetooth (in range 1–30):</string>
-    <string name="rfcommChannelWarning">The specified channel must be in range 1–30</string>
-
     <string name="bluetoothNotEnabled">Bluetooth not enabled !</string>
     <string name="bluetoothConnectFailed">Connection failed !</string>
     <string name="bluetoothConnectSuccess">Connected !</string>

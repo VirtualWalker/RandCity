@@ -26,10 +26,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 
 import fr.tjdev.commonvrlibrary.BluetoothManager;
-import fr.tjdev.commonvrlibrary.BuildConfig;
 import fr.tjdev.commonvrlibrary.FullScreenManager;
 import fr.tjdev.commonvrlibrary.R;
 
@@ -54,19 +51,15 @@ public abstract class MainMenuActivity extends ListActivity {
 
     public static final String PREF_BT = "bt";
     public static final String PREF_BT_RESET = "bt_reset";
-    public static final String PREF_BT_CHANNEL = "bt_channel";
 
     protected boolean mBluetoothEnabled;
     protected boolean mBluetoothReset;
-    protected int mBluetoothChannel;
-
-    protected EditText mRFCOMMChannelEdit;
 
     private final FullScreenManager mFullScreenMgr = new FullScreenManager(this);
 
     // Initialize the list of activities
-    private List<Map<String, Object>> mData = new ArrayList<Map<String, Object>>();
-    private List<Class<? extends Activity>> mActivityMapping = new ArrayList<Class<? extends Activity>>();
+    private List<Map<String, Object>> mData = new ArrayList<>();
+    private List<Class<? extends Activity>> mActivityMapping = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,17 +78,12 @@ public abstract class MainMenuActivity extends ListActivity {
         if (mBluetoothReset) {
             ((CheckBox) findViewById(R.id.checkBoxBluetoothReset)).setChecked(true);
         }
-        mBluetoothChannel = getPreferences(MODE_PRIVATE).getInt(PREF_BT_CHANNEL, BluetoothManager.DEFAULT_RFCOMM_CHANNEL);
-        mRFCOMMChannelEdit = (EditText) findViewById(R.id.rfcommChannelEditText);
-        mRFCOMMChannelEdit.setText(Integer.toString(mBluetoothChannel));
 
         // Exit when the exit button is clicked
         findViewById(R.id.exitButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (BuildConfig.DEBUG) {
-                    Log.d(TAG, "Exit the application ...");
-                }
+                Log.d(TAG, "Exit the application ...");
                 finish();
             }
         });
@@ -111,17 +99,6 @@ public abstract class MainMenuActivity extends ListActivity {
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                // Check for RFCOMM Channel here
-                if (!isRFCOMMChannelValid(mRFCOMMChannelEdit.getText().toString())) {
-                    Toast.makeText(MainMenuActivity.this, R.string.rfcommChannelWarning, Toast.LENGTH_LONG).show();
-                    return;
-                }
-                mBluetoothChannel = Integer.parseInt(mRFCOMMChannelEdit.getText().toString());
-                if (BuildConfig.DEBUG) {
-                    Log.d(TAG, "Using RFCOMM channel: " + Integer.toString(mBluetoothChannel));
-                }
-
                 final Class<? extends Activity> activityToLaunch = mActivityMapping.get(position);
 
                 if (activityToLaunch != null) {
@@ -129,7 +106,6 @@ public abstract class MainMenuActivity extends ListActivity {
                     // Check the bluetooth support
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(PREF_BT, mBluetoothEnabled);
-                    bundle.putInt(PREF_BT_CHANNEL, mBluetoothChannel);
                     launchIntent.putExtras(bundle);
 
                     startActivity(launchIntent);
@@ -145,8 +121,6 @@ public abstract class MainMenuActivity extends ListActivity {
         SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
         editor.putBoolean(PREF_BT, mBluetoothEnabled);
         editor.putBoolean(PREF_BT_RESET, mBluetoothReset);
-        mBluetoothChannel = Integer.parseInt(mRFCOMMChannelEdit.getText().toString());
-        editor.putInt(PREF_BT_CHANNEL, mBluetoothChannel);
         editor.apply();
 
     }
@@ -176,7 +150,7 @@ public abstract class MainMenuActivity extends ListActivity {
 
     // Allow the child activity to add an item to the main menu
     protected void addItem(int icon, int label, int subTitle, Class<? extends Activity> activity) {
-        final Map<String, Object> item = new HashMap<String, Object>();
+        final Map<String, Object> item = new HashMap<>();
         item.put(ITEM_IMAGE, icon);
         item.put(ITEM_TITLE, getText(label));
         item.put(ITEM_SUBTITLE, getText(subTitle));
@@ -187,15 +161,5 @@ public abstract class MainMenuActivity extends ListActivity {
     // Allow to change the header text
     protected void setHeaderText(int text) {
         ((TextView) findViewById(R.id.mainMenuHeader)).setText(text);
-    }
-
-    // Check if the RFCOMM Channel is a number in range 1-30
-    private boolean isRFCOMMChannelValid(final String str) {
-        if (!str.matches("[0-9]+")) {
-            return false;
-        }
-
-        final int number = Integer.parseInt(str);
-        return number > 0 && number < 31;
     }
 }

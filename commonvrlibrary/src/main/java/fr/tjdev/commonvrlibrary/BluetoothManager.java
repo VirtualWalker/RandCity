@@ -29,11 +29,11 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import fr.tjdev.commonvrlibrary.util.FileHelper;
 import fr.tjdev.commonvrlibrary.util.RawResourceReader;
@@ -49,11 +49,6 @@ public class BluetoothManager {
 
     // Names of files in the external storage
     private static final String ALLOWED_SERVER_FILENAME = "allowed_bt_servers.txt";
-
-    // Default RFCOMM Channel
-    public static final int DEFAULT_RFCOMM_CHANNEL = 22;
-
-    private int mRFCOMMChannel;
 
     // The activity that the manager depends on
     private final Activity mParentActivity;
@@ -80,10 +75,10 @@ public class BluetoothManager {
     // This list is created in the constructor by reading the raw res file
     // "allowed_bt_servers.txt"
     // Order in the list represent the priority, the first will be choose first.
-    private ArrayList<String> mAllowedServers = new ArrayList<String>();
+    private ArrayList<String> mAllowedServers = new ArrayList<>();
 
     // Contains all devices found.
-    private ArrayList<BluetoothDevice> mDevices = new ArrayList<BluetoothDevice>();
+    private ArrayList<BluetoothDevice> mDevices = new ArrayList<>();
 
     // Contains the address of the connected device
     private String mDeviceAddress;
@@ -91,9 +86,10 @@ public class BluetoothManager {
     private ConnectThread mConnectThread = null;
     private ConnectedThread mConnectedThread = null;
 
-    // This UUID represent a connection with the Serial Port Protocol
-    // Not used since we directly use the RFCOMM channel to connect with the server
-    //private static final UUID mUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    // This UUID represent the server.
+    // Don't modify this since it's also hard-coded in server
+    // It's allow to connect to the server without a specified channel
+    private static final UUID mUUID = UUID.fromString("23010000-6745-0000-AB89-0000EFCD0000");
 
     private boolean mFirstScan = true;
 
@@ -101,18 +97,14 @@ public class BluetoothManager {
     public static void disableBluetooth() {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter != null) {
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "Disabling bluetooth.");
-            }
+            Log.d(TAG, "Disabling bluetooth.");
             adapter.disable();
         }
     }
     public static void enableBluetooth() {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter != null) {
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "Enabling bluetooth.");
-            }
+            Log.d(TAG, "Enabling bluetooth.");
             adapter.enable();
         }
     }
@@ -135,17 +127,13 @@ public class BluetoothManager {
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 if (mFirstScan) {
-                    if (BuildConfig.DEBUG) {
-                        Log.d(TAG, "Discovery finished");
-                    }
+                    Log.d(TAG, "Discovery finished");
                     mParentActivity.sendBroadcast(new Intent(ACTION_SEARCH_END));
 
                     // Print devices addresses
-                    if (BuildConfig.DEBUG) {
-                        Log.d(TAG, "Near devices: ");
-                        for (BluetoothDevice device : mDevices) {
-                            Log.d(TAG, device.getAddress() + " (" + device.getName() + ")");
-                        }
+                    Log.d(TAG, "Near devices: ");
+                    for (BluetoothDevice device : mDevices) {
+                        Log.d(TAG, device.getAddress() + " (" + device.getName() + ")");
                     }
 
                     // The scan is finished, check if a device is in the mAllowedServers list.
@@ -154,9 +142,7 @@ public class BluetoothManager {
                             if (btDevice.getAddress().equals(allowed)) {
                                 // A device were found
                                 mDeviceAddress = btDevice.getAddress();
-                                if (BuildConfig.DEBUG) {
-                                    Log.d(TAG, "Use device: " + mDeviceAddress);
-                                }
+                                Log.d(TAG, "Use device: " + mDeviceAddress);
 
                                 // Clean up previous connected devices
                                 if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
@@ -194,21 +180,12 @@ public class BluetoothManager {
 
     // Constructors
     public BluetoothManager(Activity activity) {
-        this(activity, false, DEFAULT_RFCOMM_CHANNEL);
+        this(activity, false);
     }
 
     public BluetoothManager(Activity activity, boolean resetOnDestroy) {
-        this(activity, resetOnDestroy, DEFAULT_RFCOMM_CHANNEL);
-    }
-
-    public BluetoothManager(Activity activity, int rfcommChannel) {
-        this(activity, false, rfcommChannel);
-    }
-
-    public BluetoothManager(Activity activity, boolean resetOnDestroy, int rfcommChannel) {
         mParentActivity = activity;
         mResetOnDestroy = resetOnDestroy;
-        mRFCOMMChannel = rfcommChannel;
 
         // Copy some resources files if needed
         if (!FileHelper.hasExternalStoragePrivateFile(mParentActivity, ALLOWED_SERVER_FILENAME)) {
@@ -222,9 +199,7 @@ public class BluetoothManager {
             mParentActivity.finish();
             return;
         }
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "This device supports Bluetooth.");
-        }
+        Log.d(TAG, "This device supports Bluetooth.");
 
         // Get a list of allowed servers
         getAllowedServers();
@@ -240,14 +215,10 @@ public class BluetoothManager {
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             mParentActivity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "Enabling Bluetooth ...");
-            }
+            Log.d(TAG, "Enabling Bluetooth ...");
         } else {
             // The bluetooth is already on.
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "Bluetooth is already enabled.");
-            }
+            Log.d(TAG, "Bluetooth is already enabled.");
             searchForDevices();
         }
     }
@@ -256,16 +227,12 @@ public class BluetoothManager {
     public boolean onActivityResult(int requestCode, int resultCode) {
         if (requestCode == REQUEST_ENABLE_BT) {
            if (resultCode == Activity.RESULT_OK) {
-               if (BuildConfig.DEBUG) {
-                   Log.d(TAG, "Successfully enabling Bluetooth.");
-               }
+               Log.d(TAG, "Successfully enabling Bluetooth.");
                mParentActivity.sendBroadcast(new Intent(ACTION_BT_ENABLED));
                searchForDevices();
                return true;
            } else {
-               if (BuildConfig.DEBUG) {
-                   Log.e(TAG, "Error when enabling Bluetooth !");
-               }
+               Log.e(TAG, "Error when enabling Bluetooth !");
                mParentActivity.sendBroadcast(new Intent(ACTION_BT_NOT_ENABLED));
                return false;
            }
@@ -273,7 +240,7 @@ public class BluetoothManager {
         return true;
     }
 
-    // Called in the onDestroy() method of the parent activity
+    // Call in the onDestroy() method of the parent activity
     public void onDestroy() {
         mBluetoothAdapter.cancelDiscovery();
         mParentActivity.unregisterReceiver(mReceiver);
@@ -293,9 +260,7 @@ public class BluetoothManager {
         // Search for new devices
         // The end of this function will be executed in the mScanFinishedReceiver
         mParentActivity.sendBroadcast(new Intent(ACTION_SEARCH_START));
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "Starting discovery ...");
-        }
+        Log.d(TAG, "Starting discovery ...");
         mBluetoothAdapter.startDiscovery();
     }
 
@@ -324,11 +289,9 @@ public class BluetoothManager {
             }
         }
 
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "Allowed Bluetooth servers: ");
-            for (String server : mAllowedServers) {
-                Log.d(TAG, server);
-            }
+        Log.d(TAG, "Allowed Bluetooth servers: ");
+        for (String server : mAllowedServers) {
+            Log.d(TAG, server);
         }
     }
 
@@ -355,13 +318,8 @@ public class BluetoothManager {
 
             // Get a BluetoothSocket to connect with the given BluetoothDevice
             try {
-                //tmp = device.createInsecureRfcommSocketToServiceRecord(mUUID);
-                tmp = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(device, mRFCOMMChannel);
-            } catch (NoSuchMethodException e) {
-                Log.e(TAG, "ConnectThread exception:", e);
-            } catch (IllegalAccessException e) {
-                Log.e(TAG, "ConnectThread exception:", e);
-            } catch (InvocationTargetException e) {
+                tmp = device.createInsecureRfcommSocketToServiceRecord(mUUID);
+            } catch (IOException e) {
                 Log.e(TAG, "ConnectThread exception:", e);
             }
             mmSocket = tmp;
@@ -392,9 +350,7 @@ public class BluetoothManager {
 
             // Here, we are connected
             mParentActivity.sendBroadcast(new Intent(ACTION_CONNECT_SUCCESS));
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "Connected to device: " + mDeviceAddress);
-            }
+            Log.d(TAG, "Connected to device: " + mDeviceAddress);
 
             // Do work to manage the connection (in a separate thread)
             manageConnectedSocket(mmSocket);
@@ -455,17 +411,15 @@ public class BluetoothManager {
                             final int orientation = buffer[2] & 0xFF;
                             final int realOrientation = (int) (orientation * (360.0f/255.0f));
 
-                            if (BuildConfig.DEBUG) {
-                                dataCount++;
-                                // Show debug output only every second
-                                if (dataCount == printFrequency) {
-                                    dataCount = 0;
-                                    // Don't show the message if received data are null
-                                    if (walkSpeed != 0 || orientation != 0) {
-                                        Log.v(TAG, "Receive data: speed=" + Integer.toString(walkSpeed)
-                                                + " orientation=" + Integer.toString(orientation)
-                                                + " (real orientation: " + Integer.toString(realOrientation) + ")");
-                                    }
+                            dataCount++;
+                            // Show debug output only every second
+                            if (dataCount == printFrequency) {
+                                dataCount = 0;
+                                // Don't show the message if received data are null
+                                if (walkSpeed != 0 || orientation != 0) {
+                                    Log.v(TAG, "Receive data: speed=" + Integer.toString(walkSpeed)
+                                            + " orientation=" + Integer.toString(orientation)
+                                            + " (real orientation: " + Integer.toString(realOrientation) + ")");
                                 }
                             }
 

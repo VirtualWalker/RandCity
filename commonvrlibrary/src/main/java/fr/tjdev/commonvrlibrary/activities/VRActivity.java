@@ -29,7 +29,6 @@ import com.google.vrtoolkit.cardboard.CardboardActivity;
 import com.google.vrtoolkit.cardboard.CardboardView;
 
 import fr.tjdev.commonvrlibrary.BluetoothManager;
-import fr.tjdev.commonvrlibrary.BuildConfig;
 import fr.tjdev.commonvrlibrary.R;
 import fr.tjdev.commonvrlibrary.VROverlayView;
 import fr.tjdev.commonvrlibrary.util.OpenGLCheck;
@@ -47,17 +46,23 @@ public abstract class VRActivity extends CardboardActivity {
     protected final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (BluetoothManager.ACTION_BT_NOT_ENABLED.equals(action)) {
-                mOverlayView.showError3DToast(getString(R.string.bluetoothNotEnabled));
-            } else if (BluetoothManager.ACTION_CONNECT_FAILED.equals(action)) {
-                mOverlayView.showError3DToast(getString(R.string.bluetoothConnectFailed));
-            } else if (BluetoothManager.ACTION_CONNECT_SUCCESS.equals(action)) {
-                mOverlayView.show3DToast(getString(R.string.bluetoothConnectSuccess));
-            } else if (BluetoothManager.ACTION_NO_SERVERS_FOUND.equals(action)) {
-                mOverlayView.showError3DToast(getString(R.string.bluetoothNoServersFound));
-            } else if (BluetoothManager.ACTION_SEARCH_START.equals(action)) {
-                mOverlayView.show3DToast(getString(R.string.bluetoothSearchStart));
+            final String action = intent.getAction();
+            switch (action) {
+                case BluetoothManager.ACTION_BT_NOT_ENABLED:
+                    mOverlayView.showError3DToast(getString(R.string.bluetoothNotEnabled));
+                    break;
+                case BluetoothManager.ACTION_CONNECT_FAILED:
+                    mOverlayView.showError3DToast(getString(R.string.bluetoothConnectFailed));
+                    break;
+                case BluetoothManager.ACTION_CONNECT_SUCCESS:
+                    mOverlayView.show3DToast(getString(R.string.bluetoothConnectSuccess));
+                    break;
+                case BluetoothManager.ACTION_NO_SERVERS_FOUND:
+                    mOverlayView.showError3DToast(getString(R.string.bluetoothNoServersFound));
+                    break;
+                case BluetoothManager.ACTION_SEARCH_START:
+                    mOverlayView.show3DToast(getString(R.string.bluetoothSearchStart));
+                    break;
             }
         }
     };
@@ -69,11 +74,9 @@ public abstract class VRActivity extends CardboardActivity {
         // Get the bluetooth param
         Bundle bundle = getIntent().getExtras();
         if (bundle.getBoolean(MainMenuActivity.PREF_BT, false)) {
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "Bluetooth support enabled !");
-            }
+            Log.d(TAG, "Bluetooth support enabled !");
             mBluetooth = true;
-            mBTManager = new BluetoothManager(this, bundle.getInt(MainMenuActivity.PREF_BT_CHANNEL, BluetoothManager.DEFAULT_RFCOMM_CHANNEL));
+            mBTManager = new BluetoothManager(this);
 
             // Register broadcast receivers for bluetooth events
             // They are unregistered in the onDestroy();
