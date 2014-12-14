@@ -297,12 +297,16 @@ public class BluetoothManager {
 
     // Create the ConnectedThread
     private void manageConnectedSocket(BluetoothSocket socket) {
-        if (mConnectedThread != null) {
-            mConnectedThread.cancel(); mConnectedThread = null;
-        }
+        shutdownConnection();
 
         mConnectedThread = new ConnectedThread(socket);
         mConnectedThread.start();
+    }
+
+    public void shutdownConnection() {
+        if (mConnectedThread != null) {
+            mConnectedThread.cancel(); mConnectedThread = null;
+        }
     }
 
     /**

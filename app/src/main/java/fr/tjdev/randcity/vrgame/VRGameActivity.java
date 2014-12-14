@@ -30,6 +30,8 @@ import fr.tjdev.randcity.R;
 public class VRGameActivity extends VRActivity {
     private VRRenderer mRenderer;
 
+    private int mNumberOfTreasureListenerCall = 0;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,16 +45,26 @@ public class VRGameActivity extends VRActivity {
         mRenderer.setOnTreasureFoundListener(new CommonGLRenderManager.OnTreasureFoundListener() {
             @Override
             public void onTreasureFound() {
-                mOverlayView.show3DToast(getString(R.string.treasureFound));
+                mNumberOfTreasureListenerCall++;
+                if (mNumberOfTreasureListenerCall == 1) {
+                    mBTManager.shutdownConnection();
 
-                // Schedule the exit of the game
-                Handler scheduler = new Handler();
-                scheduler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                }, 1500);
+                    VRGameActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mOverlayView.show3DToast(getString(R.string.treasureFound));
+
+                            // Schedule the exit of the game
+                            Handler scheduler = new Handler();
+                            scheduler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    finish();
+                                }
+                            }, 4000);
+                        }
+                    });
+                }
             }
         });
 
@@ -84,7 +96,7 @@ public class VRGameActivity extends VRActivity {
         toggleFog();
     }
 
-    // Enable/Disable the fog on trigger the magnet or on touch the screen
+    // Enable/Disable the fog on magnet trigger or on screen touch
     public void toggleFog() {
         if (mOverlayView != null && mRenderer != null) {
             if (mRenderer.enableFog) {

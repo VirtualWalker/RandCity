@@ -97,7 +97,7 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
     protected int mColorHandle;
     protected int mTextureCoordinateHandle;
 
-    // mProgramHandle is created in BaseGLRenderer
+    // mProgramHandle is created in BaseGLRenderManager
     protected int mPointProgramHandle;
 
     // Store the position of the "treasure".
@@ -177,8 +177,6 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
     // Utility function to move the player
     // This function check for buildings positions
     public void movePlayer(final float moveX, final float moveZ) {
-
-
         lookX += moveX;
         eyeX += moveX;
 
@@ -212,7 +210,7 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
 
         if (!inRestrictedArea) {
             // Check if we are at the treasure pos
-            if (mTreasureArea.contains(eyeX, eyeY)) {
+            if (mTreasureArea.contains(eyeX, eyeZ)) {
                 // Here the treasure is found !
                 if (BuildConfig.DEBUG) {
                     Log.d(TAG, "Treasure found by the player !");
@@ -233,11 +231,6 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
                 eyeZ += moveZ;
             }
         }
-
-
-
-
-
     }
 
     public void onSurfaceCreated() {
