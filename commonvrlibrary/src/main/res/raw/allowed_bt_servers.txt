@@ -1,8 +1,10 @@
 # This file contains all MAC addresses for all allowed servers.
-# The order is import since the first will be a higher priority than the second.
+# The order is important since the first will have a higher priority than the second.
 #
 # All spaces or blank lines are skipped.
 # All lines that begin with a '#' is interpreted as a comment and will be ignored.
 
 # Default Asus Dongle used for my tests
 00:02:72:B1:16:5A
+# An another dongle for the tests
+00:09:DD:50:2B:91
