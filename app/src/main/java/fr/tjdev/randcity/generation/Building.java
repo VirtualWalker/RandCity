@@ -263,17 +263,18 @@ public class Building {
 
     /**
      * The result bitmap is composed with some random squares with a grey nuance.
+     * If lowDensity set to true, only few windows will be white
      */
-    static public Bitmap generateFuzzyTexture() {
+    static public Bitmap generateFuzzyTexture(boolean lowDensity) {
         Random rand = new Random();
         // Randomize width and height (+/- 4 windows)
         final int nbWinX = rand.moreOrLess(GenUtil.TEX_NB_WINDOW_X, 4) * 4;
         final int nbWinY = rand.moreOrLess(GenUtil.TEX_NB_WINDOW_Y, 4);
 
         // Randomize the percentage of chance to have a white glass
-        final int chanceWhiteGlass = rand.moreOrLess(20, 10);
+        final int chanceWhiteGlass = lowDensity ? rand.moreOrLess(10, 5) : rand.moreOrLess(20, 10);
         // Randomize the percentage of chance to repeat the brightness
-        final int chanceToRepeat = rand.moreOrLess(40, 20);
+        final int chanceToRepeat = lowDensity ? rand.moreOrLess(20, 10) : rand.moreOrLess(40, 20);
 
         // Create an empty, mutable bitmap
         Bitmap bitmap = Bitmap.createBitmap(nbWinX * GenUtil.TEX_WINDOW_WIDTH,

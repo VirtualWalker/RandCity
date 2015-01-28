@@ -171,8 +171,11 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
         // Generate textures
         // Handles to these textures are generated in onSurfaceCreated() method.
         int i;
-        for (i=0 ; i < 8 ; ++i) {
-            mBuildTextureBitmaps[i] = Building.generateFuzzyTexture();
+        for (i=0 ; i < 6 ; ++i) {
+            mBuildTextureBitmaps[i] = Building.generateFuzzyTexture(false);
+        }
+        for (; i < 8 ; ++i) {
+            mBuildTextureBitmaps[i] = Building.generateFuzzyTexture(true);
         }
         for (; i < 16 ; ++i) {
             mBuildTextureBitmaps[i] = Building.generateLinearTexture();
