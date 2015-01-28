@@ -147,40 +147,40 @@ public class VROverlayView extends LinearLayout {
      * This is a helper class for VROverlayView.
      */
     private class VROverlayEyeView extends ViewGroup {
-        private final ImageView imageView;
-        private final TextView textView;
-        private float offset;
+        private final ImageView mmImageView;
+        private final TextView mmTextView;
+        private float mmOffset;
 
         public VROverlayEyeView(Context context, AttributeSet attrs) {
             super(context, attrs);
-            imageView = new ImageView(context, attrs);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            imageView.setAdjustViewBounds(true);  // Preserve aspect ratio.
-            addView(imageView);
+            mmImageView = new ImageView(context, attrs);
+            mmImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            mmImageView.setAdjustViewBounds(true);  // Preserve aspect ratio.
+            addView(mmImageView);
 
-            textView = new TextView(context, attrs);
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f);
-            textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
-            textView.setGravity(Gravity.CENTER);
-            textView.setShadowLayer(3.0f, 0.0f, 0.0f, Color.DKGRAY);
-            addView(textView);
+            mmTextView = new TextView(context, attrs);
+            mmTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14.0f);
+            mmTextView.setTypeface(mmTextView.getTypeface(), Typeface.BOLD);
+            mmTextView.setGravity(Gravity.CENTER);
+            mmTextView.setShadowLayer(3.0f, 0.0f, 0.0f, Color.DKGRAY);
+            addView(mmTextView);
         }
 
         public void setColor(int color) {
-            imageView.setColorFilter(color);
-            textView.setTextColor(color);
+            mmImageView.setColorFilter(color);
+            mmTextView.setTextColor(color);
         }
 
         public void setText(String text) {
-            textView.setText(text);
+            mmTextView.setText(text);
         }
 
         public void setTextViewAlpha(float alpha) {
-            textView.setAlpha(alpha);
+            mmTextView.setAlpha(alpha);
         }
 
         public void setOffset(float offset) {
-            this.offset = offset;
+            mmOffset = offset;
         }
 
         @Override
@@ -203,16 +203,16 @@ public class VROverlayView extends LinearLayout {
 
             // Layout ImageView
             float imageMargin = (1.0f - imageSize) / 2.0f;
-            float leftMargin = (int) (width * (imageMargin + offset));
+            float leftMargin = (int) (width * (imageMargin + mmOffset));
             float topMargin = (int) (height * (imageMargin + verticalImageOffset));
-            imageView.layout(
+            mmImageView.layout(
                 (int) leftMargin, (int) topMargin,
                 (int) (leftMargin + width * imageSize), (int) (topMargin + height * imageSize));
 
             // Layout TextView
-            leftMargin = offset * width;
+            leftMargin = mmOffset * width;
             topMargin = height * verticalTextPos;
-            textView.layout(
+            mmTextView.layout(
                 (int) leftMargin, (int) topMargin,
                 (int) (leftMargin + width), (int) (topMargin + height * (1.0f - verticalTextPos)));
         }

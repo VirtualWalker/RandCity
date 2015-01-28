@@ -25,7 +25,7 @@ public class Random extends java.util.Random {
         super(seed);
     }
     
-    public int intBetween(int max, int min) {
+    public int intBetween(int min, int max) {
         return nextInt((max - min) + 1) + min;
     }
 

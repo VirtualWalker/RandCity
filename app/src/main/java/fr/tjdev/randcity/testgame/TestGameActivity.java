@@ -20,7 +20,10 @@ package fr.tjdev.randcity.testgame;
 
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.util.ArrayMap;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -37,6 +40,45 @@ public class TestGameActivity extends FullScreenActivity {
 
     private GLSurfaceView mGLView;
     private GLRenderer mRenderer;
+
+    private abstract class CustomOnTouchListener implements View.OnTouchListener {
+        // Call when a click is operate
+        abstract void onClick(int viewID);
+
+        private final Handler mmHandler = new Handler();
+        private ArrayMap<Integer, Runnable> mmRunnables = new ArrayMap<>();
+
+        @Override
+        public boolean onTouch(View view, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    // Check if a runnable already exists
+                    if (!mmRunnables.containsKey(view.getId())) {
+                        // Add a new one
+                        final int viewID = view.getId();
+                        Runnable runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                onClick(viewID);
+                                // Re-run after 200 ms
+                                mmHandler.postDelayed(this, 200);
+                            }
+                        };
+                        mmRunnables.put(viewID, runnable);
+                        mmHandler.post(runnable);
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    // Remove and stop the running Handler
+                    if (mmRunnables.containsKey(view.getId())) {
+                        mmHandler.removeCallbacks(mmRunnables.get(view.getId()));
+                        mmRunnables.remove(view.getId());
+                    }
+                    break;
+            }
+            return false;
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,70 +111,51 @@ public class TestGameActivity extends FullScreenActivity {
             ((Button) findViewById(R.id.button_toggleFog)).setText(getText(R.string.fogEnable));
         }
 
-        // Handle movements buttons
-        findViewById(R.id.button_forward).setOnClickListener(new View.OnClickListener() {
+        // Set the all button clicks events
+        final CustomOnTouchListener touchListener = new CustomOnTouchListener() {
             @Override
-            public void onClick(View v) {
+            void onClick(int viewID) {
                 if (mRenderer != null) {
-                    mRenderer.eyeZ -= MOVE_STEP;
-                    mRenderer.lookZ -= MOVE_STEP;
-                }
-            }
-        });
-        findViewById(R.id.button_backward).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mRenderer != null) {
-                    mRenderer.eyeZ += MOVE_STEP;
-                    mRenderer.lookZ += MOVE_STEP;
-                }
-            }
-        });
-        findViewById(R.id.button_left).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mRenderer != null) {
-                    mRenderer.eyeX -= MOVE_STEP;
-                    mRenderer.lookX -= MOVE_STEP;
-                }
-            }
-        });
-        findViewById(R.id.button_right).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mRenderer != null) {
-                    mRenderer.eyeX += MOVE_STEP;
-                    mRenderer.lookX += MOVE_STEP;
-                }
-            }
-        });
-        findViewById(R.id.button_up).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mRenderer != null) {
-                    mRenderer.eyeY += MOVE_STEP;
-                    //mRenderer.lookY += MOVE_STEP;
-                }
-            }
-        });
-        findViewById(R.id.button_down).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mRenderer != null) {
-                    mRenderer.eyeY -= MOVE_STEP;
-                    //mRenderer.lookY -= MOVE_STEP;
-                    if (mRenderer.eyeY < 1.0f) {
-                        Log.w(TAG, "Try to go under the floor. Block it !");
-                        mRenderer.eyeY = 1.0f;
+                    switch (viewID) {
+                        case R.id.button_forward:
+                            mRenderer.movePlayer(0.0f, MOVE_STEP);
+                            break;
+                        case R.id.button_backward:
+                            mRenderer.movePlayer(0.0f, -MOVE_STEP);
+                            break;
+                        case R.id.button_left:
+                            mRenderer.movePlayer(-MOVE_STEP, 0.0f);
+                            break;
+                        case R.id.button_right:
+                            mRenderer.movePlayer(MOVE_STEP, 0.0f);
+                            break;
+                        case R.id.button_up:
+                            mRenderer.eyeY += MOVE_STEP;
+                            break;
+                        case R.id.button_down:
+                            mRenderer.eyeY -= MOVE_STEP;
+                            if (mRenderer.eyeY < 1.0f) {
+                                Log.w(TAG, "Try to go under the floor. Block it !");
+                                mRenderer.eyeY = 1.0f;
+                            }
+                            break;
                     }
                 }
             }
-        });
+        };
+
+        // Handle movements buttons
+        findViewById(R.id.button_forward).setOnTouchListener(touchListener);
+        findViewById(R.id.button_backward).setOnTouchListener(touchListener);
+        findViewById(R.id.button_left).setOnTouchListener(touchListener);
+        findViewById(R.id.button_right).setOnTouchListener(touchListener);
+        findViewById(R.id.button_up).setOnTouchListener(touchListener);
+        findViewById(R.id.button_down).setOnTouchListener(touchListener);
         // Toggle the fog and the button title
         findViewById(R.id.button_toggleFog).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mRenderer != null) {
+                if(mRenderer != null) {
                     if(mRenderer.enableFog) {
                         mRenderer.enableFog = false;
                         ((Button) findViewById(R.id.button_toggleFog)).setText(getText(R.string.fogEnable));

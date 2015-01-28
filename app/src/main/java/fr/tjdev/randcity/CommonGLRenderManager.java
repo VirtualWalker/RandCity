@@ -125,6 +125,15 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
 
         // Generate buildings grid and textures
         generateTerrain();
+
+        // Move the player at a random position
+        boolean success = false;
+        while(!success) {
+            Random rand = new Random();
+            final int newX = rand.intBetween((int)-GenUtil.HALF_GRID_SIZE, (int)GenUtil.HALF_GRID_SIZE);
+            final int newZ = rand.intBetween((int)-GenUtil.HALF_GRID_SIZE, (int)GenUtil.HALF_GRID_SIZE);
+            success = movePlayer(newX, newZ);
+        }
     }
 
     // This function will generate buildings and textures
@@ -135,12 +144,11 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
         // We replace a random building by the treasure, and get its positions
         Random rand = new Random();
         int randIndex = rand.nextInt(mBuildings.size());
-        // Block the treasure from spawning on the sides of the city
-        final float maxCenterCoordinates = GenUtil.HALF_GRID_SIZE - GenUtil.HALF_BUILD_SQUARE_WIDTH;
-        while (mBuildings.get(randIndex).centerCoordinates[0] == maxCenterCoordinates ||
-                mBuildings.get(randIndex).centerCoordinates[0] == -maxCenterCoordinates ||
-                mBuildings.get(randIndex).centerCoordinates[2] == maxCenterCoordinates ||
-                mBuildings.get(randIndex).centerCoordinates[2] == -maxCenterCoordinates) {
+        // Block the treasure from spawning outside the walk area
+        while (mBuildings.get(randIndex).centerCoordinates[0] > GenUtil.HALF_ALLOWED_GRID_SIZE ||
+                mBuildings.get(randIndex).centerCoordinates[0] < -GenUtil.HALF_ALLOWED_GRID_SIZE ||
+                mBuildings.get(randIndex).centerCoordinates[2] > GenUtil.HALF_ALLOWED_GRID_SIZE ||
+                mBuildings.get(randIndex).centerCoordinates[2] < -GenUtil.HALF_ALLOWED_GRID_SIZE) {
             randIndex = rand.nextInt(mBuildings.size());
         }
 
@@ -176,7 +184,8 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
 
     // Utility function to move the player
     // This function check for buildings positions
-    public void movePlayer(final float moveX, final float moveZ) {
+    // Return true on success, else return false
+    public boolean movePlayer(final float moveX, final float moveZ) {
         lookX += moveX;
         eyeX += moveX;
 
@@ -223,14 +232,18 @@ public class CommonGLRenderManager extends BaseGLRenderManager {
             }
 
             // Check if the player is out of the city
-            else if (eyeX >= GenUtil.HALF_GRID_SIZE || eyeX <= -GenUtil.HALF_GRID_SIZE) {
+            else if (eyeX >= GenUtil.HALF_ALLOWED_GRID_SIZE || eyeX <= -GenUtil.HALF_ALLOWED_GRID_SIZE) {
                 lookX -= moveX;
                 eyeX -= moveX;
-            } else if (eyeZ >= GenUtil.HALF_GRID_SIZE || eyeZ <= -GenUtil.HALF_GRID_SIZE) {
+                return false;
+            } else if (eyeZ >= GenUtil.HALF_ALLOWED_GRID_SIZE || eyeZ <= -GenUtil.HALF_ALLOWED_GRID_SIZE) {
                 lookZ += moveZ;
                 eyeZ += moveZ;
+                return false;
             }
         }
+
+        return !inRestrictedArea;
     }
 
     public void onSurfaceCreated() {

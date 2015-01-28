@@ -70,11 +70,11 @@ public abstract class MainMenuActivity extends ListActivity {
         setContentView(R.layout.activity_mainmenu);
 
         // Get the preferences
-        mBluetoothEnabled = getPreferences(MODE_PRIVATE).getBoolean(PREF_BT, false);
+        mBluetoothEnabled = getPreferences(MODE_PRIVATE).getBoolean(PREF_BT, true);
         if (mBluetoothEnabled) {
             ((CheckBox) findViewById(R.id.checkBoxBluetooth)).setChecked(true);
         }
-        mBluetoothReset = getPreferences(MODE_PRIVATE).getBoolean(PREF_BT_RESET, false);
+        mBluetoothReset = getPreferences(MODE_PRIVATE).getBoolean(PREF_BT_RESET, true);
         if (mBluetoothReset) {
             ((CheckBox) findViewById(R.id.checkBoxBluetoothReset)).setChecked(true);
         }

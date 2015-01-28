@@ -168,7 +168,7 @@ public class Building {
 
         // Generate a random height for the building.
         Random rand = new Random();
-        final float height = (float) rand.intBetween(GenUtil.BUILD_MAX_HEIGHT, GenUtil.BUILD_MIN_HEIGHT);
+        final float height = (float) rand.intBetween(GenUtil.BUILD_MIN_HEIGHT, GenUtil.BUILD_MAX_HEIGHT);
 
         build.positions = Cube.generateCuboid(topLeftX + GenUtil.BUILD_MARGIN, 0.0f, topLeftZ + GenUtil.BUILD_MARGIN,
                 GenUtil.BUILD_WIDTH, height, GenUtil.BUILD_WIDTH, false);
@@ -176,7 +176,7 @@ public class Building {
         // Generate a random color (a variant of grey)
         // Color are represented with values between 0.00f, and 1.00f
         // Generate an integer between 0 and 100 and divide by 100 to get the color.
-        final int color = rand.intBetween(GenUtil.BUILD_MAX_COLOR, GenUtil.BUILD_MIN_COLOR);
+        final int color = rand.intBetween(GenUtil.BUILD_MIN_COLOR, GenUtil.BUILD_MAX_COLOR);
         final int randPercent = rand.nextInt(100);
         int red = color;
         int blue = color;
@@ -234,8 +234,7 @@ public class Building {
                 // Top-right part
                 builds.add(generateBuilding(x, -z - GenUtil.BUILD_SQUARE_WIDTH));
                 // Top-left part
-                builds.add(generateBuilding(-x - GenUtil.BUILD_SQUARE_WIDTH,
-                        -z - GenUtil.BUILD_SQUARE_WIDTH));
+                builds.add(generateBuilding(-x - GenUtil.BUILD_SQUARE_WIDTH, -z - GenUtil.BUILD_SQUARE_WIDTH));
             }
         }
 
@@ -411,7 +410,7 @@ public class Building {
     }
 
     // Return the higher value in windows on each side of the specified one
-    static private int getHigherBrightInSideWindow(Bitmap bitmap, final int left, final int top) {
+    static private int getHigherBrightInSideWindow(final Bitmap bitmap, final int left, final int top) {
         int topVal = 0;
         int bottomVal = 0;
         int leftVal = 0;

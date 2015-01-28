@@ -30,6 +30,10 @@ public class GenUtil {
 
     static public final float SPACE_BETWEEN_ROADS = 64.0f;
 
+    // The size of the grid where you can walk
+    static public final float ALLOWED_GRID_SIZE = GRID_SIZE - (SPACE_BETWEEN_ROADS * 4.0f);
+    static public final float HALF_ALLOWED_GRID_SIZE = ALLOWED_GRID_SIZE / 2.0f;
+
     static public final float ROAD_WIDTH = 16.0f;
     static public final float HALF_ROAD_WIDTH = ROAD_WIDTH / 2.0f;
     static public final float MAIN_ROAD_SCALE = 2.0f;
