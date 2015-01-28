@@ -22,7 +22,7 @@ import android.content.Context;
 import android.opengl.Matrix;
 
 import com.google.vrtoolkit.cardboard.CardboardView;
-import com.google.vrtoolkit.cardboard.EyeTransform;
+import com.google.vrtoolkit.cardboard.Eye;
 import com.google.vrtoolkit.cardboard.HeadTransform;
 import com.google.vrtoolkit.cardboard.Viewport;
 
@@ -68,7 +68,7 @@ public class VRRenderer extends CommonGLRenderManager implements CardboardView.S
      * @param transform The transformations to apply to render this eye.
      */
     @Override
-    public void onDrawEye(EyeTransform transform) {
+    public void onDrawEye(Eye transform) {
         clearGLBuffers();
         setLookAt();
 
@@ -85,7 +85,7 @@ public class VRRenderer extends CommonGLRenderManager implements CardboardView.S
 
         updateLightMatrices();
 
-        mProjectionMatrix = transform.getPerspective();
+        mProjectionMatrix = transform.getPerspective(PROJECTION_NEAR, PROJECTION_FAR);
 
         draw();
     }

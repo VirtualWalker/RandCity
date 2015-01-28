@@ -36,9 +36,6 @@ public class VRGameActivity extends VRActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set the projection matrix
-        mVrView.setZPlanes(CommonGLRenderManager.PROJECTION_NEAR, CommonGLRenderManager.PROJECTION_FAR);
-
         mRenderer = new VRRenderer(this);
         enableRenderer(mRenderer);
 

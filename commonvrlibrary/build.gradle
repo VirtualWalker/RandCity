@@ -15,5 +15,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile files('libs/cardboard.jar')
+    compile files('libs/libprotobuf-java-2.3-nano.jar')
     compile 'com.android.support:support-v4:21.0.3'
 }
