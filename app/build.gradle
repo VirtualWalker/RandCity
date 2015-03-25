@@ -1,16 +1,17 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         applicationId "fr.tjdev.randcity"
         minSdkVersion 11
-        targetSdkVersion 21
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }
+
     signingConfigs {
         release {
             storeFile file("../default.keystore")
@@ -19,6 +20,7 @@ android {
             keyPassword "android"
         }
     }
+
     buildTypes {
         release {
             minifyEnabled true
