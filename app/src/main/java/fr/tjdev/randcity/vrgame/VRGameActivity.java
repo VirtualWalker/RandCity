@@ -24,7 +24,6 @@ import android.view.View;
 
 import fr.tjdev.commonvrlibrary.BluetoothManager;
 import fr.tjdev.commonvrlibrary.activities.VRActivity;
-import fr.tjdev.randcity.CommonGLRenderManager;
 import fr.tjdev.randcity.R;
 
 public class VRGameActivity extends VRActivity {
@@ -36,15 +35,17 @@ public class VRGameActivity extends VRActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mRenderer = new VRRenderer(this);
+        mRenderer = new VRRenderer(this, mDebugRenderer);
         enableRenderer(mRenderer);
 
-        mRenderer.setOnTreasureFoundListener(new CommonGLRenderManager.OnTreasureFoundListener() {
+        mRenderer.setOnTreasureFoundListener(new VRRenderer.OnTreasureFoundListener() {
             @Override
             public void onTreasureFound() {
                 mNumberOfTreasureListenerCall++;
                 if (mNumberOfTreasureListenerCall == 1) {
-                    mBTManager.shutdownConnection();
+                    if (mBluetooth) {
+                        mBTManager.shutdownConnection();
+                    }
 
                     VRGameActivity.this.runOnUiThread(new Runnable() {
                         @Override
@@ -56,7 +57,9 @@ public class VRGameActivity extends VRActivity {
                             scheduler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    finish();
+                                    if (!mDebugRenderer) {
+                                        finish();
+                                    }
                                 }
                             }, 4000);
                         }
@@ -82,9 +85,23 @@ public class VRGameActivity extends VRActivity {
                     final float moveZ = (float) (Math.cos(Math.toRadians(orientation)) * move);
                     final float moveX = (float) (Math.sin(Math.toRadians(orientation)) * move);
 
-                    mRenderer.movePlayer(moveX, moveZ);
+                    mRenderer.movePlayer(moveX, 0.0f, moveZ);
                 }
             });
+        }
+
+        // On debug mode, create a click listener for the button
+        if(mDebugRenderer) {
+            findViewById(R.id.button_move_forward).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final float move = -5.0f;
+                    mRenderer.movePlayer(move * mRenderer.lookForwardVector[0], 0.0f, move * mRenderer.lookForwardVector[2]);
+                }
+            });
+
+            // Disable fog on debug generations
+            mRenderer.enableFog = false;
         }
     }
 

@@ -40,12 +40,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".testgame.TestGameActivity"
-            android:label="@string/testGameLabel"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="landscape" >
-        </activity>
-        <activity
             android:name=".vrgame.VRGameActivity"
             android:label="@string/vrGameLabel"
             android:configChanges="orientation|keyboardHidden|screenSize"

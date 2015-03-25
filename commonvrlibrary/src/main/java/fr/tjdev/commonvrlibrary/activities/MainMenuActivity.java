@@ -52,6 +52,8 @@ public abstract class MainMenuActivity extends ListActivity {
     public static final String PREF_BT = "bt";
     public static final String PREF_BT_RESET = "bt_reset";
 
+    public static final String PREF_DEBUG_ACT = "is_debug_act";
+
     protected boolean mBluetoothEnabled;
     protected boolean mBluetoothReset;
 
@@ -60,6 +62,8 @@ public abstract class MainMenuActivity extends ListActivity {
     // Initialize the list of activities
     private List<Map<String, Object>> mData = new ArrayList<>();
     private List<Class<? extends Activity>> mActivityMapping = new ArrayList<>();
+    // Tell for each activity if we use a debug one or not
+    private List<Boolean> mDebugParams = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,6 +110,7 @@ public abstract class MainMenuActivity extends ListActivity {
                     // Check the bluetooth support
                     Bundle bundle = new Bundle();
                     bundle.putBoolean(PREF_BT, mBluetoothEnabled);
+                    bundle.putBoolean(PREF_DEBUG_ACT, mDebugParams.get(position));
                     launchIntent.putExtras(bundle);
 
                     startActivity(launchIntent);
@@ -149,13 +154,18 @@ public abstract class MainMenuActivity extends ListActivity {
     }
 
     // Allow the child activity to add an item to the main menu
-    protected void addItem(int icon, int label, int subTitle, Class<? extends Activity> activity) {
+    protected void addItem(int icon, int label, int subTitle, Class<? extends Activity> activity, boolean isDebug) {
         final Map<String, Object> item = new HashMap<>();
         item.put(ITEM_IMAGE, icon);
-        item.put(ITEM_TITLE, getText(label));
+        if(isDebug) {
+            item.put(ITEM_TITLE, getString(R.string.debug_prefix, getText(label)));
+        } else {
+            item.put(ITEM_TITLE, getText(label));
+        }
         item.put(ITEM_SUBTITLE, getText(subTitle));
         mData.add(item);
         mActivityMapping.add(activity);
+        mDebugParams.add(isDebug);
     }
 
     // Allow to change the header text

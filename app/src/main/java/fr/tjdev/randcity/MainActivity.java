@@ -21,11 +21,10 @@ package fr.tjdev.randcity;
 import android.os.Bundle;
 
 import fr.tjdev.commonvrlibrary.activities.MainMenuActivity;
-import fr.tjdev.randcity.testgame.TestGameActivity;
 import fr.tjdev.randcity.vrgame.VRGameActivity;
 
 /**
- * This activity allow users to choose the game mode : normal mode or VR mode
+ * This activity allow users to choose the game mode and set up bluetooth params.
  */
 public class MainActivity extends MainMenuActivity {
 
@@ -34,8 +33,12 @@ public class MainActivity extends MainMenuActivity {
         super.onCreate(savedInstanceState);
 
         // Add items to the menu
-        super.addItem(R.drawable.test_game_icon, R.string.testGameLabel, R.string.testGameSubtitle, TestGameActivity.class);
-        super.addItem(R.drawable.icon, R.string.vrGameLabel, R.string.vrGameSubtitle, VRGameActivity.class);
+        super.addItem(R.drawable.icon, R.string.vrGameLabel, R.string.vrGameSubtitle, VRGameActivity.class, false);
+
+        // Add debug item on debug builds
+        if (BuildConfig.DEBUG) {
+            super.addItem(R.drawable.icon, R.string.vrGameLabel, R.string.vrGameSubtitle, VRGameActivity.class, true);
+        }
 
         // Set the header text
         super.setHeaderText(R.string.header);

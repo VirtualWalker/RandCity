@@ -24,6 +24,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.View;
 
 import com.google.vrtoolkit.cardboard.CardboardActivity;
 import com.google.vrtoolkit.cardboard.CardboardView;
@@ -42,6 +43,8 @@ public abstract class VRActivity extends CardboardActivity {
 
     protected boolean mBluetooth;
     protected BluetoothManager mBTManager;
+
+    protected boolean mDebugRenderer;
 
     protected final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -95,6 +98,15 @@ public abstract class VRActivity extends CardboardActivity {
         setCardboardView(mVrView);
         mOverlayView = (VROverlayView) findViewById(R.id.vr_overlay);
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+        mDebugRenderer = bundle.getBoolean(MainMenuActivity.PREF_DEBUG_ACT, false);
+        // Disable VR mode on debug
+        if(mDebugRenderer) {
+            mVrView.setVRModeEnabled(false);
+        } else {
+            // On not-debug mode, we need to hide the button
+            findViewById(R.id.button_move_forward).setVisibility(View.GONE);
+        }
 
         // You need to set the renderer on your own in the child class
         // and call enableRenderer() to enable it

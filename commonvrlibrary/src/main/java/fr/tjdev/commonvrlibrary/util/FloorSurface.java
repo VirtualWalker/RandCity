@@ -17,11 +17,10 @@
 
 package fr.tjdev.commonvrlibrary.util;
 
-import android.content.Context;
+import android.graphics.RectF;
 
-public class RawResourceReader {
-
-    public static String readTextFileFromRawResource(final Context context, final int resourceId) {
-        return FileHelper.readFile(context.getResources().openRawResource(resourceId));
-    }
+// Represent a simple floor surface with an area and the height
+public class FloorSurface {
+    public RectF area;
+    public float height;
 }

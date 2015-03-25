@@ -19,6 +19,7 @@ package fr.tjdev.commonvrlibrary;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.util.Log;
 
 import fr.tjdev.commonvrlibrary.shapes.IShape;
 
@@ -26,6 +27,8 @@ import fr.tjdev.commonvrlibrary.shapes.IShape;
  * Contains some elements used by all OpenGL renderer.
  */
 public class BaseGLRenderManager {
+
+    static private final String TAG = "BaseGLRenderManager";
 
     // Store different strides used in VBOs buffers
     protected static final int mVBOStride = (IShape.VERTEX_DATA_ELEMENTS + IShape.NORMAL_DATA_ELEMENTS + IShape.TEXTURE_COORDINATE_ELEMENTS)
@@ -52,24 +55,22 @@ public class BaseGLRenderManager {
 
     protected int mProgramHandle;
 
+    // Tell the height of the player
+    static public float PLAYER_HEIGHT = 10.0f;
+
     // Used in the setLookAt function.
     // Position the eye.
     public volatile float eyeX = 0.0f;
-    public volatile float eyeY = 10.0f;
+    public volatile float eyeY = PLAYER_HEIGHT;
     public volatile float eyeZ = 0.0f;
     // We are looking toward this point
     public volatile float lookX = 0.0f;
-    public volatile float lookY = eyeY;
+    public volatile float lookY = PLAYER_HEIGHT;
     public volatile float lookZ = eyeZ - 1.0f; // Just look at the front
     // Set up vector.
     public volatile float upX = 0.0f;
     public volatile float upY = 1.0f;
     public volatile float upZ = 0.0f;
-
-    // Use the common program
-    protected void useProgram() {
-        GLES20.glUseProgram(mProgramHandle);
-    }
 
     // Set the view matrix
     protected void setLookAt() {
@@ -82,4 +83,17 @@ public class BaseGLRenderManager {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         GLES20.glClearDepthf(1.0f);
     }
+
+    /**
+     * Checks if we've had an error inside of OpenGL ES, and if so what that error is.
+     * @param label Label to report in case of error.
+     */
+    static protected void checkGLError(String label) {
+        int error;
+        while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
+            Log.e(TAG, label + ": glError " + error);
+            throw new RuntimeException(label + ": glError " + error);
+        }
+    }
+
 }

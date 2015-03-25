@@ -19,21 +19,10 @@
 
     <string translatable="false" name="app_name">Rand City</string>
 
-    <string name="header">Welcome to Rand City game\nPlease choose your game mode.</string>
-    <string name="testGameLabel">Test Mode with buttons to move</string>
-    <string name="testGameSubtitle">Used for testings new the game when you don\'t have a VR helmet.</string>
-    <string name="vrGameLabel">VR Mode</string>
-    <string name="vrGameSubtitle">Wear your virtual reality helmet.</string>
+    <string name="header">Welcome to Rand City game\nSelect your options:</string>
+    <string name="vrGameLabel">Enter in the VR world</string>
+    <string name="vrGameSubtitle">Wear your virtual reality helmet !</string>
 
-    <string translatable="false" name="left">L</string>
-    <string translatable="false" name="right">R</string>
-    <string translatable="false" name="forward">F</string>
-    <string translatable="false" name="backward">B</string>
-    <string translatable="false" name="up">U</string>
-    <string translatable="false" name="down">D</string>
-
-    <string name="fogEnable">Enable fog</string>
-    <string name="fogDisable">Disable fog</string>
     <string name="fogOn">Fog enabled</string>
     <string name="fogOff">Fog disabled</string>
 

@@ -29,6 +29,7 @@ public class GenUtil {
     static public final float HALF_GRID_SIZE = GRID_SIZE / 2.0f;
 
     static public final float SPACE_BETWEEN_ROADS = 64.0f;
+    static public final float SPACE_BETWEEN_ROADS_X2 = SPACE_BETWEEN_ROADS * 2.0f;
 
     // The size of the grid where you can walk
     static public final float ALLOWED_GRID_SIZE = GRID_SIZE - (SPACE_BETWEEN_ROADS * 4.0f);
@@ -53,9 +54,12 @@ public class GenUtil {
     static public final float BUILD_SQUARE_WIDTH = SPACE_BETWEEN_ROADS - ROAD_WIDTH;
     static public final float HALF_BUILD_SQUARE_WIDTH = BUILD_SQUARE_WIDTH / 2.0f;
 
-    // There is a margin on each side of the building (we can see the grass at the bottom)
-    static public final float BUILD_MARGIN = 0.0f;
-    static public final float BUILD_WIDTH = BUILD_SQUARE_WIDTH - (BUILD_MARGIN * 2.0f);
+    // Some defines for the stairs on the treasure
+    // The width is the same as the square width
+    static public final float STAIRS_WIDTH = BUILD_SQUARE_WIDTH;
+    static public final int STAIRS_NUMBER = 10;
+    static public final float STAIRS_DEPTH = STAIRS_WIDTH / (float)STAIRS_NUMBER;
+    static public final float STAIRS_HEIGHT = STAIRS_DEPTH;
 
     // Width and height for windows
     static public final int TEX_WINDOW_WIDTH = 8;
@@ -73,7 +77,7 @@ public class GenUtil {
     static public final int TEX_WINDOW_GLASS_HEIGHT = TEX_WINDOW_HEIGHT - (TEX_WINDOW_V_BORDER * 2);
 
     // Used in texture generation to determine the size of bitmaps
-    static public final int TEX_NB_WINDOW_X = (int)(BUILD_WIDTH) / 4;
+    static public final int TEX_NB_WINDOW_X = (int)(BUILD_SQUARE_WIDTH) / 4;
     static public final int TEX_NB_WINDOW_Y = AVERAGE_BUILD_HEIGHT / 6;
 
     // The numbers of textures generated

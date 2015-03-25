@@ -31,4 +31,6 @@
 
     <string name="noOpenGLSupport">Cet appareil ne supporte pas OpenGL ES 2.0 !</string>
 
+    <string name="moveForward">Avancer</string>
+
 </resources>

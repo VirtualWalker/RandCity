@@ -22,13 +22,13 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.Region;
 
 import java.util.ArrayList;
 
 import fr.tjdev.commonvrlibrary.shapes.Cube;
 import fr.tjdev.commonvrlibrary.util.Random;
+import fr.tjdev.commonvrlibrary.util.RectF3D;
 
 /**
  * This class represent a building (with some information)
@@ -130,6 +130,9 @@ public class Building {
     // Contains the coordinates of the center of the building square.
     public float[] centerCoordinates;
 
+    // Contains the height (from the floor) of the building
+    public float height;
+
     // Contains the type of texture used by this building.
     // Index are mapped as this :
     // 0 --> fuzzy windows
@@ -168,10 +171,10 @@ public class Building {
 
         // Generate a random height for the building.
         Random rand = new Random();
-        final float height = (float) rand.intBetween(GenUtil.BUILD_MIN_HEIGHT, GenUtil.BUILD_MAX_HEIGHT);
+        build.height = (float) rand.intBetween(GenUtil.BUILD_MIN_HEIGHT, GenUtil.BUILD_MAX_HEIGHT);
 
-        build.positions = Cube.generateCuboid(topLeftX + GenUtil.BUILD_MARGIN, 0.0f, topLeftZ + GenUtil.BUILD_MARGIN,
-                GenUtil.BUILD_WIDTH, height, GenUtil.BUILD_WIDTH, false);
+        build.positions = Cube.generateCuboid(topLeftX, 0.0f, topLeftZ,
+                GenUtil.BUILD_SQUARE_WIDTH, build.height, GenUtil.BUILD_SQUARE_WIDTH, false);
 
         // Generate a random color (a variant of grey)
         // Color are represented with values between 0.00f, and 1.00f
@@ -244,18 +247,20 @@ public class Building {
     /**
      * Generate a list of areas where the buildings are. Used to prevent user to walk inside buildings
      */
-    static public ArrayList<RectF> generateRestrictedAreas(ArrayList<Building> buildings, final float[] treasureCenterCoordinates) {
-        ArrayList<RectF> restrictedAreas = new ArrayList<>();
+    static public ArrayList<RectF3D> generateRestrictedAreas(ArrayList<Building> buildings, final float[] treasureCenterCoordinates) {
+        ArrayList<RectF3D> restrictedAreas = new ArrayList<>();
 
         // All areas contains a margin of 0.8 on each side
         final float margin = 0.8f;
         for (Building build : buildings) {
             // Check if the building is not the treasure
             if (build.centerCoordinates != treasureCenterCoordinates) {
-                restrictedAreas.add(new RectF(build.centerCoordinates[0] - GenUtil.HALF_BUILD_SQUARE_WIDTH - margin,
+                restrictedAreas.add(new RectF3D(build.centerCoordinates[0] - GenUtil.HALF_BUILD_SQUARE_WIDTH - margin,
                         build.centerCoordinates[2] - GenUtil.HALF_BUILD_SQUARE_WIDTH - margin,
                         build.centerCoordinates[0] + GenUtil.HALF_BUILD_SQUARE_WIDTH + margin,
-                        build.centerCoordinates[2] + GenUtil.HALF_BUILD_SQUARE_WIDTH + margin));
+                        build.centerCoordinates[2] + GenUtil.HALF_BUILD_SQUARE_WIDTH + margin,
+                        0.0f,
+                        build.height));
             }
         }
         return restrictedAreas;
@@ -311,7 +316,7 @@ public class Building {
 
                     if (Color.blue(bitmap.getPixel(left, top)) != GenUtil.WIN_BRIGHT_1_RGB) {
                         // Check the brightness of next windows
-                        final int nextBright = getHigherBrightInSideWindow(bitmap, left, top);
+                        final int nextBright = getBrightestInSideWindow(bitmap, left, top);
                         // There is a chance to repeat the light
                         if (rand.chance(chanceToRepeat)) {
                             if (nextBright == GenUtil.WIN_BRIGHT_1_RGB) { // White
@@ -411,7 +416,7 @@ public class Building {
     }
 
     // Return the higher value in windows on each side of the specified one
-    static private int getHigherBrightInSideWindow(final Bitmap bitmap, final int left, final int top) {
+    static private int getBrightestInSideWindow(final Bitmap bitmap, final int left, final int top) {
         int topVal = 0;
         int bottomVal = 0;
         int leftVal = 0;

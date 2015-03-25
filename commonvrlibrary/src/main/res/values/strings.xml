@@ -17,6 +17,7 @@
 <resources>
 
     <string translatable="false" name="app_name">CommonVRLibrary</string>
+    <string translatable="false" name="debug_prefix">DEBUG: %1$s</string>
 
     <string name="exit">Exit</string>
 
@@ -32,5 +33,7 @@
     <string name="bluetoothSearchStart">Search for Bluetooth server &#8230;</string>
 
     <string name="noOpenGLSupport">The device doesn\'t support OpenGL ES 2.0 !</string>
+
+    <string name="moveForward">Forward</string>
 
 </resources>

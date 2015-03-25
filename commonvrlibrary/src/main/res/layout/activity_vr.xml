@@ -35,4 +35,14 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true" />
 
+    <!-- This button is only show on debug builds -->
+    <Button
+        android:id="@+id/button_move_forward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/moveForward" />
+
 </RelativeLayout>
