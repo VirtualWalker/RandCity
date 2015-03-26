@@ -83,17 +83,4 @@ public class BaseGLRenderManager {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         GLES20.glClearDepthf(1.0f);
     }
-
-    /**
-     * Checks if we've had an error inside of OpenGL ES, and if so what that error is.
-     * @param label Label to report in case of error.
-     */
-    static protected void checkGLError(String label) {
-        int error;
-        while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
-            Log.e(TAG, label + ": glError " + error);
-            throw new RuntimeException(label + ": glError " + error);
-        }
-    }
-
 }
