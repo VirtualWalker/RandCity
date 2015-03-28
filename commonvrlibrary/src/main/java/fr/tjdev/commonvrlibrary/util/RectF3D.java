@@ -20,14 +20,14 @@ package fr.tjdev.commonvrlibrary.util;
 // Simple class that hold a 3D rect
 public class RectF3D {
     // Represent the floor of the rect
-    public float floorLeft;
-    public float floorUp;
-    public float floorRight;
-    public float floorDown;
+    public final float floorLeft;
+    public final float floorUp;
+    public final float floorRight;
+    public final float floorDown;
 
     // Represent the height
-    public float bottom;
-    public float top;
+    public final float bottom;
+    public final float top;
 
     public RectF3D(float floorLeft, float floorUp, float floorRight, float floorDown, float bottom, float top) {
         this.floorLeft = floorLeft;

@@ -19,7 +19,6 @@ package fr.tjdev.commonvrlibrary;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
-import android.util.Log;
 
 import fr.tjdev.commonvrlibrary.shapes.IShape;
 
@@ -27,9 +26,6 @@ import fr.tjdev.commonvrlibrary.shapes.IShape;
  * Contains some elements used by all OpenGL renderer.
  */
 public class BaseGLRenderManager {
-
-    static private final String TAG = "BaseGLRenderManager";
-
     // Store different strides used in VBOs buffers
     protected static final int mVBOStride = (IShape.VERTEX_DATA_ELEMENTS + IShape.NORMAL_DATA_ELEMENTS + IShape.TEXTURE_COORDINATE_ELEMENTS)
             * IShape.BYTES_PER_FLOAT;

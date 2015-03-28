@@ -75,10 +75,10 @@ public class BluetoothManager {
     // This list is created in the constructor by reading the raw res file
     // "allowed_bt_servers.txt"
     // Order in the list represent the priority, the first will be choose first.
-    private ArrayList<String> mAllowedServers = new ArrayList<>();
+    private final List<String> mAllowedServers = new ArrayList<>();
 
     // Contains all devices found.
-    private ArrayList<BluetoothDevice> mDevices = new ArrayList<>();
+    private final List<BluetoothDevice> mDevices = new ArrayList<>();
 
     // Contains the address of the connected device
     private String mDeviceAddress;
@@ -99,13 +99,6 @@ public class BluetoothManager {
         if (adapter != null) {
             Log.d(TAG, "Disabling bluetooth.");
             adapter.disable();
-        }
-    }
-    public static void enableBluetooth() {
-        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-        if (adapter != null) {
-            Log.d(TAG, "Enabling bluetooth.");
-            adapter.enable();
         }
     }
 

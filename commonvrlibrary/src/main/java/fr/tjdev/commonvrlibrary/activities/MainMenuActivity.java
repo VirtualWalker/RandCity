@@ -60,10 +60,10 @@ public abstract class MainMenuActivity extends ListActivity {
     private final FullScreenManager mFullScreenMgr = new FullScreenManager(this);
 
     // Initialize the list of activities
-    private List<Map<String, Object>> mData = new ArrayList<>();
-    private List<Class<? extends Activity>> mActivityMapping = new ArrayList<>();
+    private final List<Map<String, Object>> mData = new ArrayList<>();
+    private final List<Class<? extends Activity>> mActivityMapping = new ArrayList<>();
     // Tell for each activity if we use a debug one or not
-    private List<Boolean> mDebugParams = new ArrayList<>();
+    private final List<Boolean> mDebugParams = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

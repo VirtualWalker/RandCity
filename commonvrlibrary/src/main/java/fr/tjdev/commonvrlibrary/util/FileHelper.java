@@ -36,6 +36,7 @@ public class FileHelper {
     // Copy file to the external storage from the resource ID.
     // Note that this code does no error checking and if external storage is
     // not currently mounted this will silently fail.
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     static public void createExternalStoragePrivateFile(Context context, String fileName, int resID) {
         File file = new File(context.getExternalFilesDir(null), fileName);
         try {
@@ -59,11 +60,6 @@ public class FileHelper {
             Log.w(TAG, "Error reading " + file, e);
         }
         return null;
-    }
-
-    static public boolean deleteExternalStoragePrivateFile(Context context, final String fileName) {
-        File file = new File(context.getExternalFilesDir(null), fileName);
-        return file.delete();
     }
 
     static public boolean hasExternalStoragePrivateFile(Context context, final String fileName) {

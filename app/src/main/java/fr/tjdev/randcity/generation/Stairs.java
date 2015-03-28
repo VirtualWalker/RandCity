@@ -39,7 +39,7 @@ public class Stairs {
     public float[] normals;
 
     // RGBA format
-    static public float[] color = {
+    static public final float[] color = {
             0.5f, 0.5f, 0.5f, 1.0f
     };
 

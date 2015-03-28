@@ -42,19 +42,11 @@ import android.opengl.GLUtils;
 
 public class TextureHelper {
 
-    public static int loadTexture(final Context context, final int resourceId) {
-        return loadTexture(context, resourceId, true);
-    }
-
     public static int loadTexture(final Context context, final int resourceId, boolean recycleBitmap) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;    // No pre-scaling
 
         return loadTexture(BitmapFactory.decodeResource(context.getResources(), resourceId, options), recycleBitmap);
-    }
-
-    public static int loadTexture(Bitmap bitmap) {
-        return loadTexture(bitmap, true);
     }
 
     public static int loadTexture(Bitmap bitmap, boolean recycleBitmap) {

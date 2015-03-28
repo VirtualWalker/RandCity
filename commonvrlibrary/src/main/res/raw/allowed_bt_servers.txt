@@ -4,7 +4,7 @@
 # All spaces or blank lines are skipped.
 # All lines that begin with a '#' is interpreted as a comment and will be ignored.
 
-# Default Asus Dongle used for my tests
+# Some MAC addresses of some dongles
 00:02:72:B1:16:5A
-# An another dongle for the tests
 00:09:DD:50:2B:91
+00:15:83:0C:BF:EB
