@@ -25,28 +25,28 @@ import android.graphics.Color;
  */
 public class GenUtil {
 
-    static public final float GRID_SIZE = 1024.0f;
+    static public final float GRID_SIZE = 2048.0f;
     static public final float HALF_GRID_SIZE = GRID_SIZE / 2.0f;
 
-    static public final float SPACE_BETWEEN_ROADS = 64.0f;
+    static public final float SPACE_BETWEEN_ROADS = 128.0f;
     static public final float SPACE_BETWEEN_ROADS_X2 = SPACE_BETWEEN_ROADS * 2.0f;
 
     // The size of the grid where you can walk
-    static public final float ALLOWED_GRID_SIZE = GRID_SIZE - (SPACE_BETWEEN_ROADS * 4.0f);
+    static public final float ALLOWED_GRID_SIZE = GRID_SIZE - (SPACE_BETWEEN_ROADS * 2.0f);
     static public final float HALF_ALLOWED_GRID_SIZE = ALLOWED_GRID_SIZE / 2.0f;
 
-    static public final float ROAD_WIDTH = 16.0f;
+    static public final float ROAD_WIDTH = 32.0f;
     static public final float HALF_ROAD_WIDTH = ROAD_WIDTH / 2.0f;
     static public final float MAIN_ROAD_SCALE = 2.0f;
     static public final float MAIN_ROAD_WIDTH = ROAD_WIDTH * MAIN_ROAD_SCALE;
     static public final float HALF_DIFF_BETWEEN_ROADS = (MAIN_ROAD_WIDTH - ROAD_WIDTH) / 2.0f;
 
-    static public final int BUILD_MIN_HEIGHT = 80;
-    static public final int BUILD_MAX_HEIGHT = 200;
+    static public final int BUILD_MIN_HEIGHT = 150;
+    static public final int BUILD_MAX_HEIGHT = 350;
     static public final int AVERAGE_BUILD_HEIGHT = (BUILD_MIN_HEIGHT + BUILD_MAX_HEIGHT) / 2;
 
-    static public final int BUILD_MIN_COLOR = 50;
-    static public final int BUILD_MAX_COLOR = 90;
+    static public final int BUILD_MIN_COLOR = 70;
+    static public final int BUILD_MAX_COLOR = 100;
 
     // The square for buildings is smaller than the space between roads since this space
     // is computed from the middle of the road.

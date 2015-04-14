@@ -102,6 +102,14 @@ public class BluetoothManager {
         }
     }
 
+    public static void enableBluetooth() {
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        if (adapter != null) {
+            Log.d(TAG, "Enabling bluetooth.");
+            adapter.enable();
+        }
+    }
+
     // Broadcast receiver
     // Used to listen to these actions :
     // - ACTION_FOUND : when a new device is found
@@ -251,8 +259,19 @@ public class BluetoothManager {
     private void searchForDevices() {
         mDevices.clear();
         // Search for new devices
-        // The end of this function will be executed in the mScanFinishedReceiver
+        // The end of this function will be executed in the corresponding receiver
         mParentActivity.sendBroadcast(new Intent(ACTION_SEARCH_START));
+
+        // Wait for the bluetooth functionality
+        while (!mBluetoothAdapter.isEnabled()) {
+            enableBluetooth();
+        }
+
+        // Cancel current discovery
+        if (mBluetoothAdapter.isDiscovering()) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
+
         Log.d(TAG, "Starting discovery ...");
         mBluetoothAdapter.startDiscovery();
     }

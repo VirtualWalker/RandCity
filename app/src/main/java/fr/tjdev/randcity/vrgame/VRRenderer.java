@@ -146,7 +146,7 @@ public class VRRenderer extends BaseGLRenderManager implements CardboardView.Ste
         // Generate buildings grid and textures
         generateTerrain(debugGeneration);
 
-        if(!debugGeneration) {
+        /*if(!debugGeneration) {
             // Move the player at a random position
             boolean success = false;
             while(!success) {
@@ -155,7 +155,7 @@ public class VRRenderer extends BaseGLRenderManager implements CardboardView.Ste
                 final int newZ = rand.intBetween((int)-GenUtil.HALF_GRID_SIZE, (int)GenUtil.HALF_GRID_SIZE);
                 success = movePlayer(newX, 0.0f, newZ);
             }
-        }
+        }*/
     }
 
     // This function will generate buildings and textures

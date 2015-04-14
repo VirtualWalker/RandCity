@@ -181,29 +181,42 @@ public class Building {
         // Generate an integer between 0 and 100 and divide by 100 to get the color.
         final int color = rand.intBetween(GenUtil.BUILD_MIN_COLOR, GenUtil.BUILD_MAX_COLOR);
         final int randPercent = rand.nextInt(100);
+        final int colorMargin = 40;
         int red = color;
         int blue = color;
+        int green = color;
 
         // Possible colors are: red, blue, yellow, white
-        if(randPercent < 30) { // blue
-            blue += rand.nextInt(15);
+        if(randPercent < 33) { // blue
+            blue += rand.nextInt(colorMargin);
             if(blue > 100) {
                 blue = 100;
             }
-        } else if (randPercent < 60) { // red
-            red += rand.nextInt(15);
+        } else if (randPercent < 66) { // red
+            red += rand.nextInt(colorMargin);
             if(red > 100) {
                 red = 100;
             }
-        } else if (randPercent < 90) { // yellow
-            blue -= rand.nextInt(15);
-            if(blue < 0) {
-                blue = 0;
+        } else if (randPercent < 99) { // yellow
+            green += rand.nextInt(colorMargin);
+            if(green > 100) {
+                green = 100;
             }
-        } // Only 10% of white
+        } // Only 1% of white
 
-        build.color = new float[]{red/100.0f, color/100.0f, blue/100.0f, 1.0f};
-
+        build.color = new float[]{red/100.0f, green/100.0f, blue/100.0f, 1.0f};
+        /*final int randColor = rand.nextInt(5);
+        if (randColor == 0) {
+            build.color = new float[]{242.0f/256.0f, 143.0f/256.0f, 138.0f/256.0f, 1.0f};
+        } else if (randColor == 1) {
+            build.color = new float[]{143.0f/256.0f, 242.0f/256.0f, 138.0f/256.0f, 1.0f};
+        } else if (randColor == 2) {
+            build.color = new float[]{138.0f/256.0f, 141.0f/256.0f, 242.0f/256.0f, 1.0f};
+        } else if (randColor == 3) {
+            build.color = new float[]{233.0f/256.0f, 138.0f/256.0f, 242.0f/256.0f, 1.0f};
+        } else if (randColor == 4) {
+            build.color = new float[]{242.0f/256.0f, 159.0f/256.0f, 100.0f/256.0f, 1.0f};
+        }*/
 
         // Generate the texture type
         if(rand.chance(60)) {
@@ -251,7 +264,7 @@ public class Building {
         ArrayList<RectF3D> restrictedAreas = new ArrayList<>();
 
         // All areas contains a margin of 0.8 on each side
-        final float margin = 0.8f;
+        final float margin = 1.0f;
         for (Building build : buildings) {
             // Check if the building is not the treasure
             if (build.centerCoordinates != treasureCenterCoordinates) {
