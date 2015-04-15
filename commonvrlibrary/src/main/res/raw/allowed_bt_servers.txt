@@ -2,7 +2,7 @@
 # The order is important since the first will have a higher priority than the second.
 #
 # All spaces or blank lines are skipped.
-# All lines that begin with a '#' is interpreted as a comment and will be ignored.
+# All lines that begins with a '#' is interpreted as a comment and will be ignored.
 
 # Some MAC addresses of some dongles
 00:02:72:B1:16:5A

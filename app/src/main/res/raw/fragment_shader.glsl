@@ -47,7 +47,7 @@ void main()
 
     // Compute the fog
     const float LOG2 = 1.442695;
-    const float fogDensity = 0.032;
+    const float fogDensity = 0.01;
     const vec4 fogColor = vec4(0.03, 0.03, 0.03, 0.0);
 
     float z = length(v_Position);

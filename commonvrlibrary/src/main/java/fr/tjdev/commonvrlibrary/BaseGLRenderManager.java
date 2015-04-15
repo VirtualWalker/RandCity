@@ -52,7 +52,7 @@ public class BaseGLRenderManager {
     protected int mProgramHandle;
 
     // Tell the height of the player
-    static public float PLAYER_HEIGHT = 10.0f;
+    static public float PLAYER_HEIGHT = 20.0f;
 
     // Used in the setLookAt function.
     // Position the eye.

@@ -83,6 +83,8 @@ public class BluetoothManager {
     // Contains the address of the connected device
     private String mDeviceAddress;
 
+    private boolean mDeviceFound = false;
+
     private ConnectThread mConnectThread = null;
     private ConnectedThread mConnectedThread = null;
 
@@ -125,6 +127,22 @@ public class BluetoothManager {
                 // Add the device if is not already in the list
                 if (!mDevices.contains(device)) {
                     mDevices.add(device);
+                    if (mAllowedServers.contains(device.getAddress()) && !mDeviceFound && mFirstScan) {
+                        // Start the connection
+                        mDeviceFound = true;
+
+                        mDeviceAddress = device.getAddress();
+                        Log.d(TAG, "Use device: " + mDeviceAddress);
+
+                        // Clean up previous connected devices
+                        if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
+                        if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
+
+                        mConnectThread = new ConnectThread(device);
+                        mConnectThread.start();
+
+                        mFirstScan = false;
+                    }
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 if (mFirstScan) {
@@ -137,27 +155,7 @@ public class BluetoothManager {
                         Log.d(TAG, device.getAddress() + " (" + device.getName() + ")");
                     }
 
-                    // The scan is finished, check if a device is in the mAllowedServers list.
-                    for (String allowed : mAllowedServers) {
-                        for (BluetoothDevice btDevice : mDevices) {
-                            if (btDevice.getAddress().equals(allowed)) {
-                                // A device were found
-                                mDeviceAddress = btDevice.getAddress();
-                                Log.d(TAG, "Use device: " + mDeviceAddress);
-
-                                // Clean up previous connected devices
-                                if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}
-                                if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
-
-                                mConnectThread = new ConnectThread(btDevice);
-                                mConnectThread.start();
-
-                                // Exit the loop
-                                mFirstScan = false;
-                                return;
-                            }
-                        }
-                    }
+                    mFirstScan = false;
 
                     // Here, no devices were found
                     Log.w(TAG, "No bluetooth servers were found ...");
@@ -165,16 +163,13 @@ public class BluetoothManager {
                     // Disable bluetooth
                     mBluetoothAdapter.disable();
                 }
-                if (mFirstScan) {
-                    mFirstScan = false;
-                }
             }
         }
     };
 
     // Custom listener used when data are received with bluetooth
     public interface OnBluetoothDataListener {
-        void onNewData(final int walkSpeed, final int orientation);
+        void onNewData(final int walkSpeed, final int orientation, final int specialCode);
     }
 
     private OnBluetoothDataListener mOnBTDataListener;
@@ -189,9 +184,9 @@ public class BluetoothManager {
         mResetOnDestroy = resetOnDestroy;
 
         // Copy some resources files if needed
-        if (!FileHelper.hasExternalStoragePrivateFile(mParentActivity, ALLOWED_SERVER_FILENAME)) {
-            FileHelper.createExternalStoragePrivateFile(mParentActivity, ALLOWED_SERVER_FILENAME, R.raw.allowed_bt_servers);
-        }
+        //if (!FileHelper.hasExternalStoragePrivateFile(mParentActivity, ALLOWED_SERVER_FILENAME)) {
+        //    FileHelper.createExternalStoragePrivateFile(mParentActivity, ALLOWED_SERVER_FILENAME, R.raw.allowed_bt_servers);
+        //}
 
         // Check Bluetooth support
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -273,6 +268,7 @@ public class BluetoothManager {
         }
 
         Log.d(TAG, "Starting discovery ...");
+        mDeviceFound = false;
         mBluetoothAdapter.startDiscovery();
     }
 
@@ -406,7 +402,7 @@ public class BluetoothManager {
 
         public void run() {
             // Store 3 numbers
-            byte[] buffer = new byte[3];
+            byte[] buffer = new byte[4];
             int bytesCount; // bytes returned from read()
 
             // Used to show less debug output
@@ -418,7 +414,7 @@ public class BluetoothManager {
                 try {
                     // Read from the InputStream
                     bytesCount = mmInStream.read(buffer);
-                    if (bytesCount == 3) {
+                    if (bytesCount == 4) {
                         // Check if the first byte is 0xFF
                         final int messageCheck = buffer[0] & 0xFF;
                         if (messageCheck == 0xFF) {
@@ -426,6 +422,7 @@ public class BluetoothManager {
                             final int walkSpeed = buffer[1] & 0xFF;
                             final int orientation = buffer[2] & 0xFF;
                             final int realOrientation = (int) (orientation * (360.0f/255.0f));
+                            final int specialCode = buffer[3] & 0xFF;
 
                             dataCount++;
                             // Show debug output only every second
@@ -435,13 +432,14 @@ public class BluetoothManager {
                                 if (walkSpeed != 0 || orientation != 0) {
                                     Log.v(TAG, "Receive data: speed=" + Integer.toString(walkSpeed)
                                             + " orientation=" + Integer.toString(orientation)
-                                            + " (real orientation: " + Integer.toString(realOrientation) + ")");
+                                            + " (real orientation: " + Integer.toString(realOrientation) + ")"
+                                            + " specialCode=" + Integer.toString(specialCode));
                                 }
                             }
 
                             // Send data to the listener
                             if (mOnBTDataListener != null) {
-                                mOnBTDataListener.onNewData(walkSpeed, realOrientation);
+                                mOnBTDataListener.onNewData(walkSpeed, realOrientation, specialCode);
                             }
                         }
                     }

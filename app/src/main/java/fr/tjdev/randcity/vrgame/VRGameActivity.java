@@ -88,36 +88,37 @@ public class VRGameActivity extends VRActivity {
         if (mBluetooth) {
             mBTManager.setOnBluetoothDataListener(new BluetoothManager.OnBluetoothDataListener() {
                 @Override
-                public void onNewData(int walkSpeed, int orientation) {
-
-                    //
-                    // Special values for the walk speed:
-                    //  - 254 : init with the current orientation
-                    //  - 253 : start the game
-                    //
-
-                    if (walkSpeed == 254) {
+                public void onNewData(final int walkSpeed, final int orientation, final int specialCode) {
+                    if (specialCode == 1) {
                         if (BuildConfig.DEBUG) {
                             Log.d(TAG, "Initialization with the phone orientation !");
                         }
                         // Compute the phone orientation
-                        mAngleDiff = (int)Math.toDegrees(Math.acos(mRenderer.lookForwardVector[0]));
+                        mAngleDiff = (int) Math.toDegrees(Math.acos(mRenderer.lookForwardVector[0]));
 
                         if (BuildConfig.DEBUG) {
                             Log.d(TAG, "Angle diff is :" + Integer.toString(mAngleDiff));
                         }
                         return;
-                    } else if (walkSpeed == 253) {
+                    } else if (specialCode == 2) {
+                        mAngleDiff = (int) Math.toDegrees(Math.acos(mRenderer.lookForwardVector[0]))
+                                        - orientation;
+                    } else if (specialCode == 3) {
                         if (BuildConfig.DEBUG) {
                             Log.d(TAG, "Start the game !");
                         }
-                        mOverlayView.show3DToast(getString(R.string.startGame));
+                        VRGameActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mOverlayView.show3DToast(getString(R.string.startGame));
+                            }
+                        });
                         return;
                     }
 
-                    final int realOrientation = orientation + mAngleDiff;
+                    final int realOrientation = orientation + mAngleDiff + 90;
 
-                    final float move = walkSpeed / 80.0f;
+                    final float move = walkSpeed / 65.0f;
                     final float moveZ = (float) (Math.cos(Math.toRadians(realOrientation)) * move);
                     final float moveX = (float) (Math.sin(Math.toRadians(realOrientation)) * move);
 
@@ -137,8 +138,10 @@ public class VRGameActivity extends VRActivity {
             });
 
             // Disable fog on debug generations
-            mRenderer.enableFog = false;
+            //mRenderer.enableFog = false;
         }
+
+        mRenderer.enableFog = false;
     }
 
     @Override
