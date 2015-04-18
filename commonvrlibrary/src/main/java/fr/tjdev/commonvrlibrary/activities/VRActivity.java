@@ -99,6 +99,9 @@ public abstract class VRActivity extends CardboardActivity {
         mOverlayView = (VROverlayView) findViewById(R.id.vr_overlay);
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
+        // Disable trigger when clicking on the view
+        setConvertTapIntoTrigger(false);
+
         mDebugRenderer = bundle.getBoolean(MainMenuActivity.PREF_DEBUG_ACT, false);
         // Disable VR mode on debug
         if(mDebugRenderer) {

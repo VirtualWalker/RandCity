@@ -18,7 +18,6 @@
 
 package fr.tjdev.randcity.vrgame;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -73,14 +72,6 @@ public class VRGameActivity extends VRActivity {
                         }
                     });
                 }
-            }
-        });
-
-        // Toggle fog on click
-        mVrView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleFog();
             }
         });
 
