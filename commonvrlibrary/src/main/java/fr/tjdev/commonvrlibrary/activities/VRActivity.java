@@ -78,8 +78,6 @@ public abstract class VRActivity extends CardboardActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle.getBoolean(MainMenuActivity.PREF_BT, false)) {
             Log.d(TAG, "Bluetooth support enabled !");
-            mBluetooth = true;
-            mBTManager = new BluetoothManager(this);
 
             // Register broadcast receivers for bluetooth events
             // They are unregistered in the onDestroy();
@@ -88,6 +86,9 @@ public abstract class VRActivity extends CardboardActivity {
             registerReceiver(mReceiver, new IntentFilter(BluetoothManager.ACTION_CONNECT_SUCCESS));
             registerReceiver(mReceiver, new IntentFilter(BluetoothManager.ACTION_NO_SERVERS_FOUND));
             registerReceiver(mReceiver, new IntentFilter(BluetoothManager.ACTION_SEARCH_START));
+
+            mBluetooth = true;
+            mBTManager = new BluetoothManager(this);
         } else {
             mBluetooth = false;
         }
